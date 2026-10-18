@@ -1,0 +1,18 @@
+# IDE
+.idea/
+.vscode/
+
+# 构建产物
+*.exe
+*.exe~
+dist/
+
+# 运行时产物
+tmp/
+*.log
+
+# 工具状态
+.workbuddy/
+
+# 依赖目录(示例工程使用 go module,无需 vendor)
+node_modules/
