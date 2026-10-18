@@ -1,0 +1,61 @@
+filename: nested
+package: system
+
+# 深度嵌套:res 会提升出多层命名结构体
+# UserRes -> UserResProfile -> UserResProfileAddress
+GetUserDetail:
+  method: GET
+  path: /users/:id(int64)/detail
+  res:
+    id: int64
+    name: string
+    profile:
+      avatar: string
+      bio: string
+      address:
+        province: string
+        city: string
+        street: string
+
+# 数组套对象套对象
+GetOrderDetail:
+  method: GET
+  path: /orders/:orderId(int64)/detail
+  res:
+    orderId: int64
+    userId: int64
+    items:
+      - productId: int64
+        title: string
+        price: float64
+        attrs:
+          - name: string
+            value: string
+
+# map 类型
+GetConfig:
+  method: GET
+  path: /config
+  res:
+    configs: map[string]string
+
+GetUserMap:
+  method: GET
+  path: /users/map
+  res:
+    users: map[string]int64
+
+# 同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车
+GetConfigA:
+  method: GET
+  path: /config/a
+  res:
+    list:
+      - x: int64
+
+GetConfigB:
+  method: GET
+  path: /config/b
+  res:
+    list:
+      - y: string

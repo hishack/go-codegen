@@ -1,0 +1,66 @@
+filename: edge
+package: system
+
+# 没有 req 也没有 res
+HealthCheck:
+  method: GET
+  path: /health
+
+# 只有 req,没有 res
+Logout:
+  method: POST
+  path: /logout
+  req:
+    token: string
+
+# 只有 res,没有 req
+GetTime:
+  method: GET
+  path: /time
+  res:
+    timestamp: int64
+    timezone: string
+
+# 空 req 对象
+Ping:
+  method: GET
+  path: /ping
+  req: {}
+
+# GET 带 req(query 参数场景)
+SearchUser:
+  method: GET
+  path: /users/search
+  req:
+    keyword: string
+    page: int
+    pageSize: int
+  res:
+    total: int64
+    list:
+      - id: int64
+        name: string
+
+# 多路径参数
+GetUserOrder:
+  method: GET
+  path: /users/:userId(int64)/orders/:orderId(int64)
+  res:
+    orderId: int64
+    userId: int64
+
+# 无类型的路径参数,默认按 string
+GetArticle:
+  method: GET
+  path: /articles/:id
+  res:
+    id: string
+    title: string
+
+# 多级路径参数
+GetOrgUser:
+  method: GET
+  path: /orgs/:orgId(int64)/users/:userId(int64)
+  res:
+    orgId: int64
+    userId: int64

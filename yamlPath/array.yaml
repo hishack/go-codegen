@@ -1,0 +1,58 @@
+filename: array
+package: system
+
+# 数组的各种写法:基础类型数组、对象数组、混合嵌套
+GetIntArray:
+  method: GET
+  path: /arrays/ints
+  res:
+    data: [int]
+
+GetStringArray:
+  method: GET
+  path: /arrays/strings
+  res:
+    data: [string]
+
+GetInt64Array:
+  method: GET
+  path: /arrays/int64s
+  res:
+    data: [int64]
+
+# 对象数组:对应 res.list,会提升为 GetObjectArrayResListItem
+GetObjectArray:
+  method: GET
+  path: /arrays/objects
+  res:
+    total: int64
+    list:
+      - id: int64
+        name: string
+        age: int
+
+# 多字段对象数组
+GetOrderList:
+  method: GET
+  path: /orders
+  res:
+    total: int64
+    list:
+      - orderId: int64
+        userId: int64
+        amount: float64
+        status: string
+        remark: string
+
+# 请求里带数组
+CreateBatchUser:
+  method: POST
+  path: /users/batch
+  req:
+    names: [string]
+    ages: [int]
+    tags:
+      - key: string
+        value: string
+  res:
+    successCount: int64

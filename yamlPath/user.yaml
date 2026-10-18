@@ -1,0 +1,74 @@
+filename: user
+package: system
+
+# 基础增删改查 + 全量基础类型覆盖
+CreateUser:
+  method: POST
+  path: /users
+  req:
+    name: string
+    age: int
+    height: float64
+    weight: float32
+    enabled: bool
+    score: int64
+    level: int32
+    count: uint
+    ratio: float64
+    birthday: time.Time
+    duration: time.Duration
+    nickname: string
+  res:
+    id: int64
+    createdAt: time.Time
+
+GetUser:
+  method: GET
+  path: /users/:userId(int64)
+  res:
+    id: int64
+    name: string
+    age: int
+
+ListUsers:
+  method: GET
+  path: /users
+  res:
+    total: int64
+    list:
+      - id: int64
+        name: string
+        age: int
+
+UpdateUser:
+  method: PUT
+  path: /users/:userId(int64)
+  req:
+    name: string
+    age: int
+  res:
+    updated: bool
+
+PatchUser:
+  method: PATCH
+  path: /users/:userId(int64)
+  req:
+    nickname: string
+  res:
+    updated: bool
+
+DeleteUser:
+  method: DELETE
+  path: /users/:userId(int64)
+  res:
+    deleted: bool
+
+# 根据ID获取用户详情
+GetUserProfileVo:
+  method: GET
+  path: /users/profile/:id(int64)
+  res:
+    id: int64 # 用户ID
+    profile:
+      nickname: string # 昵称
+      tags: [string]
