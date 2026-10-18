@@ -25,4 +25,4 @@ GetCharacterSkills:
     list:
       - id: int64
         name: string
-        level: []int
+        level: [int]

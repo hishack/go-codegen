@@ -1,0 +1,26 @@
+# go-codegen 配置文件
+# 所有路径相对于运行 gen 命令时所在的目录
+
+# 输入:yaml 目录(每个文件一个领域模块)
+yaml: ./yamlPath
+
+# 目标工程 go module 名,生成 import 路径时使用
+module: codegen-example
+
+# api 结构体名前缀(可选)。填 YiKou 时生成 api.YiKouCreateUserRequest
+prefix: ""
+
+# 输出:目标工程的各层目录
+serviceOut: ./example/internal/service
+apiOut:     ./example/internal/api
+modelOut:   ./example/internal/dal/vo
+logicOut:   ./example/internal/logic
+handlerOut: ./example/internal/handler
+routerOut:  ./example/internal/router
+
+# 输出:前端 ts api 目录(留空则跳过前端生成)
+webOut: ./example/web/src/api
+
+# 写入生成文件头的署名
+author: shack
+github: https://github.com/hishack
