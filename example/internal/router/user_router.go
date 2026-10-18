@@ -5,19 +5,23 @@ package router
 import (
 	"codegen-example/internal/handler"
 
-	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/gin-gonic/gin"
 )
 
-// RegisterUserRoutes 注册User模块路由(路由列表由 yaml 生成)
-func RegisterUserRoutes(h *server.Hertz, userHandler *handler.UserHandler) {
-	userGroup := h.Group("")
+type UserRouter struct{}
+
+// InitUserRouter 注册User模块路由(路由列表由 yaml 生成)
+func (s *UserRouter) InitUserRouter(Router *gin.RouterGroup, userHandler *handler.UserHandler) (R gin.IRoutes) {
+	userRouter := Router.Group("")
 	{
-		userGroup.POST("/users", userHandler.CreateUser)
-		userGroup.GET("/users/:userId", userHandler.GetUser)
-		userGroup.GET("/users", userHandler.ListUsers)
-		userGroup.PUT("/users/:userId", userHandler.UpdateUser)
-		userGroup.PATCH("/users/:userId", userHandler.PatchUser)
-		userGroup.DELETE("/users/:userId", userHandler.DeleteUser)
-		userGroup.GET("/users/profile/:id", userHandler.GetUserProfileVo)
+		userRouter.POST("/users", userHandler.CreateUser)
+		userRouter.GET("/users/:userId", userHandler.GetUser)
+		userRouter.GET("/users", userHandler.ListUsers)
+		userRouter.PUT("/users/:userId", userHandler.UpdateUser)
+		userRouter.PATCH("/users/:userId", userHandler.PatchUser)
+		userRouter.DELETE("/users/:userId", userHandler.DeleteUser)
+		userRouter.GET("/users/profile/:id", userHandler.GetUserProfileVo)
+		userRouter.POST("/users/avatar", userHandler.UploadAvatar)
 	}
+	return userRouter
 }

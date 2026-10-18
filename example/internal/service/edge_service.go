@@ -1,19 +1,19 @@
 package service
 
 import (
-	"context"
+	"codegen-example/internal/model/gen/request"
+	res "codegen-example/internal/model/gen/response"
 
-	"codegen-example/internal/api"
-	"codegen-example/internal/dal/vo"
+	"github.com/gin-gonic/gin"
 )
 
 type IEdgeService interface {
-	HealthCheck(ctx context.Context) error
-	Logout(ctx context.Context, req *api.LogoutRequest) error
-	GetTime(ctx context.Context) (vo.GetTimeVo, error)
-	Ping(ctx context.Context) error
-	SearchUser(ctx context.Context, req *api.SearchUserRequest) (vo.SearchUserVo, error)
-	GetUserOrder(ctx context.Context, userId int64, orderId int64) (vo.GetUserOrderVo, error)
-	GetArticle(ctx context.Context, id string) (vo.GetArticleVo, error)
-	GetOrgUser(ctx context.Context, orgId int64, userId int64) (vo.GetOrgUserVo, error)
+	HealthCheck(c *gin.Context) error
+	Logout(c *gin.Context, req request.LogoutReq) error
+	GetTime(c *gin.Context) (res.GetTimeRes, error)
+	Ping(c *gin.Context) error
+	SearchUser(c *gin.Context, req request.SearchUserReq) (res.SearchUserRes, error)
+	GetUserOrder(c *gin.Context, userId int64, orderId int64) (res.GetUserOrderRes, error)
+	GetArticle(c *gin.Context, id string) (res.GetArticleRes, error)
+	GetOrgUser(c *gin.Context, orgId int64, userId int64) (res.GetOrgUserRes, error)
 }

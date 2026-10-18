@@ -1,18 +1,19 @@
 package service
 
 import (
-	"context"
+	"codegen-example/internal/model/gen/request"
+	res "codegen-example/internal/model/gen/response"
 
-	"codegen-example/internal/api"
-	"codegen-example/internal/dal/vo"
+	"github.com/gin-gonic/gin"
 )
 
 type IUserService interface {
-	CreateUser(ctx context.Context, req *api.CreateUserRequest) (vo.CreateUserVo, error)
-	GetUser(ctx context.Context, userId int64) (vo.GetUserVo, error)
-	ListUsers(ctx context.Context) (vo.ListUsersVo, error)
-	UpdateUser(ctx context.Context, userId int64, req *api.UpdateUserRequest) (bool, error)
-	PatchUser(ctx context.Context, userId int64, req *api.PatchUserRequest) (bool, error)
-	DeleteUser(ctx context.Context, userId int64) (bool, error)
-	GetUserProfileVo(ctx context.Context, id int64) (vo.GetUserProfileVo, error)
+	CreateUser(c *gin.Context, req request.CreateUserReq) (res.CreateUserRes, error)
+	GetUser(c *gin.Context, userId int64) (res.GetUserRes, error)
+	ListUsers(c *gin.Context) (res.ListUsersRes, error)
+	UpdateUser(c *gin.Context, userId int64, req request.UpdateUserReq) (bool, error)
+	PatchUser(c *gin.Context, userId int64, req request.PatchUserReq) (bool, error)
+	DeleteUser(c *gin.Context, userId int64) (bool, error)
+	GetUserProfileVo(c *gin.Context, id int64) (res.GetUserProfileVoRes, error)
+	UploadAvatar(c *gin.Context, req request.UploadAvatarReq) (string, error)
 }

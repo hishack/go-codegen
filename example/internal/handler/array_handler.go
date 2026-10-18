@@ -1,15 +1,14 @@
 package handler
 
 import (
-	"context"
+	"net/http"
 
-	"codegen-example/internal/api"
-	"codegen-example/internal/dal/vo"
+	"codegen-example/internal/model/gen/request"
+	res "codegen-example/internal/model/gen/response"
 	"codegen-example/internal/service"
 	"codegen-example/pkg/response"
 
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/gin-gonic/gin"
 )
 
 type ArrayHandler struct {
@@ -28,15 +27,15 @@ func NewArrayHandler(userService service.IArrayService) *ArrayHandler {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetIntArrayResponse "数组的各种写法:基础类型数组、对象数组、混合嵌套响应"
+// @Success 200 {object} res.GetIntArrayRes "数组的各种写法:基础类型数组、对象数组、混合嵌套响应"
 // @Router /arrays/ints [get]
-func (u *ArrayHandler) GetIntArray(ctx context.Context, c *app.RequestContext) {
-	res, err := u.arrayService.GetIntArray(ctx)
+func (u *ArrayHandler) GetIntArray(c *gin.Context) {
+	data, err := u.arrayService.GetIntArray(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetIntArrayVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetIntArrayRes](data))
 }
 
 // GetStringArray GetStringArray
@@ -45,15 +44,15 @@ func (u *ArrayHandler) GetIntArray(ctx context.Context, c *app.RequestContext) {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetStringArrayResponse "GetStringArray响应"
+// @Success 200 {object} res.GetStringArrayRes "GetStringArray响应"
 // @Router /arrays/strings [get]
-func (u *ArrayHandler) GetStringArray(ctx context.Context, c *app.RequestContext) {
-	res, err := u.arrayService.GetStringArray(ctx)
+func (u *ArrayHandler) GetStringArray(c *gin.Context) {
+	data, err := u.arrayService.GetStringArray(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetStringArrayVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetStringArrayRes](data))
 }
 
 // GetInt64Array GetInt64Array
@@ -62,15 +61,15 @@ func (u *ArrayHandler) GetStringArray(ctx context.Context, c *app.RequestContext
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetInt64ArrayResponse "GetInt64Array响应"
+// @Success 200 {object} res.GetInt64ArrayRes "GetInt64Array响应"
 // @Router /arrays/int64s [get]
-func (u *ArrayHandler) GetInt64Array(ctx context.Context, c *app.RequestContext) {
-	res, err := u.arrayService.GetInt64Array(ctx)
+func (u *ArrayHandler) GetInt64Array(c *gin.Context) {
+	data, err := u.arrayService.GetInt64Array(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetInt64ArrayVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetInt64ArrayRes](data))
 }
 
 // GetObjectArray 对象数组:对应 res.list,会提升为 GetObjectArrayResListItem
@@ -79,15 +78,15 @@ func (u *ArrayHandler) GetInt64Array(ctx context.Context, c *app.RequestContext)
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetObjectArrayResponse "对象数组:对应 res.list,会提升为 GetObjectArrayResListItem响应"
+// @Success 200 {object} res.GetObjectArrayRes "对象数组:对应 res.list,会提升为 GetObjectArrayResListItem响应"
 // @Router /arrays/objects [get]
-func (u *ArrayHandler) GetObjectArray(ctx context.Context, c *app.RequestContext) {
-	res, err := u.arrayService.GetObjectArray(ctx)
+func (u *ArrayHandler) GetObjectArray(c *gin.Context) {
+	data, err := u.arrayService.GetObjectArray(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetObjectArrayVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetObjectArrayRes](data))
 }
 
 // GetOrderList 多字段对象数组
@@ -96,15 +95,15 @@ func (u *ArrayHandler) GetObjectArray(ctx context.Context, c *app.RequestContext
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetOrderListResponse "多字段对象数组响应"
+// @Success 200 {object} res.GetOrderListRes "多字段对象数组响应"
 // @Router /orders [get]
-func (u *ArrayHandler) GetOrderList(ctx context.Context, c *app.RequestContext) {
-	res, err := u.arrayService.GetOrderList(ctx)
+func (u *ArrayHandler) GetOrderList(c *gin.Context) {
+	data, err := u.arrayService.GetOrderList(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetOrderListVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetOrderListRes](data))
 }
 
 // CreateBatchUser 请求里带数组
@@ -113,21 +112,20 @@ func (u *ArrayHandler) GetOrderList(ctx context.Context, c *app.RequestContext) 
 // @Tags system
 // @Accept json
 // @Produce json
-// @Param req body api.CreateBatchUserRequest true "请求里带数组请求"
-// @Success 200 {object} api.CreateBatchUserResponse "请求里带数组响应"
+// @Param req body request.CreateBatchUserReq true "请求里带数组请求"
+// @Success 200 {object} int64 "请求里带数组响应"
 // @Router /users/batch [post]
-func (u *ArrayHandler) CreateBatchUser(ctx context.Context, c *app.RequestContext) {
-	req := &api.CreateBatchUserRequest{}
-	err := c.BindAndValidate(req)
-	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+func (u *ArrayHandler) CreateBatchUser(c *gin.Context) {
+	var req request.CreateBatchUserReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
 
-	res, err := u.arrayService.CreateBatchUser(ctx, req)
+	data, err := u.arrayService.CreateBatchUser(c, req)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[int64](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[int64](data))
 }

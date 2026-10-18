@@ -1,17 +1,17 @@
 package service
 
 import (
-	"context"
+	"codegen-example/internal/model/gen/request"
+	res "codegen-example/internal/model/gen/response"
 
-	"codegen-example/internal/api"
-	"codegen-example/internal/dal/vo"
+	"github.com/gin-gonic/gin"
 )
 
 type IArrayService interface {
-	GetIntArray(ctx context.Context) (vo.GetIntArrayVo, error)
-	GetStringArray(ctx context.Context) (vo.GetStringArrayVo, error)
-	GetInt64Array(ctx context.Context) (vo.GetInt64ArrayVo, error)
-	GetObjectArray(ctx context.Context) (vo.GetObjectArrayVo, error)
-	GetOrderList(ctx context.Context) (vo.GetOrderListVo, error)
-	CreateBatchUser(ctx context.Context, req *api.CreateBatchUserRequest) (int64, error)
+	GetIntArray(c *gin.Context) (res.GetIntArrayRes, error)
+	GetStringArray(c *gin.Context) (res.GetStringArrayRes, error)
+	GetInt64Array(c *gin.Context) (res.GetInt64ArrayRes, error)
+	GetObjectArray(c *gin.Context) (res.GetObjectArrayRes, error)
+	GetOrderList(c *gin.Context) (res.GetOrderListRes, error)
+	CreateBatchUser(c *gin.Context, req request.CreateBatchUserReq) (int64, error)
 }

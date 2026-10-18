@@ -5,20 +5,23 @@ package router
 import (
 	"codegen-example/internal/handler"
 
-	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/gin-gonic/gin"
 )
 
-// RegisterEdgeRoutes 注册Edge模块路由(路由列表由 yaml 生成)
-func RegisterEdgeRoutes(h *server.Hertz, edgeHandler *handler.EdgeHandler) {
-	edgeGroup := h.Group("")
+type EdgeRouter struct{}
+
+// InitEdgeRouter 注册Edge模块路由(路由列表由 yaml 生成)
+func (s *EdgeRouter) InitEdgeRouter(Router *gin.RouterGroup, edgeHandler *handler.EdgeHandler) (R gin.IRoutes) {
+	edgeRouter := Router.Group("")
 	{
-		edgeGroup.GET("/health", edgeHandler.HealthCheck)
-		edgeGroup.POST("/logout", edgeHandler.Logout)
-		edgeGroup.GET("/time", edgeHandler.GetTime)
-		edgeGroup.GET("/ping", edgeHandler.Ping)
-		edgeGroup.GET("/users/search", edgeHandler.SearchUser)
-		edgeGroup.GET("/users/:userId/orders/:orderId", edgeHandler.GetUserOrder)
-		edgeGroup.GET("/articles/:id", edgeHandler.GetArticle)
-		edgeGroup.GET("/orgs/:orgId/users/:userId", edgeHandler.GetOrgUser)
+		edgeRouter.GET("/health", edgeHandler.HealthCheck)
+		edgeRouter.POST("/logout", edgeHandler.Logout)
+		edgeRouter.GET("/time", edgeHandler.GetTime)
+		edgeRouter.GET("/ping", edgeHandler.Ping)
+		edgeRouter.GET("/users/search", edgeHandler.SearchUser)
+		edgeRouter.GET("/users/:userId/orders/:orderId", edgeHandler.GetUserOrder)
+		edgeRouter.GET("/articles/:id", edgeHandler.GetArticle)
+		edgeRouter.GET("/orgs/:orgId/users/:userId", edgeHandler.GetOrgUser)
 	}
+	return edgeRouter
 }

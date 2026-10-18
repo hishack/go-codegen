@@ -39,7 +39,7 @@ func run(cfgPath string) error {
 	if err != nil {
 		return err
 	}
-	yamls, err := yp.ParseAllYaml(cfg.Prefix)
+	yamls, err := yp.ParseAllYaml()
 	if err != nil {
 		return err
 	}

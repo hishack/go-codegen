@@ -5,18 +5,21 @@ package router
 import (
 	"codegen-example/internal/handler"
 
-	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/gin-gonic/gin"
 )
 
-// RegisterArrayRoutes 注册Array模块路由(路由列表由 yaml 生成)
-func RegisterArrayRoutes(h *server.Hertz, arrayHandler *handler.ArrayHandler) {
-	arrayGroup := h.Group("")
+type ArrayRouter struct{}
+
+// InitArrayRouter 注册Array模块路由(路由列表由 yaml 生成)
+func (s *ArrayRouter) InitArrayRouter(Router *gin.RouterGroup, arrayHandler *handler.ArrayHandler) (R gin.IRoutes) {
+	arrayRouter := Router.Group("")
 	{
-		arrayGroup.GET("/arrays/ints", arrayHandler.GetIntArray)
-		arrayGroup.GET("/arrays/strings", arrayHandler.GetStringArray)
-		arrayGroup.GET("/arrays/int64s", arrayHandler.GetInt64Array)
-		arrayGroup.GET("/arrays/objects", arrayHandler.GetObjectArray)
-		arrayGroup.GET("/orders", arrayHandler.GetOrderList)
-		arrayGroup.POST("/users/batch", arrayHandler.CreateBatchUser)
+		arrayRouter.GET("/arrays/ints", arrayHandler.GetIntArray)
+		arrayRouter.GET("/arrays/strings", arrayHandler.GetStringArray)
+		arrayRouter.GET("/arrays/int64s", arrayHandler.GetInt64Array)
+		arrayRouter.GET("/arrays/objects", arrayHandler.GetObjectArray)
+		arrayRouter.GET("/orders", arrayHandler.GetOrderList)
+		arrayRouter.POST("/users/batch", arrayHandler.CreateBatchUser)
 	}
+	return arrayRouter
 }

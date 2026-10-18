@@ -29,10 +29,8 @@ func NewYamlParse(yamlDir string) (*YamlParse, error) {
 	return &YamlParse{YamlDir: yamlDir}, nil
 }
 
-// ParseAllYaml 解析目录下所有 .yaml/.yml 文件。
-// prefix 是全局的 api 结构体名前缀(来自配置,可为空),
-// 只作用于 api 包的请求结构体,如 prefix=YiKou 时生成 YiKouCreateUserRequest。
-func (y *YamlParse) ParseAllYaml(prefix string) (*field.YamlList, error) {
+// ParseAllYaml 解析目录下所有 .yaml/.yml 文件
+func (y *YamlParse) ParseAllYaml() (*field.YamlList, error) {
 	files, err := y.listYamlFiles()
 	if err != nil {
 		return nil, err
@@ -43,7 +41,7 @@ func (y *YamlParse) ParseAllYaml(prefix string) (*field.YamlList, error) {
 
 	list := &field.YamlList{}
 	for _, f := range files {
-		yy, err := ParseYamlFile(f, prefix)
+		yy, err := ParseYamlFile(f)
 		if err != nil {
 			return nil, err
 		}
@@ -79,13 +77,12 @@ func (y *YamlParse) listYamlFiles() ([]string, error) {
 
 // fileParser 单个文件的解析上下文
 type fileParser struct {
-	reg    *field.Registry
-	prefix string
+	reg *field.Registry
 }
 
 // ParseYamlFile 解析一个 yaml 文件。
 // 文件头两行是 filename / package,其余顶层 key 都是一个接口定义。
-func ParseYamlFile(path string, prefix string) (*field.Yaml, error) {
+func ParseYamlFile(path string) (*field.Yaml, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -111,7 +108,7 @@ func ParseYamlFile(path string, prefix string) (*field.Yaml, error) {
 		Reg:         field.NewRegistry(),
 		PackageName: base, // package 字段缺失时的兜底
 	}
-	p := &fileParser{reg: yy.Reg, prefix: prefix}
+	p := &fileParser{reg: yy.Reg}
 
 	for i := 0; i+1 < len(root.Content); i += 2 {
 		k, v := root.Content[i], root.Content[i+1]
@@ -201,26 +198,13 @@ func (p *fileParser) parseApi(k, v *yaml.Node) (*field.Api, error) {
 	api.Params = params
 
 	// req/res 是普通对象,空对象等价于没写
-	if api.Req, err = p.parseObject(reqNode, p.reqStructName(apiName), structComment(reqKey, reqNode)); err != nil {
+	if api.Req, err = p.parseObject(reqNode, apiName+"Req", structComment(reqKey, reqNode), true); err != nil {
 		return nil, fmt.Errorf("%s.req: %w", apiName, err)
 	}
-	if api.Res, err = p.parseObject(resNode, p.resStructName(apiName), structComment(resKey, resNode)); err != nil {
+	if api.Res, err = p.parseObject(resNode, apiName+"Res", structComment(resKey, resNode), false); err != nil {
 		return nil, fmt.Errorf("%s.res: %w", apiName, err)
 	}
 	return api, nil
-}
-
-// reqStructName 请求结构体名:前缀 + 接口名 + Request,如 YiKouCreateUserRequest
-func (p *fileParser) reqStructName(apiName string) string {
-	return p.prefix + apiName + "Request"
-}
-
-// resStructName 响应数据结构名(vo):接口名 + Vo;接口名已带 Vo 后缀时不再重复
-func (p *fileParser) resStructName(apiName string) string {
-	if strings.HasSuffix(apiName, "Vo") {
-		return apiName
-	}
-	return apiName + "Vo"
 }
 
 // structComment 取 req:/res: 的行注释或上方注释,作为结构体注释
@@ -239,8 +223,8 @@ func structComment(key, node *yaml.Node) string {
 }
 
 // parseObject 把 req/res 的 mapping 解析成命名结构体,嵌套对象递归提升。
-// node 为 nil 或空对象时返回 nil。
-func (p *fileParser) parseObject(node *yaml.Node, name, comment string) (*field.Struct, error) {
+// node 为 nil 或空对象时返回 nil;isReq 控制 file 类型只允许出现在请求里。
+func (p *fileParser) parseObject(node *yaml.Node, name, comment string, isReq bool) (*field.Struct, error) {
 	if node == nil {
 		return nil, nil
 	}
@@ -250,17 +234,17 @@ func (p *fileParser) parseObject(node *yaml.Node, name, comment string) (*field.
 	if len(node.Content) == 0 {
 		return nil, nil
 	}
-	return p.parseStruct(name, node, comment)
+	return p.parseStruct(name, node, comment, isReq)
 }
 
 // parseStruct 解析一个 mapping 节点为结构体并登记。
 // 同名且内容一致直接复用(幂等);同名但内容不同是命名冲突,必须报错,
 // 否则会静默生成错误的结构体(如 GetUser 的 res 名与名为 GetUserVo 的接口撞车)
-func (p *fileParser) parseStruct(name string, node *yaml.Node, comment string) (*field.Struct, error) {
+func (p *fileParser) parseStruct(name string, node *yaml.Node, comment string, isReq bool) (*field.Struct, error) {
 	s := &field.Struct{Name: name, Comment: comment}
 	for i := 0; i+1 < len(node.Content); i += 2 {
 		k, v := node.Content[i], node.Content[i+1]
-		f, err := p.parseField(k, v, name)
+		f, err := p.parseField(k, v, name, isReq)
 		if err != nil {
 			return nil, fmt.Errorf("字段 %q: %w", k.Value, err)
 		}
@@ -295,13 +279,16 @@ func structEqual(a, b *field.Struct) bool {
 }
 
 // parseField 解析单个字段:key 是字段名,value 是类型描述
-func (p *fileParser) parseField(k, v *yaml.Node, structName string) (*field.Field, error) {
+func (p *fileParser) parseField(k, v *yaml.Node, structName string, isReq bool) (*field.Field, error) {
 	if err := validateLowerCamel(k.Value, "字段名"); err != nil {
 		return nil, err
 	}
-	t, err := p.parseType(v, structName+field.UpperFirst(k.Value))
+	t, err := p.parseType(v, structName+field.UpperFirst(k.Value), isReq)
 	if err != nil {
 		return nil, err
+	}
+	if t.IsFile() && !isReq {
+		return nil, fmt.Errorf("file 类型只能用于 req 字段(文件上传),res 不支持")
 	}
 	return &field.Field{
 		Name:    field.UpperFirst(k.Value),
@@ -315,7 +302,7 @@ func (p *fileParser) parseField(k, v *yaml.Node, structName string) (*field.Fiel
 //  1. 标量        string / int64 / map[string]string
 //  2. 单元素数组  [int] 或 - id: int64(对象数组)
 //  3. 嵌套对象    mapping,提升为命名结构体
-func (p *fileParser) parseType(node *yaml.Node, nestedName string) (*field.Type, error) {
+func (p *fileParser) parseType(node *yaml.Node, nestedName string, isReq bool) (*field.Type, error) {
 	switch node.Kind {
 	case yaml.ScalarNode:
 		v := strings.TrimSpace(node.Value)
@@ -334,7 +321,7 @@ func (p *fileParser) parseType(node *yaml.Node, nestedName string) (*field.Type,
 		item := node.Content[0]
 		switch item.Kind {
 		case yaml.ScalarNode:
-			elem, err := p.parseType(item, nestedName+"Item")
+			elem, err := p.parseType(item, nestedName+"Item", isReq)
 			if err != nil {
 				return nil, fmt.Errorf("数组元素: %w", err)
 			}
@@ -344,7 +331,7 @@ func (p *fileParser) parseType(node *yaml.Node, nestedName string) (*field.Type,
 			return &field.Type{Kind: field.KindSlice, Elem: elem}, nil
 		case yaml.MappingNode:
 			// 对象数组:list: - id: int64,元素结构体名追加 Item
-			sub, err := p.parseStruct(nestedName+"Item", item, firstComment(item.LineComment, node.HeadComment))
+			sub, err := p.parseStruct(nestedName+"Item", item, firstComment(item.LineComment, node.HeadComment), isReq)
 			if err != nil {
 				return nil, err
 			}
@@ -354,7 +341,7 @@ func (p *fileParser) parseType(node *yaml.Node, nestedName string) (*field.Type,
 		}
 
 	case yaml.MappingNode:
-		sub, err := p.parseStruct(nestedName, node, firstComment(node.LineComment, node.HeadComment))
+		sub, err := p.parseStruct(nestedName, node, firstComment(node.LineComment, node.HeadComment), isReq)
 		if err != nil {
 			return nil, err
 		}
@@ -377,6 +364,9 @@ func parseMapType(v string) (*field.Type, error) {
 	}
 	if !field.IsPrimitive(valType) {
 		return nil, fmt.Errorf("map 的 value 不支持 %q(必须是基础类型)", valType)
+	}
+	if valType == "file" {
+		return nil, fmt.Errorf("file 类型只能直接作为 req 字段,不能放在 map 里")
 	}
 	return &field.Type{
 		Kind: field.KindMap,

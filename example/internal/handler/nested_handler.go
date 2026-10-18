@@ -1,16 +1,15 @@
 package handler
 
 import (
-	"context"
+	"net/http"
 	"strconv"
 
-	"codegen-example/internal/dal/vo"
+	res "codegen-example/internal/model/gen/response"
 	"codegen-example/internal/service"
 	"codegen-example/pkg/errorutil"
 	"codegen-example/pkg/response"
 
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/gin-gonic/gin"
 )
 
 type NestedHandler struct {
@@ -30,21 +29,21 @@ func NewNestedHandler(userService service.INestedService) *NestedHandler {
 // @Accept json
 // @Produce json
 // @Param id path integer true "id"
-// @Success 200 {object} api.GetUserDetailResponse "深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress响应"
+// @Success 200 {object} res.GetUserDetailRes "深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress响应"
 // @Router /users/:id/detail [get]
-func (u *NestedHandler) GetUserDetail(ctx context.Context, c *app.RequestContext) {
+func (u *NestedHandler) GetUserDetail(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.nestedService.GetUserDetail(ctx, id)
+	data, err := u.nestedService.GetUserDetail(c, id)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetUserDetailVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserDetailRes](data))
 }
 
 // GetOrderDetail 数组套对象套对象
@@ -54,21 +53,21 @@ func (u *NestedHandler) GetUserDetail(ctx context.Context, c *app.RequestContext
 // @Accept json
 // @Produce json
 // @Param orderId path integer true "orderId"
-// @Success 200 {object} api.GetOrderDetailResponse "数组套对象套对象响应"
+// @Success 200 {object} res.GetOrderDetailRes "数组套对象套对象响应"
 // @Router /orders/:orderId/detail [get]
-func (u *NestedHandler) GetOrderDetail(ctx context.Context, c *app.RequestContext) {
+func (u *NestedHandler) GetOrderDetail(c *gin.Context) {
 	orderIdStr := c.Param("orderId")
 	orderId, err := strconv.ParseInt(orderIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.nestedService.GetOrderDetail(ctx, orderId)
+	data, err := u.nestedService.GetOrderDetail(c, orderId)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetOrderDetailVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetOrderDetailRes](data))
 }
 
 // GetConfig map 类型
@@ -77,15 +76,15 @@ func (u *NestedHandler) GetOrderDetail(ctx context.Context, c *app.RequestContex
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetConfigResponse "map 类型响应"
+// @Success 200 {object} res.GetConfigRes "map 类型响应"
 // @Router /config [get]
-func (u *NestedHandler) GetConfig(ctx context.Context, c *app.RequestContext) {
-	res, err := u.nestedService.GetConfig(ctx)
+func (u *NestedHandler) GetConfig(c *gin.Context) {
+	data, err := u.nestedService.GetConfig(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetConfigVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetConfigRes](data))
 }
 
 // GetUserMap GetUserMap
@@ -94,15 +93,15 @@ func (u *NestedHandler) GetConfig(ctx context.Context, c *app.RequestContext) {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetUserMapResponse "GetUserMap响应"
+// @Success 200 {object} res.GetUserMapRes "GetUserMap响应"
 // @Router /users/map [get]
-func (u *NestedHandler) GetUserMap(ctx context.Context, c *app.RequestContext) {
-	res, err := u.nestedService.GetUserMap(ctx)
+func (u *NestedHandler) GetUserMap(c *gin.Context) {
+	data, err := u.nestedService.GetUserMap(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetUserMapVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserMapRes](data))
 }
 
 // GetConfigA 同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车
@@ -111,15 +110,15 @@ func (u *NestedHandler) GetUserMap(ctx context.Context, c *app.RequestContext) {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetConfigAResponse "同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车响应"
+// @Success 200 {object} res.GetConfigARes "同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车响应"
 // @Router /config/a [get]
-func (u *NestedHandler) GetConfigA(ctx context.Context, c *app.RequestContext) {
-	res, err := u.nestedService.GetConfigA(ctx)
+func (u *NestedHandler) GetConfigA(c *gin.Context) {
+	data, err := u.nestedService.GetConfigA(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetConfigAVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetConfigARes](data))
 }
 
 // GetConfigB GetConfigB
@@ -128,13 +127,13 @@ func (u *NestedHandler) GetConfigA(ctx context.Context, c *app.RequestContext) {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetConfigBResponse "GetConfigB响应"
+// @Success 200 {object} res.GetConfigBRes "GetConfigB响应"
 // @Router /config/b [get]
-func (u *NestedHandler) GetConfigB(ctx context.Context, c *app.RequestContext) {
-	res, err := u.nestedService.GetConfigB(ctx)
+func (u *NestedHandler) GetConfigB(c *gin.Context) {
+	data, err := u.nestedService.GetConfigB(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetConfigBVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetConfigBRes](data))
 }

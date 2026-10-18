@@ -83,6 +83,16 @@ export interface GetUserProfileVoResProfile {
   tags: string[];
 }
 
+/** UploadAvatarReq 上传头像(multipart 文件上传)请求参数 */
+export interface UploadAvatarReq {
+  /** 用户ID */
+  userId?: number;
+  /** 头像文件 */
+  avatar?: File;
+  /** 附件,可多个 */
+  attachments?: File[];
+}
+
 
 export class UserApi {
   /** 基础增删改查 + 全量基础类型覆盖 */
@@ -144,6 +154,15 @@ export class UserApi {
       url: `/users/profile/${req.id}`,
       method: "get",
       params: req,
+    });
+  }
+
+  /** 上传头像(multipart 文件上传) */
+  async uploadAvatar(req: UploadAvatarReq): Promise<ApiResp<string>> {
+    return axios({
+      url: `/users/avatar`,
+      method: "post",
+      data: req,
     });
   }
 

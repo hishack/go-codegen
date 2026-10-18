@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -8,18 +9,24 @@ import (
 	"github.com/hishack/go-codegen/internal/field"
 )
 
-// ============ 命名约定(所有生成器共用,保证各层名字一致) ============
+// ============ 命名约定(所有生成器共用,对齐 gen_review_resource 的 gin 工程) ============
 //
-// 以 yaml 文件 user.yaml、接口 CreateUser 为例(前缀 prefix="YiKou" 时):
+// 以 yaml 文件 user.yaml、接口 CreateUser 为例:
 //
-//	请求结构体    api.YiKouCreateUserRequest           (api 包)
-//	响应别名      api.YiKouCreateUserResponse          (api 包,swagger 用)
-//	响应数据      vo.CreateUserVo(及嵌套 ...VoListItem)(vo 包)
-//	service 接口  IUserService,方法 CreateUser         (service 包)
-//	logic 结构体  UserService,方法 CreateUser          (logic 包)
-//	handler       UserHandler,方法 CreateUser          (handler 包)
-//	路由函数      RegisterUserRoutes                    (router 包)
-//	前端类        UserApi,方法 createUser               (web/src/api)
+//	请求结构体    request.CreateUserReq      (internal/model/gen/request/user.go)
+//	响应结构体    response.CreateUserRes     (internal/model/gen/response/user.go)
+//	service 接口  IUserService.CreateUser    (internal/service/user_service.go)
+//	logic 结构体  UserService.CreateUser     (internal/logic/user_logic.go)
+//	handler       UserHandler.CreateUser     (internal/handler/user_handler.go)
+//	路由          UserRouter.InitUserRouter  (internal/router/user_router.go)
+//	前端          UserApi.createUser         (web/src/api/user.ts)
+//
+// request 包按原名引用,response 包与 pkg/response 重名,统一用 res 别名
+
+// modelImportPath 模型子包的 import 路径
+func modelImportPath(cfg *config.CodeGenConfig, sub string) string {
+	return cfg.Module + "/internal/model/gen/" + sub
+}
 
 // pascal 域名大驼峰:user -> User
 func (d *domain) pascal() string { return field.UpperFirst(d.Name) }
@@ -33,25 +40,23 @@ func (d *domain) handlerType() string { return d.pascal() + "Handler" }
 // handlerSvcField handler 里的 service 字段名:userService
 func (d *domain) handlerSvcField() string { return field.LowerFirst(d.pascal()) + "Service" }
 
-// logicType logic 结构体名:UserService(与 shack 项目保持一致)
+// logicType logic 结构体名:UserService
 func (d *domain) logicType() string { return d.pascal() + "Service" }
 
 // logicCtor logic 构造函数名:NewUserService
 func (d *domain) logicCtor() string { return "New" + d.logicType() }
 
-// routerFunc 路由注册函数名:RegisterUserRoutes
-func (d *domain) routerFunc() string { return "Register" + d.pascal() + "Routes" }
+// routerType 路由结构体名:UserRouter
+func (d *domain) routerType() string { return d.pascal() + "Router" }
 
-// routerGroupVar 路由分组变量名:userGroup
-func (d *domain) routerGroupVar() string { return field.LowerFirst(d.pascal()) + "Group" }
+// routerInit 路由注册方法名:InitUserRouter
+func (d *domain) routerInit() string { return "Init" + d.pascal() + "Router" }
+
+// routerGroupVar 路由分组变量名:userRouter
+func (d *domain) routerGroupVar() string { return field.LowerFirst(d.pascal()) + "Router" }
 
 // tsClass 前端 API 类名:UserApi
 func (d *domain) tsClass() string { return d.pascal() + "Api" }
-
-// responseAlias 响应别名(swagger 文档引用):YiKouCreateUserResponse
-func responseAlias(cfg *config.CodeGenConfig, api *field.Api) string {
-	return cfg.Prefix + api.ApiName + "Response"
-}
 
 // docComment 取接口注释,没有则退化为接口名
 func docComment(api *field.Api) string {
@@ -63,30 +68,30 @@ func docComment(api *field.Api) string {
 
 // ============ service 方法签名(接口/logic/handler 三处共用) ============
 
-// serviceParams 生成参数列表:"ctx context.Context, userId int64, req *api.XRequest"
+// serviceParams 生成参数列表:"c *gin.Context, userId int64, req request.XxxReq"
 func serviceParams(api *field.Api) string {
-	parts := []string{"ctx context.Context"}
+	parts := []string{"c *gin.Context"}
 	for _, p := range api.Params {
 		parts = append(parts, field.LowerFirst(p.Name)+" "+p.Type.GoString())
 	}
 	if api.HasReq() {
-		parts = append(parts, "req *api."+api.Req.Name)
+		parts = append(parts, "req request."+api.Req.Name)
 	}
 	return strings.Join(parts, ", ")
 }
 
-// serviceResults 生成返回值列表:"(vo.XVo, error)" / "(int64, error)" / "error"
+// serviceResults 生成返回值列表:"(res.XxxRes, error)" / "(int64, error)" / "error"
 func serviceResults(api *field.Api) string {
 	if t := api.ScalarRes(); t != nil {
 		return "(" + t.GoString() + ", error)"
 	}
 	if api.HasRes() {
-		return "(vo." + api.Res.Name + ", error)"
+		return "(res." + api.Res.Name + ", error)"
 	}
 	return "error"
 }
 
-// serviceSig 完整方法签名:"CreateUser(ctx context.Context, req *api.XRequest) (vo.XVo, error)"
+// serviceSig 完整方法签名:"CreateUser(c *gin.Context, req request.CreateUserReq) (res.CreateUserRes, error)"
 func serviceSig(api *field.Api) string {
 	return api.ApiName + "(" + serviceParams(api) + ") " + serviceResults(api)
 }
@@ -97,14 +102,14 @@ func resDataT(api *field.Api) string {
 		return t.GoString()
 	}
 	if api.HasRes() {
-		return "vo." + api.Res.Name
+		return "res." + api.Res.Name
 	}
 	return "any"
 }
 
-// serviceArgs 生成调用 service 的实参列表:"ctx, userId, req"
+// serviceArgs 生成调用 service 的实参列表:"c, userId, req"
 func serviceArgs(api *field.Api) string {
-	parts := []string{"ctx"}
+	parts := []string{"c"}
 	for _, p := range api.Params {
 		parts = append(parts, field.LowerFirst(p.Name))
 	}
@@ -127,6 +132,31 @@ func zeroValue(t *field.Type) string {
 		return "nil"
 	default:
 		return "0" // 各类整型、浮点、time.Duration
+	}
+}
+
+// reqHasFile req 里是否有文件上传字段(决定 handler 的绑定方式)
+func reqHasFile(api *field.Api) bool {
+	if !api.HasReq() {
+		return false
+	}
+	for _, f := range api.Req.Fields {
+		if f.Type.IsFile() {
+			return true
+		}
+	}
+	return false
+}
+
+// bindExpr 生成 gin 参数绑定语句
+func bindExpr(api *field.Api) string {
+	switch {
+	case reqHasFile(api):
+		return "c.ShouldBind(&req)" // multipart 表单
+	case api.Method == "GET" || api.Method == "DELETE":
+		return "c.ShouldBindQuery(&req)" // query 参数
+	default:
+		return "c.ShouldBindJSON(&req)" // json body
 	}
 }
 
@@ -211,6 +241,8 @@ func swaggerType(t *field.Type) string {
 		return "integer"
 	case "float32", "float64":
 		return "number"
+	case "file":
+		return "file"
 	}
 	return "string"
 }
@@ -231,6 +263,8 @@ func tsType(t *field.Type, nested func(s *field.Struct) string) string {
 			return "string"
 		case "any", "interface{}":
 			return "unknown"
+		case "file":
+			return "File"
 		case "time.Duration":
 			return "number"
 		default:
@@ -244,4 +278,83 @@ func tsType(t *field.Type, nested func(s *field.Struct) string) string {
 		return nested(t.Struct)
 	}
 	return "unknown"
+}
+
+// ============ 公共小工具 ============
+
+// genHeader 生成文件头(作者署名)
+func genHeader(cfg *config.CodeGenConfig) []string {
+	return []string{
+		"Code generated by go-codegen. DO NOT EDIT.",
+		"Author: " + cfg.UserName + "  Github: " + cfg.Github,
+	}
+}
+
+// pkgNameOfDir 由输出目录推断包名:internal/service -> service
+func pkgNameOfDir(dir, fallback string) string {
+	base := filepath.Base(strings.TrimRight(filepath.ToSlash(dir), "/"))
+	if base == "" || strings.ContainsAny(base, " .") {
+		return fallback
+	}
+	return base
+}
+
+// apiHasTypedParam 接口是否存在需要 strconv 解析的路径参数(会声明 err 变量)
+func apiHasTypedParam(api *field.Api) bool {
+	for _, p := range api.Params {
+		if p.Type.Name != "string" {
+			return true
+		}
+	}
+	return false
+}
+
+// handlerDocBlock 渲染 handler 方法的文档注释 + swagger 注解块(含 @Router)
+func handlerDocBlock(d *domain, api *field.Api) string {
+	comment := docComment(api)
+	var b strings.Builder
+	b.WriteString("// " + api.ApiName + " " + comment + "\n")
+	b.WriteString("// @Summary " + comment + "\n")
+	b.WriteString("// @Description " + comment + "\n")
+	b.WriteString("// @Tags " + d.Pkg + "\n")
+	b.WriteString("// @Accept json\n")
+	b.WriteString("// @Produce json\n")
+	for _, p := range api.Params {
+		b.WriteString("// @Param " + p.Tag + " path " + swaggerType(p.Type) + " true \"" + p.Tag + "\"\n")
+	}
+	if api.HasReq() {
+		switch {
+		case api.Method == "GET" || api.Method == "DELETE":
+			for _, fl := range api.Req.Fields {
+				c := fl.Comment
+				if c == "" {
+					c = fl.Tag
+				}
+				b.WriteString("// @Param " + fl.Tag + " query " + swaggerType(fl.Type) + " false \"" + c + "\"\n")
+			}
+		case reqHasFile(api):
+			// multipart 表单:文件字段逐个标注 formData
+			for _, fl := range api.Req.Fields {
+				if fl.Type.IsFile() {
+					c := fl.Comment
+					if c == "" {
+						c = fl.Tag
+					}
+					b.WriteString("// @Param " + fl.Tag + " formData file true \"" + c + "\"\n")
+				}
+			}
+		default:
+			b.WriteString("// @Param req body request." + api.Req.Name + " true \"" + comment + "请求\"\n")
+		}
+	}
+	switch {
+	case api.HasRes() && api.ScalarRes() != nil:
+		b.WriteString("// @Success 200 {object} " + api.ScalarRes().GoString() + " \"" + comment + "响应\"\n")
+	case api.HasRes():
+		b.WriteString("// @Success 200 {object} res." + api.Res.Name + " \"" + comment + "响应\"\n")
+	default:
+		b.WriteString("// @Success 200 {object} bool \"" + comment + "响应\"\n")
+	}
+	b.WriteString("// @Router " + api.RoutePath() + " [" + strings.ToLower(api.Method) + "]\n")
+	return b.String()
 }

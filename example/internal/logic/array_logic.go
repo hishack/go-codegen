@@ -1,10 +1,10 @@
 package logic
 
 import (
-	"context"
+	"codegen-example/internal/model/gen/request"
+	res "codegen-example/internal/model/gen/response"
 
-	"codegen-example/internal/api"
-	"codegen-example/internal/dal/vo"
+	"github.com/gin-gonic/gin"
 )
 
 type ArrayService struct{}
@@ -14,37 +14,37 @@ func NewArrayService() *ArrayService {
 }
 
 // GetIntArray 数组的各种写法:基础类型数组、对象数组、混合嵌套
-func (s *ArrayService) GetIntArray(ctx context.Context) (vo.GetIntArrayVo, error) {
+func (s *ArrayService) GetIntArray(c *gin.Context) (res.GetIntArrayRes, error) {
 	// TODO: 实现业务逻辑:数组的各种写法:基础类型数组、对象数组、混合嵌套
-	return vo.GetIntArrayVo{}, nil
+	return res.GetIntArrayRes{}, nil
 }
 
 // GetStringArray GetStringArray
-func (s *ArrayService) GetStringArray(ctx context.Context) (vo.GetStringArrayVo, error) {
+func (s *ArrayService) GetStringArray(c *gin.Context) (res.GetStringArrayRes, error) {
 	// TODO: 实现业务逻辑:GetStringArray
-	return vo.GetStringArrayVo{}, nil
+	return res.GetStringArrayRes{}, nil
 }
 
 // GetInt64Array GetInt64Array
-func (s *ArrayService) GetInt64Array(ctx context.Context) (vo.GetInt64ArrayVo, error) {
+func (s *ArrayService) GetInt64Array(c *gin.Context) (res.GetInt64ArrayRes, error) {
 	// TODO: 实现业务逻辑:GetInt64Array
-	return vo.GetInt64ArrayVo{}, nil
+	return res.GetInt64ArrayRes{}, nil
 }
 
 // GetObjectArray 对象数组:对应 res.list,会提升为 GetObjectArrayResListItem
-func (s *ArrayService) GetObjectArray(ctx context.Context) (vo.GetObjectArrayVo, error) {
+func (s *ArrayService) GetObjectArray(c *gin.Context) (res.GetObjectArrayRes, error) {
 	// TODO: 实现业务逻辑:对象数组:对应 res.list,会提升为 GetObjectArrayResListItem
-	return vo.GetObjectArrayVo{}, nil
+	return res.GetObjectArrayRes{}, nil
 }
 
 // GetOrderList 多字段对象数组
-func (s *ArrayService) GetOrderList(ctx context.Context) (vo.GetOrderListVo, error) {
+func (s *ArrayService) GetOrderList(c *gin.Context) (res.GetOrderListRes, error) {
 	// TODO: 实现业务逻辑:多字段对象数组
-	return vo.GetOrderListVo{}, nil
+	return res.GetOrderListRes{}, nil
 }
 
 // CreateBatchUser 请求里带数组
-func (s *ArrayService) CreateBatchUser(ctx context.Context, req *api.CreateBatchUserRequest) (int64, error) {
+func (s *ArrayService) CreateBatchUser(c *gin.Context, req request.CreateBatchUserReq) (int64, error) {
 	// TODO: 实现业务逻辑:请求里带数组
 	return 0, nil
 }

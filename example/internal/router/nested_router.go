@@ -5,18 +5,21 @@ package router
 import (
 	"codegen-example/internal/handler"
 
-	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/gin-gonic/gin"
 )
 
-// RegisterNestedRoutes 注册Nested模块路由(路由列表由 yaml 生成)
-func RegisterNestedRoutes(h *server.Hertz, nestedHandler *handler.NestedHandler) {
-	nestedGroup := h.Group("")
+type NestedRouter struct{}
+
+// InitNestedRouter 注册Nested模块路由(路由列表由 yaml 生成)
+func (s *NestedRouter) InitNestedRouter(Router *gin.RouterGroup, nestedHandler *handler.NestedHandler) (R gin.IRoutes) {
+	nestedRouter := Router.Group("")
 	{
-		nestedGroup.GET("/users/:id/detail", nestedHandler.GetUserDetail)
-		nestedGroup.GET("/orders/:orderId/detail", nestedHandler.GetOrderDetail)
-		nestedGroup.GET("/config", nestedHandler.GetConfig)
-		nestedGroup.GET("/users/map", nestedHandler.GetUserMap)
-		nestedGroup.GET("/config/a", nestedHandler.GetConfigA)
-		nestedGroup.GET("/config/b", nestedHandler.GetConfigB)
+		nestedRouter.GET("/users/:id/detail", nestedHandler.GetUserDetail)
+		nestedRouter.GET("/orders/:orderId/detail", nestedHandler.GetOrderDetail)
+		nestedRouter.GET("/config", nestedHandler.GetConfig)
+		nestedRouter.GET("/users/map", nestedHandler.GetUserMap)
+		nestedRouter.GET("/config/a", nestedHandler.GetConfigA)
+		nestedRouter.GET("/config/b", nestedHandler.GetConfigB)
 	}
+	return nestedRouter
 }

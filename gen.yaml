@@ -7,13 +7,9 @@ yaml: ./yamlPath
 # 目标工程 go module 名,生成 import 路径时使用
 module: codegen-example
 
-# api 结构体名前缀(可选)。填 YiKou 时生成 api.YiKouCreateUserRequest
-prefix: ""
-
 # 输出:目标工程的各层目录
 serviceOut: ./example/internal/service
-apiOut:     ./example/internal/api
-modelOut:   ./example/internal/dal/vo
+modelOut:   ./example/internal/model/gen   # 其下自动分 request/ response/ 子包
 logicOut:   ./example/internal/logic
 handlerOut: ./example/internal/handler
 routerOut:  ./example/internal/router

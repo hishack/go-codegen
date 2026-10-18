@@ -72,3 +72,14 @@ GetUserProfileVo:
     profile:
       nickname: string # 昵称
       tags: [string]
+
+# 上传头像(multipart 文件上传)
+UploadAvatar:
+  method: POST
+  path: /users/avatar
+  req:
+    userId: int64 # 用户ID
+    avatar: file # 头像文件
+    attachments: [file] # 附件,可多个
+  res:
+    url: string # 访问地址

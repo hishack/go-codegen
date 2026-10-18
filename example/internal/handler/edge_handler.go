@@ -1,17 +1,16 @@
 package handler
 
 import (
-	"context"
+	"net/http"
 	"strconv"
 
-	"codegen-example/internal/api"
-	"codegen-example/internal/dal/vo"
+	"codegen-example/internal/model/gen/request"
+	res "codegen-example/internal/model/gen/response"
 	"codegen-example/internal/service"
 	"codegen-example/pkg/errorutil"
 	"codegen-example/pkg/response"
 
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/gin-gonic/gin"
 )
 
 type EdgeHandler struct {
@@ -32,13 +31,13 @@ func NewEdgeHandler(userService service.IEdgeService) *EdgeHandler {
 // @Produce json
 // @Success 200 {object} bool "没有 req 也没有 res响应"
 // @Router /health [get]
-func (u *EdgeHandler) HealthCheck(ctx context.Context, c *app.RequestContext) {
-	err := u.edgeService.HealthCheck(ctx)
+func (u *EdgeHandler) HealthCheck(c *gin.Context) {
+	err := u.edgeService.HealthCheck(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[any](true))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[any](true))
 }
 
 // Logout 只有 req,没有 res
@@ -47,23 +46,22 @@ func (u *EdgeHandler) HealthCheck(ctx context.Context, c *app.RequestContext) {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Param req body api.LogoutRequest true "只有 req,没有 res请求"
+// @Param req body request.LogoutReq true "只有 req,没有 res请求"
 // @Success 200 {object} bool "只有 req,没有 res响应"
 // @Router /logout [post]
-func (u *EdgeHandler) Logout(ctx context.Context, c *app.RequestContext) {
-	req := &api.LogoutRequest{}
-	err := c.BindAndValidate(req)
-	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+func (u *EdgeHandler) Logout(c *gin.Context) {
+	var req request.LogoutReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
 
-	err = u.edgeService.Logout(ctx, req)
+	err := u.edgeService.Logout(c, req)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[any](true))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[any](true))
 }
 
 // GetTime 只有 res,没有 req
@@ -72,15 +70,15 @@ func (u *EdgeHandler) Logout(ctx context.Context, c *app.RequestContext) {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.GetTimeResponse "只有 res,没有 req响应"
+// @Success 200 {object} res.GetTimeRes "只有 res,没有 req响应"
 // @Router /time [get]
-func (u *EdgeHandler) GetTime(ctx context.Context, c *app.RequestContext) {
-	res, err := u.edgeService.GetTime(ctx)
+func (u *EdgeHandler) GetTime(c *gin.Context) {
+	data, err := u.edgeService.GetTime(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetTimeVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetTimeRes](data))
 }
 
 // Ping 空 req 对象
@@ -91,13 +89,13 @@ func (u *EdgeHandler) GetTime(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Success 200 {object} bool "空 req 对象响应"
 // @Router /ping [get]
-func (u *EdgeHandler) Ping(ctx context.Context, c *app.RequestContext) {
-	err := u.edgeService.Ping(ctx)
+func (u *EdgeHandler) Ping(c *gin.Context) {
+	err := u.edgeService.Ping(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[any](true))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[any](true))
 }
 
 // SearchUser GET 带 req(query 参数场景)
@@ -109,22 +107,21 @@ func (u *EdgeHandler) Ping(ctx context.Context, c *app.RequestContext) {
 // @Param keyword query string false "keyword"
 // @Param page query integer false "page"
 // @Param pageSize query integer false "pageSize"
-// @Success 200 {object} api.SearchUserResponse "GET 带 req(query 参数场景)响应"
+// @Success 200 {object} res.SearchUserRes "GET 带 req(query 参数场景)响应"
 // @Router /users/search [get]
-func (u *EdgeHandler) SearchUser(ctx context.Context, c *app.RequestContext) {
-	req := &api.SearchUserRequest{}
-	err := c.BindAndValidate(req)
-	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+func (u *EdgeHandler) SearchUser(c *gin.Context) {
+	var req request.SearchUserReq
+	if err := c.ShouldBindQuery(&req); err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
 
-	res, err := u.edgeService.SearchUser(ctx, req)
+	data, err := u.edgeService.SearchUser(c, req)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.SearchUserVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.SearchUserRes](data))
 }
 
 // GetUserOrder 多路径参数
@@ -135,26 +132,26 @@ func (u *EdgeHandler) SearchUser(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param userId path integer true "userId"
 // @Param orderId path integer true "orderId"
-// @Success 200 {object} api.GetUserOrderResponse "多路径参数响应"
+// @Success 200 {object} res.GetUserOrderRes "多路径参数响应"
 // @Router /users/:userId/orders/:orderId [get]
-func (u *EdgeHandler) GetUserOrder(ctx context.Context, c *app.RequestContext) {
+func (u *EdgeHandler) GetUserOrder(c *gin.Context) {
 	userIdStr := c.Param("userId")
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 	orderIdStr := c.Param("orderId")
 	orderId, err := strconv.ParseInt(orderIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.edgeService.GetUserOrder(ctx, userId, orderId)
+	data, err := u.edgeService.GetUserOrder(c, userId, orderId)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetUserOrderVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserOrderRes](data))
 }
 
 // GetArticle 无类型的路径参数,默认按 string
@@ -164,17 +161,17 @@ func (u *EdgeHandler) GetUserOrder(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} api.GetArticleResponse "无类型的路径参数,默认按 string响应"
+// @Success 200 {object} res.GetArticleRes "无类型的路径参数,默认按 string响应"
 // @Router /articles/:id [get]
-func (u *EdgeHandler) GetArticle(ctx context.Context, c *app.RequestContext) {
+func (u *EdgeHandler) GetArticle(c *gin.Context) {
 	id := c.Param("id")
 
-	res, err := u.edgeService.GetArticle(ctx, id)
+	data, err := u.edgeService.GetArticle(c, id)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetArticleVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleRes](data))
 }
 
 // GetOrgUser 多级路径参数
@@ -185,24 +182,24 @@ func (u *EdgeHandler) GetArticle(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param orgId path integer true "orgId"
 // @Param userId path integer true "userId"
-// @Success 200 {object} api.GetOrgUserResponse "多级路径参数响应"
+// @Success 200 {object} res.GetOrgUserRes "多级路径参数响应"
 // @Router /orgs/:orgId/users/:userId [get]
-func (u *EdgeHandler) GetOrgUser(ctx context.Context, c *app.RequestContext) {
+func (u *EdgeHandler) GetOrgUser(c *gin.Context) {
 	orgIdStr := c.Param("orgId")
 	orgId, err := strconv.ParseInt(orgIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 	userIdStr := c.Param("userId")
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.edgeService.GetOrgUser(ctx, orgId, userId)
+	data, err := u.edgeService.GetOrgUser(c, orgId, userId)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetOrgUserVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetOrgUserRes](data))
 }

@@ -69,14 +69,14 @@ type File struct {
 	file   *ast.File
 	exists bool
 
-	pkg       string          // 包名(新建文件时必须先调用 SetPackage)
-	module    string          // 目标工程 module 名,新建文件时用于 import 分组
-	header    []string        // 新建文件时写在 package 之前的注释行
-	appendBuf []string        // 追加到文件末尾的声明
-	ifaceBuf  []ifaceBufEntry // 新建文件时收集的接口方法,渲染时组装成接口
-	ifaceIdx  map[string]int  // 接口名 -> ifaceBuf 下标,保持插入顺序
-	ops       []op            // 替换/插入操作
-	needImps  map[string]bool
+	pkg       string            // 包名(新建文件时必须先调用 SetPackage)
+	module    string            // 目标工程 module 名,新建文件时用于 import 分组
+	header    []string          // 新建文件时写在 package 之前的注释行
+	appendBuf []string          // 追加到文件末尾的声明
+	ifaceBuf  []ifaceBufEntry   // 新建文件时收集的接口方法,渲染时组装成接口
+	ifaceIdx  map[string]int    // 接口名 -> ifaceBuf 下标,保持插入顺序
+	ops       []op              // 替换/插入操作
+	needImps  map[string]string // path -> 别名("" 表示无别名)
 	warnings  []string
 }
 
@@ -89,7 +89,7 @@ type ifaceBufEntry struct {
 // Load 打开一个待合并的文件。文件不存在(或为空文件)时返回 exists=false 的合并器,
 // 之后照常调用 SetPackage / UpsertType / UpsertFunc,Render 会生成全新文件。
 func Load(path string) (*File, error) {
-	f := &File{path: path, needImps: map[string]bool{}, ifaceIdx: map[string]int{}}
+	f := &File{path: path, needImps: map[string]string{}, ifaceIdx: map[string]int{}}
 	src, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -130,8 +130,15 @@ func (f *File) SetHeader(lines ...string) { f.header = append(f.header, lines...
 func (f *File) NeedImports(paths ...string) {
 	for _, p := range paths {
 		if p != "" {
-			f.needImps[p] = true
+			f.needImps[p] = ""
 		}
+	}
+}
+
+// NeedAliasedImport 登记需要别名的 import,如 res "xxx/model/gen/response"
+func (f *File) NeedAliasedImport(alias, path string) {
+	if path != "" {
+		f.needImps[path] = alias
 	}
 }
 
@@ -452,6 +459,14 @@ func (f *File) missingImports() []string {
 	return missing
 }
 
+// importLine 按"别名 路径"格式渲染一行 import
+func importLine(alias, path string) string {
+	if alias != "" {
+		return alias + " " + strconv.Quote(path)
+	}
+	return strconv.Quote(path)
+}
+
 // fixImports 补上缺失的 import,并删除"原本有引用、合并后失去引用"的孤儿 import。
 // 只删自己造成的孤儿:原本就无引用的 import(用户自己的问题)一律不碰,避免误删。
 func (f *File) fixImports(out []byte, missing []string) ([]byte, error) {
@@ -465,13 +480,21 @@ func (f *File) fixImports(out []byte, missing []string) ([]byte, error) {
 	used := usedPackageNames(af)
 	usedOrig := usedPackageNames(f.file)
 
-	// 1. 已存在的 import 若带别名,提醒(插入的代码按默认包名引用)
+	// 1. 已存在的 import 若别名与需要的不一致,提醒(插入的代码按登记的别名引用)
 	for _, s := range specs {
 		p := importPathOf(s)
-		if f.needImps[p] && s.Name != nil && s.Name.Name != "_" && s.Name.Name != "." && s.Name.Name != pkgNameOf(p) {
+		want, ok := f.needImps[p]
+		if !ok {
+			continue
+		}
+		got := ""
+		if s.Name != nil {
+			got = s.Name.Name
+		}
+		if got != want && got != "_" && got != "." {
 			f.warnings = append(f.warnings, fmt.Sprintf(
-				"%s: import %q 被别名为 %s,新生成的代码按 %s 引用,请检查",
-				filepath.Base(f.path), p, s.Name.Name, pkgNameOf(p)))
+				"%s: import %q 现有别名 %q 与生成代码需要的 %q 不一致,请检查",
+				filepath.Base(f.path), p, got, want))
 		}
 	}
 
@@ -509,7 +532,7 @@ func (f *File) fixImports(out []byte, missing []string) ([]byte, error) {
 		kept = append(kept, importLineOf(s))
 	}
 	for _, p := range missing {
-		kept = append(kept, strconv.Quote(p))
+		kept = append(kept, importLine(f.needImps[p], p))
 	}
 	return replaceImportDecls(out, fset, af, kept), nil
 }
@@ -565,6 +588,7 @@ func (f *File) findFunc(recv, name string) *ast.FuncDecl {
 	if f.file == nil {
 		return nil
 	}
+	recv = strings.TrimPrefix(recv, "*")
 	for _, d := range f.file.Decls {
 		fd, ok := d.(*ast.FuncDecl)
 		if !ok || fd.Name.Name != name {
@@ -579,7 +603,7 @@ func (f *File) findFunc(recv, name string) *ast.FuncDecl {
 		if fd.Recv == nil {
 			continue
 		}
-		if n, ok := recvBaseName(fd.Recv.List[0].Type); ok && n == recv {
+		if n, ok := recvBaseName(fd.Recv.List[0].Type); ok && strings.TrimPrefix(n, "*") == recv {
 			return fd
 		}
 	}
@@ -874,7 +898,9 @@ func (f *File) groupedImports() []string {
 		if len(lines) > 0 {
 			lines = append(lines, "")
 		}
-		lines = append(lines, quotedImports(group)...)
+		for _, p := range group {
+			lines = append(lines, importLine(f.needImps[p], p))
+		}
 	}
 	add(std)
 	add(own)

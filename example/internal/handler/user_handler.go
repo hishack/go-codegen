@@ -1,17 +1,16 @@
 package handler
 
 import (
-	"context"
+	"net/http"
 	"strconv"
 
-	"codegen-example/internal/api"
-	"codegen-example/internal/dal/vo"
+	"codegen-example/internal/model/gen/request"
+	res "codegen-example/internal/model/gen/response"
 	"codegen-example/internal/service"
 	"codegen-example/pkg/errorutil"
 	"codegen-example/pkg/response"
 
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
@@ -30,23 +29,22 @@ func NewUserHandler(userService service.IUserService) *UserHandler {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Param req body api.CreateUserRequest true "基础增删改查 + 全量基础类型覆盖请求"
-// @Success 200 {object} api.CreateUserResponse "基础增删改查 + 全量基础类型覆盖响应"
+// @Param req body request.CreateUserReq true "基础增删改查 + 全量基础类型覆盖请求"
+// @Success 200 {object} res.CreateUserRes "基础增删改查 + 全量基础类型覆盖响应"
 // @Router /users [post]
-func (u *UserHandler) CreateUser(ctx context.Context, c *app.RequestContext) {
-	req := &api.CreateUserRequest{}
-	err := c.BindAndValidate(req)
-	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+func (u *UserHandler) CreateUser(c *gin.Context) {
+	var req request.CreateUserReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
 
-	res, err := u.userService.CreateUser(ctx, req)
+	data, err := u.userService.CreateUser(c, req)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.CreateUserVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.CreateUserRes](data))
 }
 
 // GetUser GetUser
@@ -56,21 +54,21 @@ func (u *UserHandler) CreateUser(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param userId path integer true "userId"
-// @Success 200 {object} api.GetUserResponse "GetUser响应"
+// @Success 200 {object} res.GetUserRes "GetUser响应"
 // @Router /users/:userId [get]
-func (u *UserHandler) GetUser(ctx context.Context, c *app.RequestContext) {
+func (u *UserHandler) GetUser(c *gin.Context) {
 	userIdStr := c.Param("userId")
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.userService.GetUser(ctx, userId)
+	data, err := u.userService.GetUser(c, userId)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetUserVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserRes](data))
 }
 
 // ListUsers ListUsers
@@ -79,15 +77,15 @@ func (u *UserHandler) GetUser(ctx context.Context, c *app.RequestContext) {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Success 200 {object} api.ListUsersResponse "ListUsers响应"
+// @Success 200 {object} res.ListUsersRes "ListUsers响应"
 // @Router /users [get]
-func (u *UserHandler) ListUsers(ctx context.Context, c *app.RequestContext) {
-	res, err := u.userService.ListUsers(ctx)
+func (u *UserHandler) ListUsers(c *gin.Context) {
+	data, err := u.userService.ListUsers(c)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.ListUsersVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.ListUsersRes](data))
 }
 
 // UpdateUser UpdateUser
@@ -97,29 +95,28 @@ func (u *UserHandler) ListUsers(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param userId path integer true "userId"
-// @Param req body api.UpdateUserRequest true "UpdateUser请求"
-// @Success 200 {object} api.UpdateUserResponse "UpdateUser响应"
+// @Param req body request.UpdateUserReq true "UpdateUser请求"
+// @Success 200 {object} bool "UpdateUser响应"
 // @Router /users/:userId [put]
-func (u *UserHandler) UpdateUser(ctx context.Context, c *app.RequestContext) {
-	req := &api.UpdateUserRequest{}
-	err := c.BindAndValidate(req)
-	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+func (u *UserHandler) UpdateUser(c *gin.Context) {
+	var req request.UpdateUserReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
 
 	userIdStr := c.Param("userId")
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.userService.UpdateUser(ctx, userId, req)
+	data, err := u.userService.UpdateUser(c, userId, req)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[bool](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))
 }
 
 // PatchUser PatchUser
@@ -129,29 +126,28 @@ func (u *UserHandler) UpdateUser(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param userId path integer true "userId"
-// @Param req body api.PatchUserRequest true "PatchUser请求"
-// @Success 200 {object} api.PatchUserResponse "PatchUser响应"
+// @Param req body request.PatchUserReq true "PatchUser请求"
+// @Success 200 {object} bool "PatchUser响应"
 // @Router /users/:userId [patch]
-func (u *UserHandler) PatchUser(ctx context.Context, c *app.RequestContext) {
-	req := &api.PatchUserRequest{}
-	err := c.BindAndValidate(req)
-	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+func (u *UserHandler) PatchUser(c *gin.Context) {
+	var req request.PatchUserReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
 
 	userIdStr := c.Param("userId")
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.userService.PatchUser(ctx, userId, req)
+	data, err := u.userService.PatchUser(c, userId, req)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[bool](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))
 }
 
 // DeleteUser DeleteUser
@@ -161,21 +157,21 @@ func (u *UserHandler) PatchUser(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param userId path integer true "userId"
-// @Success 200 {object} api.DeleteUserResponse "DeleteUser响应"
+// @Success 200 {object} bool "DeleteUser响应"
 // @Router /users/:userId [delete]
-func (u *UserHandler) DeleteUser(ctx context.Context, c *app.RequestContext) {
+func (u *UserHandler) DeleteUser(c *gin.Context) {
 	userIdStr := c.Param("userId")
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.userService.DeleteUser(ctx, userId)
+	data, err := u.userService.DeleteUser(c, userId)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[bool](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))
 }
 
 // GetUserProfileVo 根据ID获取用户详情
@@ -185,19 +181,43 @@ func (u *UserHandler) DeleteUser(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param id path integer true "id"
-// @Success 200 {object} api.GetUserProfileVoResponse "根据ID获取用户详情响应"
+// @Success 200 {object} res.GetUserProfileVoRes "根据ID获取用户详情响应"
 // @Router /users/profile/:id [get]
-func (u *UserHandler) GetUserProfileVo(ctx context.Context, c *app.RequestContext) {
+func (u *UserHandler) GetUserProfileVo(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	res, err := u.userService.GetUserProfileVo(ctx, id)
+	data, err := u.userService.GetUserProfileVo(c, id)
 	if err != nil {
-		c.JSON(consts.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
-	c.JSON(consts.StatusOK, response.NewSuccessResponse[vo.GetUserProfileVo](res))
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserProfileVoRes](data))
+}
+
+// UploadAvatar 上传头像(multipart 文件上传)
+// @Summary 上传头像(multipart 文件上传)
+// @Description 上传头像(multipart 文件上传)
+// @Tags system
+// @Accept json
+// @Produce json
+// @Param avatar formData file true "头像文件"
+// @Success 200 {object} string "上传头像(multipart 文件上传)响应"
+// @Router /users/avatar [post]
+func (u *UserHandler) UploadAvatar(c *gin.Context) {
+	var req request.UploadAvatarReq
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		return
+	}
+
+	data, err := u.userService.UploadAvatar(c, req)
+	if err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		return
+	}
+	c.JSON(http.StatusOK, response.NewSuccessResponse[string](data))
 }

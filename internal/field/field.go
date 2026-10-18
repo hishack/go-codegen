@@ -62,6 +62,9 @@ func (t *Type) GoString() string {
 	}
 	switch t.Kind {
 	case KindPrimitive:
+		if t.Name == "file" {
+			return "*multipart.FileHeader"
+		}
 		return t.Name
 	case KindSlice:
 		return "[]" + t.Elem.GoString()
@@ -71,6 +74,11 @@ func (t *Type) GoString() string {
 		return "*" + t.Struct.Name
 	}
 	return "any"
+}
+
+// IsFile 是否是文件上传类型(yaml 里写 file / [file])
+func (t *Type) IsFile() bool {
+	return t != nil && t.Kind == KindPrimitive && t.Name == "file"
 }
 
 // IsPtr 判断是否是指针类型(嵌套结构体统一用指针,避免递归结构体无限增长)
@@ -295,7 +303,8 @@ func SortedKeys(m map[string]any) []string {
 	return keys
 }
 
-// primitives 是允许直接使用的 go 基础类型白名单
+// primitives 是允许直接使用的 go 基础类型白名单。
+// file 是特殊类型:映射为 *multipart.FileHeader,只能用在 req 字段
 var primitives = map[string]bool{
 	"bool": true, "string": true,
 	"int": true, "int8": true, "int16": true, "int32": true, "int64": true,
@@ -304,6 +313,7 @@ var primitives = map[string]bool{
 	"byte": true, "rune": true,
 	"time.Time": true, "time.Duration": true,
 	"any": true, "interface{}": true,
+	"file": true,
 }
 
 // IsPrimitive 判断是否是合法的基础类型

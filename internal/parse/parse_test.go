@@ -16,7 +16,7 @@ func TestParseAllYaml(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewYamlParse: %v", err)
 	}
-	list, err := p.ParseAllYaml("")
+	list, err := p.ParseAllYaml()
 	if err != nil {
 		t.Fatalf("ParseAllYaml: %v", err)
 	}
@@ -31,7 +31,7 @@ func TestParseAllYaml(t *testing.T) {
 	}
 
 	// 幂等:两次解析结构体登记数量一致
-	list2, err := p.ParseAllYaml("")
+	list2, err := p.ParseAllYaml()
 	if err != nil {
 		t.Fatalf("第二次 ParseAllYaml: %v", err)
 	}
@@ -58,7 +58,7 @@ CreateUser:
 `
 	tmp := t.TempDir() + "/comment.yaml"
 	writeFile(t, tmp, src)
-	yy, err := ParseYamlFile(tmp, "")
+	yy, err := ParseYamlFile(tmp)
 	if err != nil {
 		t.Fatalf("ParseYamlFile: %v", err)
 	}
@@ -110,7 +110,7 @@ GetOrderDetail:
 `
 	tmp := t.TempDir() + "/nested.yaml"
 	writeFile(t, tmp, src)
-	yy, err := ParseYamlFile(tmp, "")
+	yy, err := ParseYamlFile(tmp)
 	if err != nil {
 		t.Fatalf("ParseYamlFile: %v", err)
 	}
@@ -123,7 +123,7 @@ GetOrderDetail:
 
 	// 结构体提升:根 Vo -> items 数组元素 Item -> attrs 数组元素 Item
 	res := api.Res
-	if res.Name != "GetOrderDetailVo" {
+	if res.Name != "GetOrderDetailRes" {
 		t.Errorf("根结构体名错误: %s", res.Name)
 	}
 	items := res.Field("Items")
@@ -131,25 +131,25 @@ GetOrderDetail:
 		t.Fatalf("items 字段错误: %+v", items)
 	}
 	itemStruct := items.Type.Elem.Struct
-	if itemStruct.Name != "GetOrderDetailVoItemsItem" {
+	if itemStruct.Name != "GetOrderDetailResItemsItem" {
 		t.Errorf("数组元素结构体名错误: %s", itemStruct.Name)
 	}
 	attrs := itemStruct.Field("Attrs")
 	if attrs == nil || attrs.Type.Elem.Struct == nil {
 		t.Fatalf("attrs 字段错误: %+v", attrs)
 	}
-	if attrs.Type.Elem.Struct.Name != "GetOrderDetailVoItemsItemAttrsItem" {
+	if attrs.Type.Elem.Struct.Name != "GetOrderDetailResItemsItemAttrsItem" {
 		t.Errorf("深层结构体名错误: %s", attrs.Type.Elem.Struct.Name)
 	}
 
 	// GoString 类型检查
-	if got := items.Type.GoString(); got != "[]*GetOrderDetailVoItemsItem" {
-		t.Errorf("items 类型期望 []*GetOrderDetailVoItemsItem,实际 %s", got)
+	if got := items.Type.GoString(); got != "[]*GetOrderDetailResItemsItem" {
+		t.Errorf("items 类型期望 []*GetOrderDetailResItemsItem,实际 %s", got)
 	}
 }
 
-// TestPrefix 前缀只作用于请求结构体
-func TestPrefix(t *testing.T) {
+// TestNaming 验证 Req/Res 命名规则(对齐 model/gen 布局)
+func TestNaming(t *testing.T) {
 	src := `filename: user
 package: system
 
@@ -163,23 +163,23 @@ CreateUser:
 `
 	tmp := t.TempDir() + "/user.yaml"
 	writeFile(t, tmp, src)
-	yy, err := ParseYamlFile(tmp, "YiKou")
+	yy, err := ParseYamlFile(tmp)
 	if err != nil {
 		t.Fatalf("ParseYamlFile: %v", err)
 	}
 	api := yy.ApiList[0]
-	if api.Req.Name != "YiKouCreateUserRequest" {
-		t.Errorf("req 结构体名期望 YiKouCreateUserRequest,实际 %s", api.Req.Name)
+	if api.Req.Name != "CreateUserReq" {
+		t.Errorf("req 结构体名期望 CreateUserReq,实际 %s", api.Req.Name)
 	}
-	if api.Res.Name != "CreateUserVo" {
-		t.Errorf("res 结构体名期望 CreateUserVo,实际 %s", api.Res.Name)
+	if api.Res.Name != "CreateUserRes" {
+		t.Errorf("res 结构体名期望 CreateUserRes,实际 %s", api.Res.Name)
 	}
 }
 
 // TestEdgeCases edge.yaml 的全部边界场景
 func TestEdgeCases(t *testing.T) {
 	p, _ := NewYamlParse(yamlDir)
-	list, err := p.ParseAllYaml("")
+	list, err := p.ParseAllYaml()
 	if err != nil {
 		t.Fatalf("ParseAllYaml: %v", err)
 	}
@@ -246,7 +246,7 @@ CreateUser:
 `
 	tmp := t.TempDir() + "/user.yaml"
 	writeFile(t, tmp, src)
-	yy, err := ParseYamlFile(tmp, "")
+	yy, err := ParseYamlFile(tmp)
 	if err != nil {
 		t.Fatalf("ParseYamlFile: %v", err)
 	}
@@ -282,7 +282,7 @@ func TestValidationErrors(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			tmp := t.TempDir() + "/bad.yaml"
 			writeFile(t, tmp, c.src)
-			_, err := ParseYamlFile(tmp, "")
+			_, err := ParseYamlFile(tmp)
 			if err == nil {
 				t.Fatalf("期望报错包含 [%s],实际没有报错", c.want)
 			}
@@ -299,7 +299,7 @@ func TestGlobalDuplicate(t *testing.T) {
 	writeFile(t, dir+"/a.yaml", "filename: user\npackage: system\nGetUser:\n  method: GET\n  path: /a\n")
 	writeFile(t, dir+"/b.yaml", "filename: user\npackage: system\nGetOrder:\n  method: GET\n  path: /b\n")
 	p, _ := NewYamlParse(dir)
-	_, err := p.ParseAllYaml("")
+	_, err := p.ParseAllYaml()
 	if err == nil || !strings.Contains(err.Error(), "filename") {
 		t.Fatalf("期望 filename 冲突报错,实际 %v", err)
 	}
@@ -308,7 +308,7 @@ func TestGlobalDuplicate(t *testing.T) {
 	writeFile(t, dir2+"/a.yaml", "filename: user\npackage: system\nGetUser:\n  method: GET\n  path: /a\n")
 	writeFile(t, dir2+"/b.yaml", "filename: order\npackage: system\nGetUser:\n  method: GET\n  path: /b\n")
 	p2, _ := NewYamlParse(dir2)
-	_, err = p2.ParseAllYaml("")
+	_, err = p2.ParseAllYaml()
 	if err == nil || !strings.Contains(err.Error(), "接口名") {
 		t.Fatalf("期望接口名冲突报错,实际 %v", err)
 	}
@@ -321,10 +321,8 @@ func writeFile(t *testing.T, path, content string) {
 	}
 }
 
-// TestStructNameCollision 同名不同结构的结构体必须报错,而不是静默复用
-func TestStructNameCollision(t *testing.T) {
-	// GetUser 的 res 名是 GetUserVo;再来一个名为 GetUserVo 的接口,res 名也是
-	// GetUserVo,结构不同 → 必须报错
+// TestResNaming 响应结构体名恒为 {ApiName}Res,不同接口互不冲突
+func TestResNaming(t *testing.T) {
 	src := `filename: user
 package: system
 
@@ -334,7 +332,6 @@ GetUser:
   res:
     id: int64
     name: string
-    age: int
 GetUserVo:
   method: GET
   path: /users/vo/:id(int64)
@@ -345,36 +342,58 @@ GetUserVo:
 `
 	tmp := t.TempDir() + "/user.yaml"
 	writeFile(t, tmp, src)
-	_, err := ParseYamlFile(tmp, "")
-	if err == nil {
-		t.Fatal("期望结构体名冲突报错,实际成功")
+	yy, err := ParseYamlFile(tmp)
+	if err != nil {
+		t.Fatalf("ParseYamlFile: %v", err)
 	}
-	if !strings.Contains(err.Error(), "GetUserVo") || !strings.Contains(err.Error(), "冲突") {
-		t.Fatalf("报错信息不明确: %v", err)
+	if got := yy.ApiList[0].Res.Name; got != "GetUserRes" {
+		t.Errorf("期望 GetUserRes,实际 %s", got)
 	}
+	if got := yy.ApiList[1].Res.Name; got != "GetUserVoRes" {
+		t.Errorf("期望 GetUserVoRes,实际 %s", got)
+	}
+}
 
-	// 同名同结构:合法(不同接口的响应结构完全一样时复用)
+// TestFileOnlyInReq file 类型只能用于 req
+func TestFileOnlyInReq(t *testing.T) {
 	ok := `filename: user
 package: system
 
-GetA:
-  method: GET
-  path: /a
+UploadAvatar:
+  method: POST
+  path: /users/avatar
+  req:
+    avatar: file # 头像文件
+    files: [file]
   res:
-    same: string
-GetB:
+    url: string
+`
+	tmp := t.TempDir() + "/user.yaml"
+	writeFile(t, tmp, ok)
+	yy, err := ParseYamlFile(tmp)
+	if err != nil {
+		t.Fatalf("req 里的 file 类型应合法: %v", err)
+	}
+	req := yy.ApiList[0].Req
+	if got := req.Fields[0].Type.GoString(); got != "*multipart.FileHeader" {
+		t.Errorf("file 应映射为 *multipart.FileHeader,实际 %s", got)
+	}
+	if got := req.Fields[1].Type.GoString(); got != "[]*multipart.FileHeader" {
+		t.Errorf("[file] 应映射为 []*multipart.FileHeader,实际 %s", got)
+	}
+
+	bad := `filename: user
+package: system
+
+GetFile:
   method: GET
-  path: /b
+  path: /file
   res:
-    same: string
+    data: file
 `
 	tmp2 := t.TempDir() + "/user2.yaml"
-	writeFile(t, tmp2, ok)
-	yy, err := ParseYamlFile(tmp2, "")
-	if err != nil {
-		t.Fatalf("不同接口各自的结构体不应报错: %v", err)
-	}
-	if len(yy.ApiList[0].Res.Fields) != 1 || len(yy.ApiList[1].Res.Fields) != 1 {
-		t.Fatal("两个接口的 res 字段数错误")
+	writeFile(t, tmp2, bad)
+	if _, err := ParseYamlFile(tmp2); err == nil {
+		t.Fatal("res 里的 file 类型应报错")
 	}
 }

@@ -35,22 +35,33 @@ func (g *WebApiGen) Generate(ctx *GenContext, report *Report) {
 		return
 	}
 	for _, d := range groupDomains(ctx.Yamls) {
-		content := g.renderDomain(d)
-		path := filepath.Join(g.cfg.WebApiOutPath, d.Name+".ts")
-		old, statErr := os.ReadFile(path)
-		if statErr == nil && string(old) == content {
-			continue // 幂等
-		}
-		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+		added, changed, err := g.writeDomain(d)
+		if err != nil {
 			report.warn("web 写入失败(" + d.Name + "): " + err.Error())
 			continue
 		}
-		if statErr == nil {
-			report.Updated++
-		} else {
+		switch {
+		case added:
 			report.Added++
+		case changed:
+			report.Updated++
 		}
 	}
+}
+
+// writeDomain 渲染并写盘;内容不变时不写,保持幂等。
+// 返回 (是否为新建文件, 是否有写入)
+func (g *WebApiGen) writeDomain(d *domain) (added bool, changed bool, err error) {
+	content := g.renderDomain(d)
+	path := filepath.Join(g.cfg.WebApiOutPath, d.Name+".ts")
+	old, statErr := os.ReadFile(path)
+	if statErr == nil && string(old) == content {
+		return false, false, nil
+	}
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+		return false, false, err
+	}
+	return statErr != nil, true, nil
 }
 
 func (g *WebApiGen) renderDomain(d *domain) string {
