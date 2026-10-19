@@ -1,0 +1,68 @@
+# =============================================================================
+# go-codegen yaml 格式示例
+#
+# 【文件头】只有下面两个特殊字段,必须写在所有接口之前:
+#   filename: 领域名,要求小驼峰。决定生成的文件名(threshold_service.go ...)。
+#             不写则默认取本 yaml 的文件名;接口内部还可以再写 filename 覆盖它。
+#   package:  swagger 的 @Tags 分组名,只影响文档展示,不影响文件生成。
+#
+# 【接口】filename 之后,每一个顶层 key 都是一个接口,接口名要求大驼峰:
+#   method  必填,get/post/put/patch/delete,不区分大小写
+#   path    必填,必须以 / 开头;路径参数写作 :name 或 :name(类型),
+#           如 /thresholds/:id(int64),类型支持 string/int/int64/uint/float 等
+#   req     可选,请求体。生成 <接口名>Req 结构体;POST/PUT/PATCH 走 JSON,
+#           GET 走 query,含 file 字段时走 multipart
+#   res     可选,响应体。生成 <接口名>Res 结构体
+#   filename 可选,接口级覆盖领域归属,让不同接口落到不同的一组文件里
+#
+# 【注释】所有 # 注释都会被原样带进生成代码,不是写给自己看的:
+#   接口上方的注释 -> swagger @Summary + Go 方法注释 + TS 的 jsdoc
+#   字段的注释     -> Go 结构体字段注释 + TS 字段注释
+#
+# 【字段类型速查】
+#   name: string            基础类型: string/int/int8.../uint.../float32/float64/
+#                                       bool/time.Time/time.Duration/any
+#   tags: [string]          基础类型数组,等价 Go 的 []string
+#   avatar: file            文件上传,仅 req 可用,生成 *multipart.FileHeader
+#   profile:                嵌套对象,自动提升为命名结构体 <字段名大驼峰>
+#     nickname: string
+#   attrs: map[string]string 键值对,key/value 都必须是基础类型
+#
+#   注意:res 不支持 file 类型;嵌套对象与对象数组会被自动提升为独立结构体,
+#   命名规则是 <父结构体><字段大驼峰>,对象数组再加 Item 后缀。
+# =============================================================================
+
+filename: threshold
+package: system
+
+# 新增阈值:创建一个成长阈值,例如"等级达到 10 需要 1000 经验"
+CreateThreshold:
+  method: POST
+  path: /thresholds
+  filename: threshold # 接口级覆盖:本接口归属 threshold 领域,生成到 threshold_*.go
+  req: # 请求体 -> 生成 CreateThresholdReq
+    name: string # 阈值名称,展示给用户看的文案
+    score: string # 阈值档位标识,如 easy/normal/hard
+  res: # 响应体 -> 生成 CreateThresholdRes
+    id: int64 # 新建阈值的自增主键
+
+# 更新阈值:按主键局部更新阈值配置
+UpdateThreshold:
+  method: PUT
+  path: /thresholds/:id(int64) # :id 是路径参数,(int64) 指定类型,不写则默认为 string
+  filename: threshold # 同样归属 threshold 领域,和 CreateThreshold 共用一组文件
+  req: # 请求体 -> 生成 UpdateThresholdReq
+    name: string # 新的阈值名称,只覆盖名称,其余字段保持不变
+  res: # 响应体 -> 生成 UpdateThresholdRes
+    updated: bool # 是否更新成功,便于前端判断要不要刷新列表
+
+# 查询角色技能列表
+GetCharacterSkills:
+  method: GET
+  path: /characters/:id(int64)/skills # 角色 id 从路径取,自动成为 handler 的入参
+  filename: character # 接口级 filename:覆盖领域归属,生成到 character_*.go
+  res: # 响应体 -> 生成 GetCharacterSkillsRes
+    list: # 对象数组,自动提升为 GetCharacterSkillsResListItem 结构体
+      - id: int64 # 技能 id
+        name: string # 技能名称
+        level: [int] # 该技能已解锁的等级列表,等价 Go 的 []int

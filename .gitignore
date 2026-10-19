@@ -31,7 +31,3 @@ node_modules/
 example/web/dist/
 example/web/.vite/
 example/web/node_modules/
-
-# ===== 生成器临时/实验目录 =====
-# example/cmd/gen/yaml 为手工试验用的临时输入,不入库
-example/cmd/gen/yaml/

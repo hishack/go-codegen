@@ -1,0 +1,40 @@
+# example/cmd/gen 的独立示例配置:演示注释规范与多领域拆分。
+#
+# 与仓库根 gen.yaml 的区别:
+#   - 根 gen.yaml  读 ./yamlPath,是生成器的主测试集(user/array/edge/nested)
+#   - 本文件      读 ./yaml,是注释与多领域拆分的教学示例
+#
+# 【领域名的选择】
+# 本示例的 yaml 刻意使用 threshold / character 这些与主测试集不重叠的领域名,
+# 因此两份配置先后跑会各自新增自己的文件,互不覆盖:
+#   根 gen.yaml      -> user_* / array_* / edge_* / nested_*
+#   本文件          -> threshold_* / character_*
+# 只有文件名相同的领域(如 user)才会走增量合并,而增量合并对"本次 yaml 里
+# 没有的接口"只保留并告警、绝不删除,所以两份配置可以安全共存。
+#
+# 输出沿用 example 已有的 internal/ 与 web/,import 前缀 module+"/internal/..."
+# 与 module+"/pkg/..." 才能解析到真实包,产物因此可直接编译。
+#
+# 用法(在 example 目录下):
+#   go run ./cmd/gen -config cmd/gen/gen.yaml
+#   或:cd cmd/gen && go generate
+
+# 输入:yaml 目录(路径相对本配置文件解析,因此与运行目录无关)
+yaml: ./yaml
+
+# 目标工程 go module 名,生成 import 路径时使用
+module: codegen-example
+
+# 输出:目标工程的各层目录
+serviceOut: ../../internal/service
+modelOut: ../../internal/model/gen # 其下自动分 request/ response/ 子包
+logicOut: ../../internal/logic
+handlerOut: ../../internal/handler
+routerOut: ../../internal/router
+
+# 输出:前端 ts api 目录(留空则跳过前端生成)
+webOut: ../../web/src/api
+
+# 写入生成文件头的署名
+author: shack
+github: https://github.com/hishack

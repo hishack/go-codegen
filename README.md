@@ -39,8 +39,14 @@ cd example && go build ./...        # 直接编译通过
 
 ```bash
 cd example
-go run ./cmd/gen -config ../gen.yaml  # 或 go generate ./...
+go run ./cmd/gen -config cmd/gen/gen.yaml   # 注释与多领域示例(默认就是这个)
+go run ./cmd/gen -config ../gen.yaml        # 主测试集
 ```
+
+`example/cmd/gen/yaml/threshold.yaml` 是一份**带完整注释的教学样例**,
+演示了注释如何一路带到 Go 字段注释、swagger `@Summary` 与前端 TS jsdoc,
+以及接口级 `filename` 如何把一个 yaml 拆成多个领域。
+里面的每个字段都写了 `#` 注释,可以直接对照生成结果看效果。
 
 ## 在自己的项目里引用
 

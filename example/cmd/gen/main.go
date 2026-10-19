@@ -7,10 +7,10 @@
 // 用法:
 //
 //	cd example
-//	go run ./cmd/gen                 # 使用默认配置 ../gen.yaml
-//	go run ./cmd/gen -config ../gen.yaml
+//	go run ./cmd/gen -config cmd/gen/gen.yaml   # 读本目录的 yaml/ 示例
+//	go run ./cmd/gen -config ../gen.yaml        # 读仓库根的 yamlPath/ 主测试集
 //
-// 也可以用 go generate 触发(等价于上面第一条命令):
+// 也可以用 go generate 触发:
 //
 //	go generate ./...
 package main
@@ -24,10 +24,8 @@ import (
 	"github.com/hishack/go-codegen/pkg/codegen"
 )
 
-//go:generate go run . -config ../gen.yaml
-
 func main() {
-	cfgPath := flag.String("config", "../gen.yaml", "生成器配置文件路径")
+	cfgPath := flag.String("config", "cmd/gen/gen.yaml", "生成器配置文件路径")
 	flag.Parse()
 
 	if err := run(*cfgPath); err != nil {
