@@ -39,5 +39,3 @@ func (s *ArticleService) GetArticleStats(c *gin.Context) (res.GetArticleStatsRes
 	// TODO: 实现业务逻辑:统计文章数据
 	return res.GetArticleStatsRes{}, nil
 }
-
-
