@@ -22,14 +22,14 @@ func NewThresholdHandler(userService service.IThresholdService) *ThresholdHandle
 	}
 }
 
-// CreateThreshold 新增阈值:创建一个成长阈值,例如"等级达到 10 需要 1000 经验"
-// @Summary 新增阈值:创建一个成长阈值,例如"等级达到 10 需要 1000 经验"
-// @Description 新增阈值:创建一个成长阈值,例如"等级达到 10 需要 1000 经验"
+// CreateThreshold 新增阈值
+// @Summary 新增阈值
+// @Description 新增阈值
 // @Tags system
 // @Accept json
 // @Produce json
-// @Param req body request.CreateThresholdReq true "新增阈值:创建一个成长阈值,例如"等级达到 10 需要 1000 经验"请求"
-// @Success 200 {object} int64 "新增阈值:创建一个成长阈值,例如"等级达到 10 需要 1000 经验"响应"
+// @Param req body request.CreateThresholdReq true "新增阈值请求"
+// @Success 200 {object} int64 "新增阈值响应"
 // @Router /thresholds [post]
 func (u *ThresholdHandler) CreateThreshold(c *gin.Context) {
 	var req request.CreateThresholdReq
@@ -46,15 +46,15 @@ func (u *ThresholdHandler) CreateThreshold(c *gin.Context) {
 	c.JSON(http.StatusOK, response.NewSuccessResponse[int64](data))
 }
 
-// UpdateThreshold 更新阈值:按主键局部更新阈值配置
-// @Summary 更新阈值:按主键局部更新阈值配置
-// @Description 更新阈值:按主键局部更新阈值配置
+// UpdateThreshold 更新阈值
+// @Summary 更新阈值
+// @Description 更新阈值
 // @Tags system
 // @Accept json
 // @Produce json
 // @Param id path integer true "id"
-// @Param req body request.UpdateThresholdReq true "更新阈值:按主键局部更新阈值配置请求"
-// @Success 200 {object} bool "更新阈值:按主键局部更新阈值配置响应"
+// @Param req body request.UpdateThresholdReq true "更新阈值请求"
+// @Success 200 {object} bool "更新阈值响应"
 // @Router /thresholds/:id [put]
 func (u *ThresholdHandler) UpdateThreshold(c *gin.Context) {
 	var req request.UpdateThresholdReq

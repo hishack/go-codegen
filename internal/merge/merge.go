@@ -173,7 +173,7 @@ func (f *File) UpsertType(text string, policy Policy) (Action, error) {
 	if f.normalized(start, end) == normalizeDecl(text) {
 		return ActionNone, nil
 	}
-	f.ops = append(f.ops, op{pos: start, end: end, text: text})
+	f.ops = append(f.ops, op{pos: start, end: f.skipTrailingBlank(end), text: text})
 	return ActionUpdated, nil
 }
 
@@ -216,14 +216,14 @@ func (f *File) UpsertFunc(recv, name, text string, policy Policy) (Action, error
 		if oldSig == newSig {
 			return ActionNone, nil // 签名没变,实现体(可能被用户改过)原样保留
 		}
-		f.ops = append(f.ops, op{pos: start, end: end, text: text})
+		f.ops = append(f.ops, op{pos: start, end: f.skipTrailingBlank(end), text: text})
 		return ActionUpdated, nil
 
 	default: // PolicyAlways
 		if f.normalized(start, end) == normalizeDecl(text) {
 			return ActionNone, nil
 		}
-		f.ops = append(f.ops, op{pos: start, end: end, text: text})
+		f.ops = append(f.ops, op{pos: start, end: f.skipTrailingBlank(end), text: text})
 		return ActionUpdated, nil
 	}
 }
@@ -271,7 +271,7 @@ func (f *File) UpsertInterfaceMethod(ifaceName, sigText string) (Action, error) 
 		if field.Comment != nil && f.off(field.Comment.End()) > end {
 			end = f.off(field.Comment.End())
 		}
-		f.ops = append(f.ops, op{pos: start, end: end, text: "\t" + sigText + "\n"})
+		f.ops = append(f.ops, op{pos: start, end: f.skipTrailingBlank(end), text: "\t" + sigText + "\n"})
 		return ActionUpdated, nil
 	}
 
@@ -287,7 +287,7 @@ func (f *File) UpsertInterfaceMethod(ifaceName, sigText string) (Action, error) 
 		if id.GenDecl.Doc != nil {
 			start = f.off(id.GenDecl.Doc.Pos())
 		}
-		f.ops = append(f.ops, op{pos: start, end: f.off(id.GenDecl.End()), text: newText})
+		f.ops = append(f.ops, op{pos: start, end: f.skipTrailingBlank(f.off(id.GenDecl.End())), text: newText})
 		return ActionUpdated, nil
 	}
 	lineStart := f.lineStart(f.off(closePos))
@@ -692,6 +692,35 @@ func (f *File) fieldRange(fl *ast.Field) (int, int) {
 func (f *File) lineStart(off int) int {
 	i := bytes.LastIndexByte(f.src[:off], '\n')
 	return i + 1
+}
+
+// skipTrailingBlank 把替换区间的末尾向后扩展,吃掉旧声明遗留的尾随空行。
+//
+// 背景:替换区间的 end 取自 AST 节点,不含尾随空白。当新声明比旧声明短时
+// (典型场景:yaml 注释被精简),旧内容尾部会残留多余空行,产物就过不了 gofmt。
+//
+// 做法:从 end 起跳过所有空白,停在下一个非空白字符 i。
+// 若这段空白里含换行,说明旧声明后面多出了整行空白,应连同替换区间一起删除,
+// 声明之间的空行由生成文本自身保证;不含换行则不处理。
+//
+// 只清理"被替换声明"与后续内容之间的空白,不触碰用户手写代码本身。
+func (f *File) skipTrailingBlank(end int) int {
+	i := end
+	for i < len(f.src) && isSpaceByte(f.src[i]) {
+		i++
+	}
+	if i == end {
+		return end // 后面紧跟非空白,没有可清理的空白
+	}
+	if bytes.IndexByte(f.src[end:i], '\n') >= 0 {
+		return i // 整行空白,删除
+	}
+	return end // 只是行内空格,保留
+}
+
+// isSpaceByte 判断是否为空白字符
+func isSpaceByte(c byte) bool {
+	return c == ' ' || c == '\t' || c == '\r' || c == '\n'
 }
 
 // normalized 取 [start,end) 的源码并按 gofmt 规范化,用于内容比较

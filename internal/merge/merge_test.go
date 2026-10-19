@@ -1,6 +1,8 @@
 package merge
 
 import (
+	"fmt"
+	"go/format"
 	"os"
 	"path/filepath"
 	"strings"
@@ -410,4 +412,63 @@ func free() {}
 	if got := f.TypeNames(); len(got) != 1 || got[0] != "UserHandler" {
 		t.Errorf("TypeNames 错误: %v", got)
 	}
+}
+
+// TestUpdateShorterDeclNoExtraBlank 回归:替换后的声明比旧的短时(典型场景是
+// yaml 注释被精简),旧声明尾部会残留多余空行,产物过不了 gofmt。
+func TestUpdateShorterDeclNoExtraBlank(t *testing.T) {
+	const tag = "`json:\"%s\"`"
+	orig := "package request\n\n" +
+		"// OldReq 这是一个很长很长的旧注释,用于制造新声明更短的场景\n" +
+		"type OldReq struct {\n" +
+		"\t// 这是旧字段的很长很长的注释文字\n" +
+		"\tName string " + fmt.Sprintf(tag, "name") + "\n" +
+		"\t// 这是第二个字段的很长很长的注释文字\n" +
+		"\tScore string " + fmt.Sprintf(tag, "score") + "\n" +
+		"}\n\n" +
+		"type NextReq struct {\n" +
+		"\tId int64 " + fmt.Sprintf(tag, "id") + "\n" +
+		"}\n"
+
+	p := tmpFile(t, "m.go", orig)
+	f, err := Load(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// 新声明明显更短,且注释更短
+	newDecl := "type OldReq struct {\n\tName string " + fmt.Sprintf(tag, "name") + "\n}"
+	if _, err := f.UpsertType(newDecl, PolicyAlways); err != nil {
+		t.Fatal(err)
+	}
+	out := mustRender(t, f)
+
+	if err := validateGoSource(p); err != nil {
+		t.Errorf("产物不是合法 gofmt 格式: %v\n%s", err, out)
+	}
+	// 两个声明之间必须恰好一个空行
+	if strings.Contains(out, "}\n\n\n") {
+		t.Errorf("声明之间出现多余空行:\n%s", out)
+	}
+	// 用户未涉及的 NextReq 必须原样保留
+	if !strings.Contains(out, "type NextReq struct {") {
+		t.Errorf("后续声明被破坏:\n%s", out)
+	}
+}
+
+// validateGoSource 用 go/parser 校验产物能否解析,并与 gofmt 结果比对,
+// 借此发现多余空行等格式问题
+func validateGoSource(path string) error {
+	src, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	formatted, err := format.Source(src)
+	if err != nil {
+		return err
+	}
+	if string(formatted) != string(src) {
+		return fmt.Errorf("产物与 gofmt 输出不一致")
+	}
+	return nil
 }

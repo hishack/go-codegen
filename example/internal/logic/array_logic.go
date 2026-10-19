@@ -3,6 +3,7 @@ package logic
 import (
 	"codegen-example/internal/model/gen/request"
 	res "codegen-example/internal/model/gen/response"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,6 +17,9 @@ func NewArrayService() *ArrayService {
 // GetIntArray 数组的各种写法:基础类型数组、对象数组、混合嵌套
 func (s *ArrayService) GetIntArray(c *gin.Context) (res.GetIntArrayRes, error) {
 	// TODO: 实现业务逻辑:数组的各种写法:基础类型数组、对象数组、混合嵌套
+
+	ctx := c.Request.Context()
+	fmt.Print(ctx)
 	return res.GetIntArrayRes{}, nil
 }
 

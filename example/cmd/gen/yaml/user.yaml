@@ -1,0 +1,62 @@
+filename: user
+package: system
+
+# 本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。
+# 三个接口分属 user / profile / auth 三组文件,互不干扰。
+
+# 登录
+Login:
+  method: POST
+  path: /auth/login
+  filename: auth # 归入 auth 领域
+  req:
+    username: string # 登录名
+    password: string # 密码
+  res:
+    token: string # 访问令牌
+    expireIn: int # 令牌有效期,单位秒
+
+# 刷新令牌
+RefreshToken:
+  method: POST
+  path: /auth/refresh
+  filename: auth
+  req:
+    token: string # 旧的访问令牌
+  res:
+    token: string # 新的访问令牌
+
+# 退出登录
+LogoutAccount:
+  method: POST
+  path: /auth/logout
+  filename: auth
+  req:
+    token: string # 访问令牌
+
+# 用户详情
+GetUserProfile:
+  method: GET
+  path: /users/profile
+  filename: profile # 归入 profile 领域
+  res:
+    id: int64 # 用户 id
+    nickname: string # 昵称
+    avatar: string # 头像地址
+    level: int # 等级
+    createdAt: time.Time # 注册时间
+    tags: [string] # 用户标签
+    profile:
+      gender: string # 性别
+      signature: string # 个性签名
+
+# 更新用户资料
+UpdateUserProfile:
+  method: PUT
+  path: /users/profile
+  filename: profile
+  req:
+    nickname: string # 昵称
+    signature: string # 个性签名
+  res:
+    updated: bool # 是否更新成功

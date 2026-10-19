@@ -1,0 +1,53 @@
+filename: article
+package: cms
+
+# 文章列表
+ListArticles:
+  method: GET
+  path: /articles
+  req:
+    authorId: int64 # 按作者过滤
+    tag: string # 按标签过滤
+  res:
+    total: int64 # 总条数
+    list:
+      - id: int64 # 文章 id
+        title: string # 标题
+        summary: string # 摘要
+        readCount: int64 # 阅读次数
+
+# 文章详情
+GetArticleById:
+  method: GET
+  path: /articles/:id(int64)
+  res:
+    id: int64 # 文章 id
+    title: string # 标题
+    content: string # 正文
+    authorId: int64 # 作者 id
+    publishAt: time.Time # 发布时间
+    lastEdit: time.Duration # 距上次编辑的间隔
+
+# 发布文章
+PublishArticle:
+  method: POST
+  path: /articles
+  req:
+    title: string # 标题
+    content: string # 正文
+    tags: [string] # 标签列表
+  res:
+    id: int64 # 新建文章的 id
+
+# 统计文章数据
+GetArticleStats:
+  method: GET
+  path: /articles/stats
+  res:
+    total: int64 # 文章总数
+    today: int64 # 今日新增
+    ratio: float64 # 同比增长率
+    online: bool # 是否有在线文章
+    avgRead: float32 # 平均阅读量
+    cost: time.Duration # 统计耗时
+    extra: any # 预留的扩展字段

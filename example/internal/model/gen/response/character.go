@@ -2,7 +2,6 @@
 // Author: shack  Github: https://github.com/hishack
 package response
 
-// GetCharacterSkillsRes 响应体 -> 生成 GetCharacterSkillsRes
 type GetCharacterSkillsRes struct {
 	List []*GetCharacterSkillsResListItem `json:"list"`
 }
@@ -12,6 +11,6 @@ type GetCharacterSkillsResListItem struct {
 	Id int64 `json:"id"`
 	// 技能名称
 	Name string `json:"name"`
-	// 该技能已解锁的等级列表,等价 Go 的 []int
+	// 已解锁的等级列表
 	Level []int `json:"level"`
 }

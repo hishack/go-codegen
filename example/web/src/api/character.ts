@@ -16,7 +16,7 @@ export interface GetCharacterSkillsResListItem {
   id: number;
   /** 技能名称 */
   name: string;
-  /** 该技能已解锁的等级列表,等价 Go 的 []int */
+  /** 已解锁的等级列表 */
   level: number[];
 }
 

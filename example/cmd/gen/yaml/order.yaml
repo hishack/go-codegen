@@ -1,0 +1,55 @@
+filename: order
+package: mall
+
+# 创建订单
+CreateOrder:
+  method: POST
+  path: /orders
+  req:
+    userId: int64 # 下单用户 id
+    addressId: int64 # 收货地址 id
+    items:
+      - productId: int64 # 商品 id
+        count: int # 购买数量
+    remark: string # 订单备注
+  res:
+    orderId: int64 # 订单号
+    amount: float64 # 订单总金额
+
+# 订单列表
+ListOrders:
+  method: GET
+  path: /orders
+  req:
+    userId: int64 # 按用户过滤
+    status: string # 订单状态,如 unpaid/paid/shipped
+    page: int # 页码
+    pageSize: int # 每页条数
+  res:
+    total: int64 # 总条数
+    list:
+      - orderId: int64 # 订单号
+        amount: float64 # 订单金额
+        status: string # 订单状态
+        createAt: time.Time # 下单时间
+
+# 订单详情
+GetOrderInfo:
+  method: GET
+  path: /orders/:orderId(int64)
+  res:
+    orderId: int64 # 订单号
+    userId: int64 # 下单用户 id
+    amount: float64 # 订单金额
+    status: string # 订单状态
+    address:
+      receiver: string # 收货人
+      phone: string # 联系电话
+      detail: string # 收货地址
+
+# 取消订单
+CancelOrder:
+  method: PATCH
+  path: /orders/:orderId(int64)/cancel
+  res:
+    canceled: bool # 是否取消成功

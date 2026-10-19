@@ -2,16 +2,14 @@
 // Author: shack  Github: https://github.com/hishack
 package request
 
-// CreateThresholdReq 请求体 -> 生成 CreateThresholdReq
 type CreateThresholdReq struct {
-	// 阈值名称,展示给用户看的文案
+	// 阈值名称
 	Name string `json:"name" form:"name"`
-	// 阈值档位标识,如 easy/normal/hard
+	// 阈值档位,如 easy/normal/hard
 	Score string `json:"score" form:"score"`
 }
 
-// UpdateThresholdReq 请求体 -> 生成 UpdateThresholdReq
 type UpdateThresholdReq struct {
-	// 新的阈值名称,只覆盖名称,其余字段保持不变
+	// 新的阈值名称
 	Name string `json:"name" form:"name"`
 }

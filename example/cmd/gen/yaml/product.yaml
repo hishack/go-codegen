@@ -1,0 +1,62 @@
+filename: product
+package: mall
+
+# 商品列表查询
+ListProducts:
+  method: GET
+  path: /products
+  req:
+    keyword: string # 搜索关键字
+    categoryId: int64 # 分类 id
+    page: int # 页码,从 1 开始
+    pageSize: int # 每页条数
+  res:
+    total: int64 # 总条数
+    list:
+      - id: int64 # 商品 id
+        title: string # 商品标题
+        price: float64 # 售价
+        tags: [string] # 商品标签
+
+# 商品详情
+GetProduct:
+  method: GET
+  path: /products/:id(int64)
+  res:
+    id: int64 # 商品 id
+    title: string # 商品标题
+    price: float64 # 售价
+    stock: int # 库存数量
+    detail:
+      images: [string] # 商品图链接
+      desc: string # 商品详情描述
+
+# 创建商品
+CreateProduct:
+  method: POST
+  path: /products
+  req:
+    title: string # 商品标题
+    price: float64 # 售价
+    images: [string] # 商品图链接
+    detail:
+      desc: string # 商品详情描述
+  res:
+    id: int64 # 新建商品的 id
+
+# 更新商品
+UpdateProduct:
+  method: PUT
+  path: /products/:id(int64)
+  req:
+    title: string # 商品标题
+    price: float64 # 售价
+  res:
+    updated: bool # 是否更新成功
+
+# 删除商品
+DeleteProduct:
+  method: DELETE
+  path: /products/:id(int64)
+  res:
+    deleted: bool # 是否删除成功

@@ -1,0 +1,33 @@
+filename: file
+package: system
+
+# 单文件上传
+UploadFile:
+  method: POST
+  path: /files
+  req:
+    file: file # 上传的文件
+  res:
+    url: string # 文件访问地址
+
+# 多文件上传
+UploadFiles:
+  method: POST
+  path: /files/batch
+  req:
+    files:
+      - key: string # 文件字段名
+        file: file # 上传的文件
+  res:
+    urls: [string] # 文件访问地址列表
+
+# 文件信息
+GetFileInfo:
+  method: GET
+  path: /files/:id(int64)
+  res:
+    id: int64 # 文件 id
+    name: string # 文件名
+    size: int64 # 文件大小,单位字节
+    url: string # 文件访问地址
+    uploadAt: time.Time # 上传时间
