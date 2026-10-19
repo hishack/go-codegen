@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 
@@ -67,14 +68,37 @@ func (r *Report) warn(msg string) {
 	r.Warnings = append(r.Warnings, msg)
 }
 
-// RunAll 依次执行所有已注册的生成器
+// RunAll 依次执行所有已注册的生成器。
+//
+// 生成前先做路由冲突检测:gin 要求同一 METHOD+PATH 唯一、同一层通配符同名,
+// 而 yaml 按领域组织,各领域独立定义 path 极易撞车。若不在此处拦住,
+// 生成的代码能编译通过,却会在服务启动时 panic。
 func RunAll(cfg *config.CodeGenConfig, yamls *field.YamlList) (*Report, error) {
+	if err := checkRouteConflicts(yamls, cfg); err != nil {
+		return nil, err
+	}
 	ctx := &GenContext{Cfg: cfg, Yamls: yamls}
 	report := &Report{}
 	for _, f := range generatorFactories {
 		f(cfg).Generate(ctx, report)
 	}
 	return report, nil
+}
+
+// checkRouteConflicts 路由冲突时返回错误,无冲突返回 nil。
+//
+// 分两层检查:
+//  1. 本次 yaml 内部的冲突
+//  2. 本次 yaml 与目标工程里已生成的路由之间的冲突(跨多次配置的场景)
+func checkRouteConflicts(yamls *field.YamlList, cfg *config.CodeGenConfig) error {
+	conflicts := validateRoutes(yamls)
+	if cfg != nil && cfg.RouterOutPath != "" {
+		conflicts = append(conflicts, checkRoutesAgainstExisting(yamls, cfg)...)
+	}
+	if len(conflicts) == 0 {
+		return nil
+	}
+	return errors.New(formatConflicts(conflicts))
 }
 
 // ============ 生成器共用工具 ============

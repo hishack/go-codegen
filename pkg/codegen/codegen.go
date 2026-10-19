@@ -142,3 +142,45 @@ func absPath(p, base string) string {
 	}
 	return filepath.Join(base, p)
 }
+
+// ============ 路由冲突自检(供装配层在启动前调用)============
+
+// RouteConflictInfo 一处路由冲突的对外表示
+type RouteConflictInfo struct {
+	Kind   string // duplicate(路由重复) / wildcard(通配符不同名)
+	Detail string // 冲突说明
+	First  string // 先注册方
+	Second string // 后注册方
+}
+
+// ScanRouteConflicts 扫描已生成的路由目录,返回其中存在的冲突。
+//
+// gin 要求:同一 METHOD+PATH 只能注册一次,且同一层路径段上的通配符必须同名,
+// 否则服务启动即 panic。生成器在生成阶段已拦截,这里供 main 等装配层在启动前
+// 再兜一层,把手工改坏或历史遗留的冲突变成可读的错误提示。
+//
+// routerDir 形如 "internal/router";目录不存在时返回空结果与 nil。
+func ScanRouteConflicts(routerDir string) ([]RouteConflictInfo, error) {
+	cs, err := handler.ScanRouterOutForConflicts(routerDir)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]RouteConflictInfo, 0, len(cs))
+	for _, c := range cs {
+		out = append(out, RouteConflictInfo{
+			Kind: c.Kind, Detail: c.Detail, First: c.First, Second: c.Second,
+		})
+	}
+	return out, nil
+}
+
+// FormatRouteConflicts 把冲突列表拼成可直接展示的文本
+func FormatRouteConflicts(cs []RouteConflictInfo) string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "检测到 %d 处路由冲突:", len(cs))
+	for i, c := range cs {
+		fmt.Fprintf(&b, "\n\n%d) [%s] %s\n    先: %s\n    后: %s",
+			i+1, c.Kind, c.Detail, c.First, c.Second)
+	}
+	return b.String()
+}

@@ -58,7 +58,7 @@ func (u *OrderHandler) CreateOrder(c *gin.Context) {
 // @Param page query integer false "页码"
 // @Param pageSize query integer false "每页条数"
 // @Success 200 {object} res.ListOrdersRes "订单列表响应"
-// @Router /orders [get]
+// @Router /user-orders [get]
 func (u *OrderHandler) ListOrders(c *gin.Context) {
 	var req request.ListOrdersReq
 	if err := c.ShouldBindQuery(&req); err != nil {
@@ -73,7 +73,6 @@ func (u *OrderHandler) ListOrders(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.ListOrdersRes](data))
 }
-
 // GetOrderInfo 订单详情
 // @Summary 订单详情
 // @Description 订单详情

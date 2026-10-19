@@ -14,7 +14,7 @@ type NestedRouter struct{}
 func (s *NestedRouter) InitNestedRouter(Router *gin.RouterGroup, nestedHandler *handler.NestedHandler) (R gin.IRoutes) {
 	nestedRouter := Router.Group("")
 	{
-		nestedRouter.GET("/users/:id/detail", nestedHandler.GetUserDetail)
+		nestedRouter.GET("/users/:userId/detail", nestedHandler.GetUserDetail)
 		nestedRouter.GET("/orders/:orderId/detail", nestedHandler.GetOrderDetail)
 		nestedRouter.GET("/config", nestedHandler.GetConfig)
 		nestedRouter.GET("/users/map", nestedHandler.GetUserMap)

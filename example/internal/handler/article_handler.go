@@ -48,15 +48,15 @@ func (u *ArticleHandler) ListArticles(c *gin.Context) {
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.ListArticlesRes](data))
 }
 
-// GetArticleById 文章详情
-// @Summary 文章详情
-// @Description 文章详情
+// GetArticleById 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles
+// @Summary 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles
+// @Description 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles
 // @Tags cms
 // @Accept json
 // @Produce json
 // @Param id path integer true "id"
-// @Success 200 {object} res.GetArticleByIdRes "文章详情响应"
-// @Router /articles/:id [get]
+// @Success 200 {object} res.GetArticleByIdRes "文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles响应"
+// @Router /cms-articles/:id [get]
 func (u *ArticleHandler) GetArticleById(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -71,7 +71,6 @@ func (u *ArticleHandler) GetArticleById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleByIdRes](data))
 }
-
 // PublishArticle 发布文章
 // @Summary 发布文章
 // @Description 发布文章
@@ -111,4 +110,38 @@ func (u *ArticleHandler) GetArticleStats(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleStatsRes](data))
+}
+
+// GetArticleStats1 统计文章数据1
+// @Summary 统计文章数据1
+// @Description 统计文章数据1
+// @Tags cms
+// @Accept json
+// @Produce json
+// @Success 200 {object} res.GetArticleStats1Res "统计文章数据1响应"
+// @Router /articles/stats1 [get]
+func (u *ArticleHandler) GetArticleStats1(c *gin.Context) {
+	data, err := u.articleService.GetArticleStats1(c)
+	if err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		return
+	}
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleStats1Res](data))
+}
+
+// GetArticleStats2 统计文章数据2
+// @Summary 统计文章数据2
+// @Description 统计文章数据2
+// @Tags cms
+// @Accept json
+// @Produce json
+// @Success 200 {object} res.GetArticleStats2Res "统计文章数据2响应"
+// @Router /articles/stats2 [get]
+func (u *ArticleHandler) GetArticleStats2(c *gin.Context) {
+	data, err := u.articleService.GetArticleStats2(c)
+	if err != nil {
+		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		return
+	}
+	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleStats2Res](data))
 }

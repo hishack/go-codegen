@@ -20,6 +20,8 @@ import (
 	"codegen-example/internal/router"
 	"codegen-example/internal/routereg"
 
+	"github.com/hishack/go-codegen/pkg/codegen"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -72,8 +74,29 @@ func main() {
 	}
 }
 
+// precheckRoutes 启动前自检已生成的路由文件。
+//
+// gin 对路由有两���硬性约束(同 METHOD+PATH 唯一、同层通配符同名),
+// 违反会直接 panic 且信息晦涩。生成器已在生成阶段拦截,
+// 这里再兜一层:对手工改坏或历史遗留的冲突给出可读的错误提示。
+func precheckRoutes() {
+	conflicts, err := codegen.ScanRouteConflicts("internal/router")
+	if err != nil {
+		log.Printf("路由自检失败(忽略): %v", err)
+		return
+	}
+	if len(conflicts) == 0 {
+		fmt.Println("路由自检: 通过")
+		return
+	}
+	fmt.Println("\n[路由自检] " + codegen.FormatRouteConflicts(conflicts))
+	fmt.Println("\n请修正对应 yaml 后重新生成(go run ./cmd/gen -config ...)")
+	log.Fatal("存在路由冲突,已中止启动")
+}
+
 // newEngine 手动装配全部领域并注册路由
 func newEngine(addr string) (*gin.Engine, *routereg.Registry, bool) {
+	precheckRoutes() // 冲突时直接终止,避免 gin panic
 	r := gin.New()
 	r.Use(gin.Recovery())
 
@@ -129,67 +152,52 @@ func newEngine(addr string) (*gin.Engine, *routereg.Registry, bool) {
 
 // registerAll 逐个装配业务领域。
 //
-// 生成器产出的 Init*Router 内部直接调用 gin 注册,这里用 recover 兜住
-// gin 因通配符冲突抛出的 panic:冲突的那一组路由跳过注册,其余照常,
-// 保证服务仍能启动、其余接口仍可测试。
+// 生成器已在生成阶段拦截路由冲突(同 METHOD+PATH 重复、同层通配符不同名),
+// 因此这里可以放心直接注册;启动前还会再自检一次已生成的路由文件,
+// 万一手工改坏了也能给出明确提示而不是 panic。
 func registerAll(r *gin.Engine) {
-	// 安全注册:panic 时记录并跳过
-	safe := func(name string, fn func()) {
-		defer func() {
-			if e := recover(); e != nil {
-				fmt.Printf("! %s 领域路由注册失败: %v\n", name, e)
-			}
-		}()
-		fn()
-	}
+	// 注册即视为成功;若仍发生冲突,由 GinPrecheckRouteConflicts 提前拦截
+	safe := func(fn func()) { fn() }
 
 	api := r.Group("")
 
-	// 注册顺序说明:生成器不检测跨领域路由冲突,先注册者占位。
-	// 这里按"业务价值"排序,让 order/article 等业务接口优先占位,
-	// 主测试集(array/edge/nested)冲突时自动跳过,便于测试主要功能。
-	safe("user", func() {
+	safe(func() {
 		(&router.UserRouter{}).InitUserRouter(api, handler.NewUserHandler(logic.NewUserService()))
 	})
-	safe("order", func() {
+	safe(func() {
 		(&router.OrderRouter{}).InitOrderRouter(api, handler.NewOrderHandler(logic.NewOrderService()))
 	})
-	safe("article", func() {
+	safe(func() {
 		(&router.ArticleRouter{}).InitArticleRouter(api, handler.NewArticleHandler(logic.NewArticleService()))
 	})
-	safe("product", func() {
+	safe(func() {
 		(&router.ProductRouter{}).InitProductRouter(api, handler.NewProductHandler(logic.NewProductService()))
 	})
-	safe("file", func() {
+	safe(func() {
 		(&router.FileRouter{}).InitFileRouter(api, handler.NewFileHandler(logic.NewFileService()))
 	})
-	safe("notify", func() {
+	safe(func() {
 		(&router.NotifyRouter{}).InitNotifyRouter(api, handler.NewNotifyHandler(logic.NewNotifyService()))
 	})
-	safe("auth", func() {
+	safe(func() {
 		(&router.AuthRouter{}).InitAuthRouter(api, handler.NewAuthHandler(logic.NewAuthService()))
 	})
-	safe("profile", func() {
+	safe(func() {
 		(&router.ProfileRouter{}).InitProfileRouter(api, handler.NewProfileHandler(logic.NewProfileService()))
 	})
-	safe("character", func() {
+	safe(func() {
 		(&router.CharacterRouter{}).InitCharacterRouter(api, handler.NewCharacterHandler(logic.NewCharacterService()))
 	})
-	safe("threshold", func() {
+	safe(func() {
 		(&router.ThresholdRouter{}).InitThresholdRouter(api, handler.NewThresholdHandler(logic.NewThresholdService()))
 	})
-
-	// 以下三个主测试集领域与上面的业务领域存在路径冲突,会被安全跳过:
-	//   edge    /health(与运维接口抢)、/articles/:id(与 article 抢)
-	//   array   GET /orders(与 order 抢)
-	//   nested  /users/:id/detail(与 user 的 /users/:userId 通配符冲突)
-	safe("edge", func() {
+	safe(func() {
 		(&router.EdgeRouter{}).InitEdgeRouter(api, handler.NewEdgeHandler(logic.NewEdgeService()))
 	})
-	safe("array", func() {
+	safe(func() {
 		(&router.ArrayRouter{}).InitArrayRouter(api, handler.NewArrayHandler(logic.NewArrayService()))
 	})
-	safe("nested", func() {
+	safe(func() {
 		(&router.NestedRouter{}).InitNestedRouter(api, handler.NewNestedHandler(logic.NewNestedService()))
 	})
 }

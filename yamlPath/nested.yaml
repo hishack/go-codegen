@@ -5,7 +5,8 @@ package: system
 # UserRes -> UserResProfile -> UserResProfileAddress
 GetUserDetail:
   method: GET
-  path: /users/:id(int64)/detail
+  # 用 :userId 而非 :id:gin 要求同层通配符同名,需与 user.yaml 保持一致
+  path: /users/:userId(int64)/detail
   res:
     id: int64
     name: string

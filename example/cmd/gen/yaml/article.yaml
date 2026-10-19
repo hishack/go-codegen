@@ -16,10 +16,10 @@ ListArticles:
         summary: string # 摘要
         readCount: int64 # 阅读次数
 
-# 文章详情
+# 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles
 GetArticleById:
   method: GET
-  path: /articles/:id(int64)
+  path: /cms-articles/:id(int64)
   res:
     id: int64 # 文章 id
     title: string # 标题

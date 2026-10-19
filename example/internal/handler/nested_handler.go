@@ -28,24 +28,23 @@ func NewNestedHandler(userService service.INestedService) *NestedHandler {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Param id path integer true "id"
+// @Param userId path integer true "userId"
 // @Success 200 {object} res.GetUserDetailRes "深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress响应"
-// @Router /users/:id/detail [get]
+// @Router /users/:userId/detail [get]
 func (u *NestedHandler) GetUserDetail(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	userIdStr := c.Param("userId")
+	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
 	}
 
-	data, err := u.nestedService.GetUserDetail(c, id)
+	data, err := u.nestedService.GetUserDetail(c, userId)
 	if err != nil {
 		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserDetailRes](data))
 }
-
 // GetOrderDetail 数组套对象套对象
 // @Summary 数组套对象套对象
 // @Description 数组套对象套对象

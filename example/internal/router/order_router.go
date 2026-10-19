@@ -15,7 +15,7 @@ func (s *OrderRouter) InitOrderRouter(Router *gin.RouterGroup, orderHandler *han
 	orderRouter := Router.Group("")
 	{
 		orderRouter.POST("/orders", orderHandler.CreateOrder)
-		orderRouter.GET("/orders", orderHandler.ListOrders)
+		orderRouter.GET("/user-orders", orderHandler.ListOrders)
 		orderRouter.GET("/orders/:orderId", orderHandler.GetOrderInfo)
 		orderRouter.PATCH("/orders/:orderId/cancel", orderHandler.CancelOrder)
 	}

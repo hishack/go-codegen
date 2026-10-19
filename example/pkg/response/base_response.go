@@ -32,6 +32,8 @@ func NewErrorResponse[T any](err error) *BaseResponse[T] {
 	return &BaseResponse[T]{Code: newError.Code, Message: newError.Message}
 }
 
+
+
 // PageResponse 分页响应
 type PageResponse[T any] struct {
 	Records   []T `json:"records"`

@@ -103,7 +103,7 @@ export class OrderApi {
   /** 订单列表 */
   async listOrders(req: ListOrdersReq): Promise<ApiResp<ListOrdersRes>> {
     return axios({
-      url: `/orders`,
+      url: `/user-orders`,
       method: "get",
       params: req,
     });

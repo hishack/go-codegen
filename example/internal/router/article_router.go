@@ -15,9 +15,11 @@ func (s *ArticleRouter) InitArticleRouter(Router *gin.RouterGroup, articleHandle
 	articleRouter := Router.Group("")
 	{
 		articleRouter.GET("/articles", articleHandler.ListArticles)
-		articleRouter.GET("/articles/:id", articleHandler.GetArticleById)
+		articleRouter.GET("/cms-articles/:id", articleHandler.GetArticleById)
 		articleRouter.POST("/articles", articleHandler.PublishArticle)
 		articleRouter.GET("/articles/stats", articleHandler.GetArticleStats)
+		articleRouter.GET("/articles/stats1", articleHandler.GetArticleStats1)
+		articleRouter.GET("/articles/stats2", articleHandler.GetArticleStats2)
 	}
 	return articleRouter
 }

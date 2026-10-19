@@ -12,4 +12,6 @@ type IArticleService interface {
 	GetArticleById(c *gin.Context, id int64) (res.GetArticleByIdRes, error)
 	PublishArticle(c *gin.Context, req request.PublishArticleReq) (int64, error)
 	GetArticleStats(c *gin.Context) (res.GetArticleStatsRes, error)
+	GetArticleStats2(c *gin.Context) (res.GetArticleStats2Res, error)
+	GetArticleStats1(c *gin.Context) (res.GetArticleStats1Res, error)
 }

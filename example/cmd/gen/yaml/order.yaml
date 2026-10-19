@@ -19,7 +19,8 @@ CreateOrder:
 # 订单列表
 ListOrders:
   method: GET
-  path: /orders
+  # 用 /user-orders 而非 /orders:主测试集 array.yaml 已占用 GET /orders
+  path: /user-orders
   req:
     userId: int64 # 按用户过滤
     status: string # 订单状态,如 unpaid/paid/shipped

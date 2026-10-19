@@ -3,7 +3,7 @@ import axios from "@/utils/request";
 import { ApiResp } from "@/types/api";
 /** GetUserDetailReq 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress请求参数 */
 export interface GetUserDetailReq {
-  id: number;
+  userId: number;
 }
 
 /** GetUserDetailRes 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress响应数据 */
@@ -82,7 +82,7 @@ export class NestedApi {
   /** 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress */
   async getUserDetail(req: GetUserDetailReq): Promise<ApiResp<GetUserDetailRes>> {
     return axios({
-      url: `/users/${req.id}/detail`,
+      url: `/users/${req.userId}/detail`,
       method: "get",
       params: req,
     });

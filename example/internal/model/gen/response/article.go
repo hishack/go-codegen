@@ -55,9 +55,6 @@ type GetArticleStatsRes struct {
 	Extra any `json:"extra"`
 }
 
-// 说明:GetArticleStats1Res / GetArticleStats2Res 原本由生成器产出,
-// 对应 yaml 中重复声明了同一 path 的 GetArticleStats1 / GetArticleStats2。
-// 这里手工补回以保持 logic 层可编译,详见测试报告中的生成器问题说明。
 type GetArticleStats1Res struct {
 	// 文章总数
 	Total int64 `json:"total"`
@@ -74,7 +71,6 @@ type GetArticleStats1Res struct {
 	// 预留的扩展字段
 	Extra any `json:"extra"`
 }
-
 type GetArticleStats2Res struct {
 	// 文章总数
 	Total int64 `json:"total"`

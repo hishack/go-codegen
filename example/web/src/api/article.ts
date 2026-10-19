@@ -27,12 +27,12 @@ export interface ListArticlesResListItem {
   readCount: number;
 }
 
-/** GetArticleByIdReq 文章详情请求参数 */
+/** GetArticleByIdReq 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles请求参数 */
 export interface GetArticleByIdReq {
   id: number;
 }
 
-/** GetArticleByIdRes 文章详情响应数据 */
+/** GetArticleByIdRes 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles响应数据 */
 export interface GetArticleByIdRes {
   /** 文章 id */
   id: number;
@@ -123,10 +123,10 @@ export class ArticleApi {
     });
   }
 
-  /** 文章详情 */
+  /** 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles */
   async getArticleById(req: GetArticleByIdReq): Promise<ApiResp<GetArticleByIdRes>> {
     return axios({
-      url: `/articles/${req.id}`,
+      url: `/cms-articles/${req.id}`,
       method: "get",
       params: req,
     });
