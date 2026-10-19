@@ -1,0 +1,1955 @@
+definitions:
+  multipart.FileHeader:
+    properties:
+      filename:
+        type: string
+      header:
+        $ref: '#/definitions/textproto.MIMEHeader'
+      size:
+        format: int64
+        type: integer
+    type: object
+  request.CreateBatchUserReq:
+    properties:
+      ages:
+        items:
+          type: integer
+        type: array
+      names:
+        items:
+          type: string
+        type: array
+      tags:
+        items:
+          $ref: '#/definitions/request.CreateBatchUserReqTagsItem'
+        type: array
+    type: object
+  request.CreateBatchUserReqTagsItem:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    type: object
+  request.CreateOrderReq:
+    properties:
+      addressId:
+        description: 收货地址 id
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/request.CreateOrderReqItemsItem'
+        type: array
+      remark:
+        description: 订单备注
+        type: string
+      userId:
+        description: 下单用户 id
+        type: integer
+    type: object
+  request.CreateOrderReqItemsItem:
+    properties:
+      count:
+        description: 购买数量
+        type: integer
+      productId:
+        description: 商品 id
+        type: integer
+    type: object
+  request.CreateProductReq:
+    properties:
+      detail:
+        $ref: '#/definitions/request.CreateProductReqDetail'
+      images:
+        description: 商品图链接
+        items:
+          type: string
+        type: array
+      price:
+        description: 售价
+        type: number
+      title:
+        description: 商品标题
+        type: string
+    type: object
+  request.CreateProductReqDetail:
+    properties:
+      desc:
+        description: 商品详情描述
+        type: string
+    type: object
+  request.CreateThresholdReq:
+    properties:
+      name:
+        description: 阈值名称
+        type: string
+      score:
+        description: 阈值档位,如 easy/normal/hard
+        type: string
+    type: object
+  request.CreateUserReq:
+    properties:
+      age:
+        type: integer
+      birthday:
+        type: string
+      count:
+        type: integer
+      duration:
+        $ref: '#/definitions/time.Duration'
+      enabled:
+        type: boolean
+      height:
+        type: number
+      level:
+        type: integer
+      name:
+        type: string
+      nickname:
+        type: string
+      ratio:
+        type: number
+      score:
+        type: integer
+      weight:
+        type: number
+    type: object
+  request.LoginReq:
+    properties:
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 登录名
+        type: string
+    type: object
+  request.LogoutAccountReq:
+    properties:
+      token:
+        description: 访问令牌
+        type: string
+    type: object
+  request.LogoutReq:
+    properties:
+      token:
+        type: string
+    type: object
+  request.PatchUserReq:
+    properties:
+      nickname:
+        type: string
+    type: object
+  request.PublishArticleReq:
+    properties:
+      content:
+        description: 正文
+        type: string
+      tags:
+        description: 标签列表
+        items:
+          type: string
+        type: array
+      title:
+        description: 标题
+        type: string
+    type: object
+  request.RefreshTokenReq:
+    properties:
+      token:
+        description: 旧的访问令牌
+        type: string
+    type: object
+  request.SendSmsCodeReq:
+    properties:
+      phone:
+        description: 手机号
+        type: string
+      scene:
+        description: 场景,如 login/register
+        type: string
+    type: object
+  request.UpdateProductReq:
+    properties:
+      price:
+        description: 售价
+        type: number
+      title:
+        description: 商品标题
+        type: string
+    type: object
+  request.UpdateThresholdReq:
+    properties:
+      name:
+        description: 新的阈值名称
+        type: string
+    type: object
+  request.UpdateUserProfileReq:
+    properties:
+      nickname:
+        description: 昵称
+        type: string
+      signature:
+        description: 个性签名
+        type: string
+    type: object
+  request.UpdateUserReq:
+    properties:
+      age:
+        type: integer
+      name:
+        type: string
+    type: object
+  request.UploadFilesReq:
+    properties:
+      files:
+        items:
+          $ref: '#/definitions/request.UploadFilesReqFilesItem'
+        type: array
+    type: object
+  request.UploadFilesReqFilesItem:
+    properties:
+      file:
+        allOf:
+        - $ref: '#/definitions/multipart.FileHeader'
+        description: 上传的文件
+      key:
+        description: 文件字段名
+        type: string
+    type: object
+  response.CreateOrderRes:
+    properties:
+      amount:
+        description: 订单总金额
+        type: number
+      orderId:
+        description: 订单号
+        type: integer
+    type: object
+  response.CreateUserRes:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+    type: object
+  response.GetArticleByIdRes:
+    properties:
+      authorId:
+        description: 作者 id
+        type: integer
+      content:
+        description: 正文
+        type: string
+      id:
+        description: 文章 id
+        type: integer
+      lastEdit:
+        allOf:
+        - $ref: '#/definitions/time.Duration'
+        description: 距上次编辑的间隔
+      publishAt:
+        description: 发布时间
+        type: string
+      title:
+        description: 标题
+        type: string
+    type: object
+  response.GetArticleRes:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  response.GetArticleStatsRes:
+    properties:
+      avgRead:
+        description: 平均阅读量
+        type: number
+      cost:
+        allOf:
+        - $ref: '#/definitions/time.Duration'
+        description: 统计耗时
+      extra:
+        description: 预留的扩展字段
+      online:
+        description: 是否有在线文章
+        type: boolean
+      ratio:
+        description: 同比增长率
+        type: number
+      today:
+        description: 今日新增
+        type: integer
+      total:
+        description: 文章总数
+        type: integer
+    type: object
+  response.GetCharacterSkillsRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.GetCharacterSkillsResListItem'
+        type: array
+    type: object
+  response.GetCharacterSkillsResListItem:
+    properties:
+      id:
+        description: 技能 id
+        type: integer
+      level:
+        description: 已解锁的等级列表
+        items:
+          type: integer
+        type: array
+      name:
+        description: 技能名称
+        type: string
+    type: object
+  response.GetConfigARes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.GetConfigAResListItem'
+        type: array
+    type: object
+  response.GetConfigAResListItem:
+    properties:
+      x:
+        type: integer
+    type: object
+  response.GetConfigBRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.GetConfigBResListItem'
+        type: array
+    type: object
+  response.GetConfigBResListItem:
+    properties:
+      "y":
+        type: string
+    type: object
+  response.GetConfigRes:
+    properties:
+      configs:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  response.GetFileInfoRes:
+    properties:
+      id:
+        description: 文件 id
+        type: integer
+      name:
+        description: 文件名
+        type: string
+      size:
+        description: 文件大小,单位字节
+        type: integer
+      uploadAt:
+        description: 上传时间
+        type: string
+      url:
+        description: 文件访问地址
+        type: string
+    type: object
+  response.GetInt64ArrayRes:
+    properties:
+      data:
+        items:
+          type: integer
+        type: array
+    type: object
+  response.GetIntArrayRes:
+    properties:
+      data:
+        items:
+          type: integer
+        type: array
+    type: object
+  response.GetNotifyConfigRes:
+    properties:
+      channels:
+        description: 开启的通知渠道
+        items:
+          type: string
+        type: array
+      extras:
+        additionalProperties:
+          type: string
+        description: 渠道对应的扩展配置
+        type: object
+    type: object
+  response.GetObjectArrayRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.GetObjectArrayResListItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  response.GetObjectArrayResListItem:
+    properties:
+      age:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.GetOrderDetailRes:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/response.GetOrderDetailResItemsItem'
+        type: array
+      orderId:
+        type: integer
+      userId:
+        type: integer
+    type: object
+  response.GetOrderDetailResItemsItem:
+    properties:
+      attrs:
+        items:
+          $ref: '#/definitions/response.GetOrderDetailResItemsItemAttrsItem'
+        type: array
+      price:
+        type: number
+      productId:
+        type: integer
+      title:
+        type: string
+    type: object
+  response.GetOrderDetailResItemsItemAttrsItem:
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    type: object
+  response.GetOrderInfoRes:
+    properties:
+      address:
+        $ref: '#/definitions/response.GetOrderInfoResAddress'
+      amount:
+        description: 订单金额
+        type: number
+      orderId:
+        description: 订单号
+        type: integer
+      status:
+        description: 订单状态
+        type: string
+      userId:
+        description: 下单用户 id
+        type: integer
+    type: object
+  response.GetOrderInfoResAddress:
+    properties:
+      detail:
+        description: 收货地址
+        type: string
+      phone:
+        description: 联系电话
+        type: string
+      receiver:
+        description: 收货人
+        type: string
+    type: object
+  response.GetOrderListRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.GetOrderListResListItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  response.GetOrderListResListItem:
+    properties:
+      amount:
+        type: number
+      orderId:
+        type: integer
+      remark:
+        type: string
+      status:
+        type: string
+      userId:
+        type: integer
+    type: object
+  response.GetOrgUserRes:
+    properties:
+      orgId:
+        type: integer
+      userId:
+        type: integer
+    type: object
+  response.GetProductRes:
+    properties:
+      detail:
+        $ref: '#/definitions/response.GetProductResDetail'
+      id:
+        description: 商品 id
+        type: integer
+      price:
+        description: 售价
+        type: number
+      stock:
+        description: 库存数量
+        type: integer
+      title:
+        description: 商品标题
+        type: string
+    type: object
+  response.GetProductResDetail:
+    properties:
+      desc:
+        description: 商品详情描述
+        type: string
+      images:
+        description: 商品图链接
+        items:
+          type: string
+        type: array
+    type: object
+  response.GetStringArrayRes:
+    properties:
+      data:
+        items:
+          type: string
+        type: array
+    type: object
+  response.GetTimeRes:
+    properties:
+      timestamp:
+        type: integer
+      timezone:
+        type: string
+    type: object
+  response.GetUserDetailRes:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      profile:
+        $ref: '#/definitions/response.GetUserDetailResProfile'
+    type: object
+  response.GetUserDetailResProfile:
+    properties:
+      address:
+        $ref: '#/definitions/response.GetUserDetailResProfileAddress'
+      avatar:
+        type: string
+      bio:
+        type: string
+    type: object
+  response.GetUserDetailResProfileAddress:
+    properties:
+      city:
+        type: string
+      province:
+        type: string
+      street:
+        type: string
+    type: object
+  response.GetUserMapRes:
+    properties:
+      users:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+    type: object
+  response.GetUserOrderRes:
+    properties:
+      orderId:
+        type: integer
+      userId:
+        type: integer
+    type: object
+  response.GetUserProfileRes:
+    properties:
+      avatar:
+        description: 头像地址
+        type: string
+      createdAt:
+        description: 注册时间
+        type: string
+      id:
+        description: 用户 id
+        type: integer
+      level:
+        description: 等级
+        type: integer
+      nickname:
+        description: 昵称
+        type: string
+      profile:
+        $ref: '#/definitions/response.GetUserProfileResProfile'
+      tags:
+        description: 用户标签
+        items:
+          type: string
+        type: array
+    type: object
+  response.GetUserProfileResProfile:
+    properties:
+      gender:
+        description: 性别
+        type: string
+      signature:
+        description: 个性签名
+        type: string
+    type: object
+  response.GetUserProfileVoRes:
+    properties:
+      id:
+        description: 用户ID
+        type: integer
+      profile:
+        $ref: '#/definitions/response.GetUserProfileVoResProfile'
+    type: object
+  response.GetUserProfileVoResProfile:
+    properties:
+      nickname:
+        description: 昵称
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  response.GetUserRes:
+    properties:
+      age:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.ListArticlesRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.ListArticlesResListItem'
+        type: array
+      total:
+        description: 总条数
+        type: integer
+    type: object
+  response.ListArticlesResListItem:
+    properties:
+      id:
+        description: 文章 id
+        type: integer
+      readCount:
+        description: 阅读次数
+        type: integer
+      summary:
+        description: 摘要
+        type: string
+      title:
+        description: 标题
+        type: string
+    type: object
+  response.ListNotifiesRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.ListNotifiesResListItem'
+        type: array
+      total:
+        description: 总条数
+        type: integer
+    type: object
+  response.ListNotifiesResListItem:
+    properties:
+      content:
+        description: 通知内容
+        type: string
+      createAt:
+        description: 通知时间
+        type: string
+      id:
+        description: 通知 id
+        type: integer
+      read:
+        description: 是否已读
+        type: boolean
+      title:
+        description: 通知标题
+        type: string
+    type: object
+  response.ListOrdersRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.ListOrdersResListItem'
+        type: array
+      total:
+        description: 总条数
+        type: integer
+    type: object
+  response.ListOrdersResListItem:
+    properties:
+      amount:
+        description: 订单金额
+        type: number
+      createAt:
+        description: 下单时间
+        type: string
+      orderId:
+        description: 订单号
+        type: integer
+      status:
+        description: 订单状态
+        type: string
+    type: object
+  response.ListProductsRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.ListProductsResListItem'
+        type: array
+      total:
+        description: 总条数
+        type: integer
+    type: object
+  response.ListProductsResListItem:
+    properties:
+      id:
+        description: 商品 id
+        type: integer
+      price:
+        description: 售价
+        type: number
+      tags:
+        description: 商品标签
+        items:
+          type: string
+        type: array
+      title:
+        description: 商品标题
+        type: string
+    type: object
+  response.ListUsersRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.ListUsersResListItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  response.ListUsersResListItem:
+    properties:
+      age:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.LoginRes:
+    properties:
+      expireIn:
+        description: 令牌有效期,单位秒
+        type: integer
+      token:
+        description: 访问令牌
+        type: string
+    type: object
+  response.SearchUserRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.SearchUserResListItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  response.SearchUserResListItem:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.UploadFilesRes:
+    properties:
+      urls:
+        description: 文件访问地址列表
+        items:
+          type: string
+        type: array
+    type: object
+  textproto.MIMEHeader:
+    additionalProperties:
+      items:
+        type: string
+      type: array
+    type: object
+  time.Duration:
+    enum:
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    - 60000000000
+    - 3600000000000
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    - 60000000000
+    - 3600000000000
+    format: int64
+    type: integer
+    x-enum-varnames:
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
+    - Minute
+    - Hour
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
+    - Minute
+    - Hour
+info:
+  contact: {}
+paths:
+  /arrays/int64s:
+    get:
+      consumes:
+      - application/json
+      description: GetInt64Array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetInt64Array响应
+          schema:
+            $ref: '#/definitions/response.GetInt64ArrayRes'
+      summary: GetInt64Array
+      tags:
+      - system
+  /arrays/ints:
+    get:
+      consumes:
+      - application/json
+      description: 数组的各种写法:基础类型数组、对象数组、混合嵌套
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 数组的各种写法:基础类型数组、对象数组、混合嵌套响应
+          schema:
+            $ref: '#/definitions/response.GetIntArrayRes'
+      summary: 数组的各种写法:基础类型数组、对象数组、混合嵌套
+      tags:
+      - system
+  /arrays/objects:
+    get:
+      consumes:
+      - application/json
+      description: 对象数组:对应 res.list,会提升为 GetObjectArrayResListItem
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 对象数组:对应 res.list,会提升为 GetObjectArrayResListItem响应
+          schema:
+            $ref: '#/definitions/response.GetObjectArrayRes'
+      summary: 对象数组:对应 res.list,会提升为 GetObjectArrayResListItem
+      tags:
+      - system
+  /arrays/strings:
+    get:
+      consumes:
+      - application/json
+      description: GetStringArray
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetStringArray响应
+          schema:
+            $ref: '#/definitions/response.GetStringArrayRes'
+      summary: GetStringArray
+      tags:
+      - system
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: 文章列表
+      parameters:
+      - description: 按作者过滤
+        in: query
+        name: authorId
+        type: integer
+      - description: 按标签过滤
+        in: query
+        name: tag
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 文章列表响应
+          schema:
+            $ref: '#/definitions/response.ListArticlesRes'
+      summary: 文章列表
+      tags:
+      - cms
+    post:
+      consumes:
+      - application/json
+      description: 发布文章
+      parameters:
+      - description: 发布文章请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.PublishArticleReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 发布文章响应
+          schema:
+            format: int64
+            type: integer
+      summary: 发布文章
+      tags:
+      - cms
+  /articles/:id:
+    get:
+      consumes:
+      - application/json
+      description: 无类型的路径参数,默认按 string
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 无类型的路径参数,默认按 string响应
+          schema:
+            $ref: '#/definitions/response.GetArticleRes'
+      summary: 无类型的路径参数,默认按 string
+      tags:
+      - system
+  /articles/stats:
+    get:
+      consumes:
+      - application/json
+      description: 统计文章数据
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统计文章数据响应
+          schema:
+            $ref: '#/definitions/response.GetArticleStatsRes'
+      summary: 统计文章数据
+      tags:
+      - cms
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth
+        三组文件,互不干扰。 登录
+      parameters:
+      - description: 本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth
+          三组文件,互不干扰。 登录请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile /
+            auth 三组文件,互不干扰。 登录响应
+          schema:
+            $ref: '#/definitions/response.LoginRes'
+      summary: 本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。
+        登录
+      tags:
+      - system
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: 退出登录
+      parameters:
+      - description: 退出登录请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.LogoutAccountReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 退出登录响应
+          schema:
+            type: boolean
+      summary: 退出登录
+      tags:
+      - system
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: 刷新令牌
+      parameters:
+      - description: 刷新令牌请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.RefreshTokenReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 刷新令牌响应
+          schema:
+            type: string
+      summary: 刷新令牌
+      tags:
+      - system
+  /characters/:id/skills:
+    get:
+      consumes:
+      - application/json
+      description: 查询角色技能列表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询角色技能列表响应
+          schema:
+            $ref: '#/definitions/response.GetCharacterSkillsRes'
+      summary: 查询角色技能列表
+      tags:
+      - system
+  /config:
+    get:
+      consumes:
+      - application/json
+      description: map 类型
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: map 类型响应
+          schema:
+            $ref: '#/definitions/response.GetConfigRes'
+      summary: map 类型
+      tags:
+      - system
+  /config/a:
+    get:
+      consumes:
+      - application/json
+      description: 同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车响应
+          schema:
+            $ref: '#/definitions/response.GetConfigARes'
+      summary: 同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车
+      tags:
+      - system
+  /config/b:
+    get:
+      consumes:
+      - application/json
+      description: GetConfigB
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetConfigB响应
+          schema:
+            $ref: '#/definitions/response.GetConfigBRes'
+      summary: GetConfigB
+      tags:
+      - system
+  /files:
+    post:
+      consumes:
+      - application/json
+      description: 单文件上传
+      parameters:
+      - description: 上传的文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 单文件上传响应
+          schema:
+            type: string
+      summary: 单文件上传
+      tags:
+      - system
+  /files/:id:
+    get:
+      consumes:
+      - application/json
+      description: 文件信息
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 文件信息响应
+          schema:
+            $ref: '#/definitions/response.GetFileInfoRes'
+      summary: 文件信息
+      tags:
+      - system
+  /files/batch:
+    post:
+      consumes:
+      - application/json
+      description: 多文件上传
+      parameters:
+      - description: 多文件上传请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.UploadFilesReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 多文件上传响应
+          schema:
+            $ref: '#/definitions/response.UploadFilesRes'
+      summary: 多文件上传
+      tags:
+      - system
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: 没有 req 也没有 res
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 没有 req 也没有 res响应
+          schema:
+            type: boolean
+      summary: 没有 req 也没有 res
+      tags:
+      - system
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: 只有 req,没有 res
+      parameters:
+      - description: 只有 req,没有 res请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.LogoutReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 只有 req,没有 res响应
+          schema:
+            type: boolean
+      summary: 只有 req,没有 res
+      tags:
+      - system
+  /notifies:
+    get:
+      consumes:
+      - application/json
+      description: 查询通知列表
+      parameters:
+      - description: 按用户过滤
+        in: query
+        name: userId
+        type: integer
+      - description: 是否已读
+        in: query
+        name: read
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询通知列表响应
+          schema:
+            $ref: '#/definitions/response.ListNotifiesRes'
+      summary: 查询通知列表
+      tags:
+      - system
+  /notifies/:id/read:
+    patch:
+      consumes:
+      - application/json
+      description: 标记通知已读
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 标记通知已读响应
+          schema:
+            type: boolean
+      summary: 标记通知已读
+      tags:
+      - system
+  /notifies/config:
+    get:
+      consumes:
+      - application/json
+      description: 扩展属性示例:map 类型
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 扩展属性示例:map 类型响应
+          schema:
+            $ref: '#/definitions/response.GetNotifyConfigRes'
+      summary: 扩展属性示例:map 类型
+      tags:
+      - system
+  /notify/sms:
+    post:
+      consumes:
+      - application/json
+      description: 发送短信验证码
+      parameters:
+      - description: 发送短信验证码请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.SendSmsCodeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 发送短信验证码响应
+          schema:
+            type: integer
+      summary: 发送短信验证码
+      tags:
+      - system
+  /orders:
+    get:
+      consumes:
+      - application/json
+      description: 订单列表
+      parameters:
+      - description: 按用户过滤
+        in: query
+        name: userId
+        type: integer
+      - description: 订单状态,如 unpaid/paid/shipped
+        in: query
+        name: status
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页条数
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 订单列表响应
+          schema:
+            $ref: '#/definitions/response.ListOrdersRes'
+      summary: 订单列表
+      tags:
+      - mall
+    post:
+      consumes:
+      - application/json
+      description: 创建订单
+      parameters:
+      - description: 创建订单请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateOrderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建订单响应
+          schema:
+            $ref: '#/definitions/response.CreateOrderRes'
+      summary: 创建订单
+      tags:
+      - mall
+  /orders/:orderId:
+    get:
+      consumes:
+      - application/json
+      description: 订单详情
+      parameters:
+      - description: orderId
+        in: path
+        name: orderId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 订单详情响应
+          schema:
+            $ref: '#/definitions/response.GetOrderInfoRes'
+      summary: 订单详情
+      tags:
+      - mall
+  /orders/:orderId/cancel:
+    patch:
+      consumes:
+      - application/json
+      description: 取消订单
+      parameters:
+      - description: orderId
+        in: path
+        name: orderId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 取消订单响应
+          schema:
+            type: boolean
+      summary: 取消订单
+      tags:
+      - mall
+  /orders/:orderId/detail:
+    get:
+      consumes:
+      - application/json
+      description: 数组套对象套对象
+      parameters:
+      - description: orderId
+        in: path
+        name: orderId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 数组套对象套对象响应
+          schema:
+            $ref: '#/definitions/response.GetOrderDetailRes'
+      summary: 数组套对象套对象
+      tags:
+      - system
+  /orgs/:orgId/users/:userId:
+    get:
+      consumes:
+      - application/json
+      description: 多级路径参数
+      parameters:
+      - description: orgId
+        in: path
+        name: orgId
+        required: true
+        type: integer
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 多级路径参数响应
+          schema:
+            $ref: '#/definitions/response.GetOrgUserRes'
+      summary: 多级路径参数
+      tags:
+      - system
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: 空 req 对象
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 空 req 对象响应
+          schema:
+            type: boolean
+      summary: 空 req 对象
+      tags:
+      - system
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: 商品列表查询
+      parameters:
+      - description: 搜索关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 分类 id
+        in: query
+        name: categoryId
+        type: integer
+      - description: 页码,从 1 开始
+        in: query
+        name: page
+        type: integer
+      - description: 每页条数
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 商品列表查询响应
+          schema:
+            $ref: '#/definitions/response.ListProductsRes'
+      summary: 商品列表查询
+      tags:
+      - mall
+    post:
+      consumes:
+      - application/json
+      description: 创建商品
+      parameters:
+      - description: 创建商品请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateProductReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建商品响应
+          schema:
+            format: int64
+            type: integer
+      summary: 创建商品
+      tags:
+      - mall
+  /products/:id:
+    delete:
+      consumes:
+      - application/json
+      description: 删除商品
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除商品响应
+          schema:
+            type: boolean
+      summary: 删除商品
+      tags:
+      - mall
+    get:
+      consumes:
+      - application/json
+      description: 商品详情
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 商品详情响应
+          schema:
+            $ref: '#/definitions/response.GetProductRes'
+      summary: 商品详情
+      tags:
+      - mall
+    put:
+      consumes:
+      - application/json
+      description: 更新商品
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新商品请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateProductReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新商品响应
+          schema:
+            type: boolean
+      summary: 更新商品
+      tags:
+      - mall
+  /thresholds:
+    post:
+      consumes:
+      - application/json
+      description: 新增阈值
+      parameters:
+      - description: 新增阈值请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateThresholdReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 新增阈值响应
+          schema:
+            format: int64
+            type: integer
+      summary: 新增阈值
+      tags:
+      - system
+  /thresholds/:id:
+    put:
+      consumes:
+      - application/json
+      description: 更新阈值
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新阈值请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateThresholdReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新阈值响应
+          schema:
+            type: boolean
+      summary: 更新阈值
+      tags:
+      - system
+  /time:
+    get:
+      consumes:
+      - application/json
+      description: 只有 res,没有 req
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 只有 res,没有 req响应
+          schema:
+            $ref: '#/definitions/response.GetTimeRes'
+      summary: 只有 res,没有 req
+      tags:
+      - system
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: ListUsers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ListUsers响应
+          schema:
+            $ref: '#/definitions/response.ListUsersRes'
+      summary: ListUsers
+      tags:
+      - system
+    post:
+      consumes:
+      - application/json
+      description: 基础增删改查 + 全量基础类型覆盖
+      parameters:
+      - description: 基础增删改查 + 全量基础类型覆盖请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 基础增删改查 + 全量基础类型覆盖响应
+          schema:
+            $ref: '#/definitions/response.CreateUserRes'
+      summary: 基础增删改查 + 全量基础类型覆盖
+      tags:
+      - system
+  /users/:id/detail:
+    get:
+      consumes:
+      - application/json
+      description: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress响应
+          schema:
+            $ref: '#/definitions/response.GetUserDetailRes'
+      summary: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress
+      tags:
+      - system
+  /users/:userId:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteUser
+      parameters:
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: DeleteUser响应
+          schema:
+            type: boolean
+      summary: DeleteUser
+      tags:
+      - system
+    get:
+      consumes:
+      - application/json
+      description: GetUser
+      parameters:
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetUser响应
+          schema:
+            $ref: '#/definitions/response.GetUserRes'
+      summary: GetUser
+      tags:
+      - system
+    patch:
+      consumes:
+      - application/json
+      description: PatchUser
+      parameters:
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: PatchUser请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.PatchUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PatchUser响应
+          schema:
+            type: boolean
+      summary: PatchUser
+      tags:
+      - system
+    put:
+      consumes:
+      - application/json
+      description: UpdateUser
+      parameters:
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: UpdateUser请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: UpdateUser响应
+          schema:
+            type: boolean
+      summary: UpdateUser
+      tags:
+      - system
+  /users/:userId/orders/:orderId:
+    get:
+      consumes:
+      - application/json
+      description: 多路径参数
+      parameters:
+      - description: userId
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: orderId
+        in: path
+        name: orderId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 多路径参数响应
+          schema:
+            $ref: '#/definitions/response.GetUserOrderRes'
+      summary: 多路径参数
+      tags:
+      - system
+  /users/avatar:
+    post:
+      consumes:
+      - application/json
+      description: 上传头像(multipart 文件上传)
+      parameters:
+      - description: 头像文件
+        in: formData
+        name: avatar
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 上传头像(multipart 文件上传)响应
+          schema:
+            type: string
+      summary: 上传头像(multipart 文件上传)
+      tags:
+      - system
+  /users/batch:
+    post:
+      consumes:
+      - application/json
+      description: 请求里带数组
+      parameters:
+      - description: 请求里带数组请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateBatchUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求里带数组响应
+          schema:
+            format: int64
+            type: integer
+      summary: 请求里带数组
+      tags:
+      - system
+  /users/map:
+    get:
+      consumes:
+      - application/json
+      description: GetUserMap
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetUserMap响应
+          schema:
+            $ref: '#/definitions/response.GetUserMapRes'
+      summary: GetUserMap
+      tags:
+      - system
+  /users/profile:
+    get:
+      consumes:
+      - application/json
+      description: 用户详情
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户详情响应
+          schema:
+            $ref: '#/definitions/response.GetUserProfileRes'
+      summary: 用户详情
+      tags:
+      - system
+    put:
+      consumes:
+      - application/json
+      description: 更新用户资料
+      parameters:
+      - description: 更新用户资料请求
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateUserProfileReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新用户资料响应
+          schema:
+            type: boolean
+      summary: 更新用户资料
+      tags:
+      - system
+  /users/profile/:id:
+    get:
+      consumes:
+      - application/json
+      description: 根据ID获取用户详情
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 根据ID获取用户详情响应
+          schema:
+            $ref: '#/definitions/response.GetUserProfileVoRes'
+      summary: 根据ID获取用户详情
+      tags:
+      - system
+  /users/search:
+    get:
+      consumes:
+      - application/json
+      description: GET 带 req(query 参数场景)
+      parameters:
+      - description: keyword
+        in: query
+        name: keyword
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: pageSize
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GET 带 req(query 参数场景)响应
+          schema:
+            $ref: '#/definitions/response.SearchUserRes'
+      summary: GET 带 req(query 参数场景)
+      tags:
+      - system
+swagger: "2.0"

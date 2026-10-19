@@ -51,3 +51,29 @@ GetArticleStats:
     avgRead: float32 # 平均阅读量
     cost: time.Duration # 统计耗时
     extra: any # 预留的扩展字段
+
+# 统计文章数据1
+GetArticleStats1:
+  method: GET
+  path: /articles/stats1
+  res:
+    total: int64 # 文章总数
+    today: int64 # 今日新增
+    ratio: float64 # 同比增长率
+    online: bool # 是否有在线文章
+    avgRead: float32 # 平均阅读量
+    cost: time.Duration # 统计耗时
+    extra: any # 预留的扩展字段
+
+# 统计文章数据2
+GetArticleStats2:
+  method: GET
+  path: /articles/stats2
+  res:
+    total: int64 # 文章总数
+    today: int64 # 今日新增
+    ratio: float64 # 同比增长率
+    online: bool # 是否有在线文章
+    avgRead: float32 # 平均阅读量
+    cost: time.Duration # 统计耗时
+    extra: any # 预留的扩展字段

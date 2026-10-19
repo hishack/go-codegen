@@ -76,6 +76,42 @@ export interface GetArticleStatsRes {
   extra: unknown;
 }
 
+/** GetArticleStats1Res 统计文章数据1响应数据 */
+export interface GetArticleStats1Res {
+  /** 文章总数 */
+  total: number;
+  /** 今日新增 */
+  today: number;
+  /** 同比增长率 */
+  ratio: number;
+  /** 是否有在线文章 */
+  online: boolean;
+  /** 平均阅读量 */
+  avgRead: number;
+  /** 统计耗时 */
+  cost: number;
+  /** 预留的扩展字段 */
+  extra: unknown;
+}
+
+/** GetArticleStats2Res 统计文章数据2响应数据 */
+export interface GetArticleStats2Res {
+  /** 文章总数 */
+  total: number;
+  /** 今日新增 */
+  today: number;
+  /** 同比增长率 */
+  ratio: number;
+  /** 是否有在线文章 */
+  online: boolean;
+  /** 平均阅读量 */
+  avgRead: number;
+  /** 统计耗时 */
+  cost: number;
+  /** 预留的扩展字段 */
+  extra: unknown;
+}
+
 
 export class ArticleApi {
   /** 文章列表 */
@@ -109,6 +145,22 @@ export class ArticleApi {
   async getArticleStats(): Promise<ApiResp<GetArticleStatsRes>> {
     return axios({
       url: `/articles/stats`,
+      method: "get",
+    });
+  }
+
+  /** 统计文章数据1 */
+  async getArticleStats1(): Promise<ApiResp<GetArticleStats1Res>> {
+    return axios({
+      url: `/articles/stats1`,
+      method: "get",
+    });
+  }
+
+  /** 统计文章数据2 */
+  async getArticleStats2(): Promise<ApiResp<GetArticleStats2Res>> {
+    return axios({
+      url: `/articles/stats2`,
       method: "get",
     });
   }

@@ -31,3 +31,6 @@ node_modules/
 example/web/dist/
 example/web/.vite/
 example/web/node_modules/
+
+# swagger 生成物(docs/docs.go 由 swag init 按需生成,需要 swag 依赖)
+example/docs/docs.go

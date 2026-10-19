@@ -1,0 +1,2941 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/arrays/int64s": {
+            "get": {
+                "description": "GetInt64Array",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "GetInt64Array",
+                "responses": {
+                    "200": {
+                        "description": "GetInt64Array响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetInt64ArrayRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/arrays/ints": {
+            "get": {
+                "description": "数组的各种写法:基础类型数组、对象数组、混合嵌套",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "数组的各种写法:基础类型数组、对象数组、混合嵌套",
+                "responses": {
+                    "200": {
+                        "description": "数组的各种写法:基础类型数组、对象数组、混合嵌套响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetIntArrayRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/arrays/objects": {
+            "get": {
+                "description": "对象数组:对应 res.list,会提升为 GetObjectArrayResListItem",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "对象数组:对应 res.list,会提升为 GetObjectArrayResListItem",
+                "responses": {
+                    "200": {
+                        "description": "对象数组:对应 res.list,会提升为 GetObjectArrayResListItem响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetObjectArrayRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/arrays/strings": {
+            "get": {
+                "description": "GetStringArray",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "GetStringArray",
+                "responses": {
+                    "200": {
+                        "description": "GetStringArray响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetStringArrayRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles": {
+            "get": {
+                "description": "文章列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cms"
+                ],
+                "summary": "文章列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "按作者过滤",
+                        "name": "authorId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "按标签过滤",
+                        "name": "tag",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "文章列表响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.ListArticlesRes"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "发布文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cms"
+                ],
+                "summary": "发布文章",
+                "parameters": [
+                    {
+                        "description": "发布文章请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PublishArticleReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "发布文章响应",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/:id": {
+            "get": {
+                "description": "无类型的路径参数,默认按 string",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "无类型的路径参数,默认按 string",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "无类型的路径参数,默认按 string响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetArticleRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/stats": {
+            "get": {
+                "description": "统计文章数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cms"
+                ],
+                "summary": "统计文章数据",
+                "responses": {
+                    "200": {
+                        "description": "统计文章数据响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetArticleStatsRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "description": "本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。 登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。 登录",
+                "parameters": [
+                    {
+                        "description": "本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。 登录请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。 登录响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.LoginRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "description": "退出登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "退出登录",
+                "parameters": [
+                    {
+                        "description": "退出登录请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LogoutAccountReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "退出登录响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "刷新令牌",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "刷新令牌",
+                "parameters": [
+                    {
+                        "description": "刷新令牌请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RefreshTokenReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "刷新令牌响应",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/characters/:id/skills": {
+            "get": {
+                "description": "查询角色技能列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "查询角色技能列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询角色技能列表响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetCharacterSkillsRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/config": {
+            "get": {
+                "description": "map 类型",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "map 类型",
+                "responses": {
+                    "200": {
+                        "description": "map 类型响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetConfigRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/config/a": {
+            "get": {
+                "description": "同名字段但结构不同 -\u003e 靠 ApiName 前缀区分,不会撞车",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "同名字段但结构不同 -\u003e 靠 ApiName 前缀区分,不会撞车",
+                "responses": {
+                    "200": {
+                        "description": "同名字段但结构不同 -\u003e 靠 ApiName 前缀区分,不会撞车响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetConfigARes"
+                        }
+                    }
+                }
+            }
+        },
+        "/config/b": {
+            "get": {
+                "description": "GetConfigB",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "GetConfigB",
+                "responses": {
+                    "200": {
+                        "description": "GetConfigB响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetConfigBRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/files": {
+            "post": {
+                "description": "单文件上传",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "单文件上传",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "上传的文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "单文件上传响应",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/files/:id": {
+            "get": {
+                "description": "文件信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "文件信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "文件信息响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetFileInfoRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/files/batch": {
+            "post": {
+                "description": "多文件上传",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "多文件上传",
+                "parameters": [
+                    {
+                        "description": "多文件上传请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UploadFilesReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "多文件上传响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.UploadFilesRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "没有 req 也没有 res",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "没有 req 也没有 res",
+                "responses": {
+                    "200": {
+                        "description": "没有 req 也没有 res响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "只有 req,没有 res",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "只有 req,没有 res",
+                "parameters": [
+                    {
+                        "description": "只有 req,没有 res请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LogoutReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "只有 req,没有 res响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifies": {
+            "get": {
+                "description": "查询通知列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "查询通知列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "按用户过滤",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否已读",
+                        "name": "read",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询通知列表响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.ListNotifiesRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifies/:id/read": {
+            "patch": {
+                "description": "标记通知已读",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "标记通知已读",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "标记通知已读响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifies/config": {
+            "get": {
+                "description": "扩展属性示例:map 类型",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "扩展属性示例:map 类型",
+                "responses": {
+                    "200": {
+                        "description": "扩展属性示例:map 类型响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetNotifyConfigRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/notify/sms": {
+            "post": {
+                "description": "发送短信验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "发送短信验证码",
+                "parameters": [
+                    {
+                        "description": "发送短信验证码请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.SendSmsCodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "发送短信验证码响应",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders": {
+            "get": {
+                "description": "订单列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "订单列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "按用户过滤",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "订单状态,如 unpaid/paid/shipped",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "订单列表响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.ListOrdersRes"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "创建订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "创建订单",
+                "parameters": [
+                    {
+                        "description": "创建订单请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateOrderReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "创建订单响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateOrderRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/:orderId": {
+            "get": {
+                "description": "订单详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "订单详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "orderId",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "订单详情响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetOrderInfoRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/:orderId/cancel": {
+            "patch": {
+                "description": "取消订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "取消订单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "orderId",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "取消订单响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/:orderId/detail": {
+            "get": {
+                "description": "数组套对象套对象",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "数组套对象套对象",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "orderId",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "数组套对象套对象响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetOrderDetailRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/orgs/:orgId/users/:userId": {
+            "get": {
+                "description": "多级路径参数",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "多级路径参数",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "orgId",
+                        "name": "orgId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "userId",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "多级路径参数响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetOrgUserRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "description": "空 req 对象",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "空 req 对象",
+                "responses": {
+                    "200": {
+                        "description": "空 req 对象响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/products": {
+            "get": {
+                "description": "商品列表查询",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "商品列表查询",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "搜索关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分类 id",
+                        "name": "categoryId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码,从 1 开始",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "商品列表查询响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.ListProductsRes"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "创建商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "创建商品",
+                "parameters": [
+                    {
+                        "description": "创建商品请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateProductReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "创建商品响应",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                }
+            }
+        },
+        "/products/:id": {
+            "get": {
+                "description": "商品详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "商品详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "商品详情响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetProductRes"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "更新商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "更新商品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "更新商品请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateProductReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "更新商品响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "删除商品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "删除商品响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/thresholds": {
+            "post": {
+                "description": "新增阈值",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "新增阈值",
+                "parameters": [
+                    {
+                        "description": "新增阈值请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateThresholdReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "新增阈值响应",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                }
+            }
+        },
+        "/thresholds/:id": {
+            "put": {
+                "description": "更新阈值",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "更新阈值",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "更新阈值请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateThresholdReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "更新阈值响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/time": {
+            "get": {
+                "description": "只有 res,没有 req",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "只有 res,没有 req",
+                "responses": {
+                    "200": {
+                        "description": "只有 res,没有 req响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetTimeRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "ListUsers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "ListUsers",
+                "responses": {
+                    "200": {
+                        "description": "ListUsers响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.ListUsersRes"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "基础增删改查 + 全量基础类型覆盖",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "基础增删改查 + 全量基础类型覆盖",
+                "parameters": [
+                    {
+                        "description": "基础增删改查 + 全量基础类型覆盖请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "基础增删改查 + 全量基础类型覆盖响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.CreateUserRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/:id/detail": {
+            "get": {
+                "description": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetUserDetailRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/:userId": {
+            "get": {
+                "description": "GetUser",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "GetUser",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "userId",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "GetUser响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetUserRes"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "UpdateUser",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "UpdateUser",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "userId",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "UpdateUser请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "UpdateUser响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "DeleteUser",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "DeleteUser",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "userId",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DeleteUser响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "PatchUser",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "PatchUser",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "userId",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "PatchUser请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PatchUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PatchUser响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/:userId/orders/:orderId": {
+            "get": {
+                "description": "多路径参数",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "多路径参数",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "userId",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "orderId",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "多路径参数响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetUserOrderRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/avatar": {
+            "post": {
+                "description": "上传头像(multipart 文件上传)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "上传头像(multipart 文件上传)",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "头像文件",
+                        "name": "avatar",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "上传头像(multipart 文件上传)响应",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/batch": {
+            "post": {
+                "description": "请求里带数组",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "请求里带数组",
+                "parameters": [
+                    {
+                        "description": "请求里带数组请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateBatchUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "请求里带数组响应",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/map": {
+            "get": {
+                "description": "GetUserMap",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "GetUserMap",
+                "responses": {
+                    "200": {
+                        "description": "GetUserMap响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetUserMapRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/profile": {
+            "get": {
+                "description": "用户详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "用户详情",
+                "responses": {
+                    "200": {
+                        "description": "用户详情响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetUserProfileRes"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "更新用户资料",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "更新用户资料",
+                "parameters": [
+                    {
+                        "description": "更新用户资料请求",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateUserProfileReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "更新用户资料响应",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/profile/:id": {
+            "get": {
+                "description": "根据ID获取用户详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "根据ID获取用户详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "根据ID获取用户详情响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetUserProfileVoRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/search": {
+            "get": {
+                "description": "GET 带 req(query 参数场景)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "GET 带 req(query 参数场景)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "keyword",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "pageSize",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "GET 带 req(query 参数场景)响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.SearchUserRes"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "multipart.FileHeader": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "header": {
+                    "$ref": "#/definitions/textproto.MIMEHeader"
+                },
+                "size": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "request.CreateBatchUserReq": {
+            "type": "object",
+            "properties": {
+                "ages": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/request.CreateBatchUserReqTagsItem"
+                    }
+                }
+            }
+        },
+        "request.CreateBatchUserReqTagsItem": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreateOrderReq": {
+            "type": "object",
+            "properties": {
+                "addressId": {
+                    "description": "收货地址 id",
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/request.CreateOrderReqItemsItem"
+                    }
+                },
+                "remark": {
+                    "description": "订单备注",
+                    "type": "string"
+                },
+                "userId": {
+                    "description": "下单用户 id",
+                    "type": "integer"
+                }
+            }
+        },
+        "request.CreateOrderReqItemsItem": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "购买数量",
+                    "type": "integer"
+                },
+                "productId": {
+                    "description": "商品 id",
+                    "type": "integer"
+                }
+            }
+        },
+        "request.CreateProductReq": {
+            "type": "object",
+            "properties": {
+                "detail": {
+                    "$ref": "#/definitions/request.CreateProductReqDetail"
+                },
+                "images": {
+                    "description": "商品图链接",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "price": {
+                    "description": "售价",
+                    "type": "number"
+                },
+                "title": {
+                    "description": "商品标题",
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreateProductReqDetail": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "description": "商品详情描述",
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreateThresholdReq": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "阈值名称",
+                    "type": "string"
+                },
+                "score": {
+                    "description": "阈值档位,如 easy/normal/hard",
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreateUserReq": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "birthday": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "ratio": {
+                    "type": "number"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "request.LoginReq": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "登录名",
+                    "type": "string"
+                }
+            }
+        },
+        "request.LogoutAccountReq": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "description": "访问令牌",
+                    "type": "string"
+                }
+            }
+        },
+        "request.LogoutReq": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.PatchUserReq": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.PublishArticleReq": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "正文",
+                    "type": "string"
+                },
+                "tags": {
+                    "description": "标签列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                }
+            }
+        },
+        "request.RefreshTokenReq": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "description": "旧的访问令牌",
+                    "type": "string"
+                }
+            }
+        },
+        "request.SendSmsCodeReq": {
+            "type": "object",
+            "properties": {
+                "phone": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "scene": {
+                    "description": "场景,如 login/register",
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateProductReq": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "description": "售价",
+                    "type": "number"
+                },
+                "title": {
+                    "description": "商品标题",
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateThresholdReq": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "新的阈值名称",
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateUserProfileReq": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "signature": {
+                    "description": "个性签名",
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateUserReq": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UploadFilesReq": {
+            "type": "object",
+            "properties": {
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/request.UploadFilesReqFilesItem"
+                    }
+                }
+            }
+        },
+        "request.UploadFilesReqFilesItem": {
+            "type": "object",
+            "properties": {
+                "file": {
+                    "description": "上传的文件",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/multipart.FileHeader"
+                        }
+                    ]
+                },
+                "key": {
+                    "description": "文件字段名",
+                    "type": "string"
+                }
+            }
+        },
+        "response.CreateOrderRes": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "订单总金额",
+                    "type": "number"
+                },
+                "orderId": {
+                    "description": "订单号",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.CreateUserRes": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetArticleByIdRes": {
+            "type": "object",
+            "properties": {
+                "authorId": {
+                    "description": "作者 id",
+                    "type": "integer"
+                },
+                "content": {
+                    "description": "正文",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "文章 id",
+                    "type": "integer"
+                },
+                "lastEdit": {
+                    "description": "距上次编辑的间隔",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/time.Duration"
+                        }
+                    ]
+                },
+                "publishAt": {
+                    "description": "发布时间",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetArticleRes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetArticleStatsRes": {
+            "type": "object",
+            "properties": {
+                "avgRead": {
+                    "description": "平均阅读量",
+                    "type": "number"
+                },
+                "cost": {
+                    "description": "统计耗时",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/time.Duration"
+                        }
+                    ]
+                },
+                "extra": {
+                    "description": "预留的扩展字段"
+                },
+                "online": {
+                    "description": "是否有在线文章",
+                    "type": "boolean"
+                },
+                "ratio": {
+                    "description": "同比增长率",
+                    "type": "number"
+                },
+                "today": {
+                    "description": "今日新增",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "文章总数",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetCharacterSkillsRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.GetCharacterSkillsResListItem"
+                    }
+                }
+            }
+        },
+        "response.GetCharacterSkillsResListItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "技能 id",
+                    "type": "integer"
+                },
+                "level": {
+                    "description": "已解锁的等级列表",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "description": "技能名称",
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetConfigARes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.GetConfigAResListItem"
+                    }
+                }
+            }
+        },
+        "response.GetConfigAResListItem": {
+            "type": "object",
+            "properties": {
+                "x": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetConfigBRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.GetConfigBResListItem"
+                    }
+                }
+            }
+        },
+        "response.GetConfigBResListItem": {
+            "type": "object",
+            "properties": {
+                "y": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetConfigRes": {
+            "type": "object",
+            "properties": {
+                "configs": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.GetFileInfoRes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "文件 id",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "文件名",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "文件大小,单位字节",
+                    "type": "integer"
+                },
+                "uploadAt": {
+                    "description": "上传时间",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "文件访问地址",
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetInt64ArrayRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "response.GetIntArrayRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "response.GetNotifyConfigRes": {
+            "type": "object",
+            "properties": {
+                "channels": {
+                    "description": "开启的通知渠道",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "extras": {
+                    "description": "渠道对应的扩展配置",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.GetObjectArrayRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.GetObjectArrayResListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetObjectArrayResListItem": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetOrderDetailRes": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.GetOrderDetailResItemsItem"
+                    }
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetOrderDetailResItemsItem": {
+            "type": "object",
+            "properties": {
+                "attrs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.GetOrderDetailResItemsItemAttrsItem"
+                    }
+                },
+                "price": {
+                    "type": "number"
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetOrderDetailResItemsItemAttrsItem": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetOrderInfoRes": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/response.GetOrderInfoResAddress"
+                },
+                "amount": {
+                    "description": "订单金额",
+                    "type": "number"
+                },
+                "orderId": {
+                    "description": "订单号",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "订单状态",
+                    "type": "string"
+                },
+                "userId": {
+                    "description": "下单用户 id",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetOrderInfoResAddress": {
+            "type": "object",
+            "properties": {
+                "detail": {
+                    "description": "收货地址",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "联系电话",
+                    "type": "string"
+                },
+                "receiver": {
+                    "description": "收货人",
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetOrderListRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.GetOrderListResListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetOrderListResListItem": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetOrgUserRes": {
+            "type": "object",
+            "properties": {
+                "orgId": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetProductRes": {
+            "type": "object",
+            "properties": {
+                "detail": {
+                    "$ref": "#/definitions/response.GetProductResDetail"
+                },
+                "id": {
+                    "description": "商品 id",
+                    "type": "integer"
+                },
+                "price": {
+                    "description": "售价",
+                    "type": "number"
+                },
+                "stock": {
+                    "description": "库存数量",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "商品标题",
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetProductResDetail": {
+            "type": "object",
+            "properties": {
+                "desc": {
+                    "description": "商品详情描述",
+                    "type": "string"
+                },
+                "images": {
+                    "description": "商品图链接",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.GetStringArrayRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.GetTimeRes": {
+            "type": "object",
+            "properties": {
+                "timestamp": {
+                    "type": "integer"
+                },
+                "timezone": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetUserDetailRes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "profile": {
+                    "$ref": "#/definitions/response.GetUserDetailResProfile"
+                }
+            }
+        },
+        "response.GetUserDetailResProfile": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/response.GetUserDetailResProfileAddress"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "bio": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetUserDetailResProfileAddress": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "province": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetUserMapRes": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            }
+        },
+        "response.GetUserOrderRes": {
+            "type": "object",
+            "properties": {
+                "orderId": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetUserProfileRes": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像地址",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "注册时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "用户 id",
+                    "type": "integer"
+                },
+                "level": {
+                    "description": "等级",
+                    "type": "integer"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "profile": {
+                    "$ref": "#/definitions/response.GetUserProfileResProfile"
+                },
+                "tags": {
+                    "description": "用户标签",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.GetUserProfileResProfile": {
+            "type": "object",
+            "properties": {
+                "gender": {
+                    "description": "性别",
+                    "type": "string"
+                },
+                "signature": {
+                    "description": "个性签名",
+                    "type": "string"
+                }
+            }
+        },
+        "response.GetUserProfileVoRes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "用户ID",
+                    "type": "integer"
+                },
+                "profile": {
+                    "$ref": "#/definitions/response.GetUserProfileVoResProfile"
+                }
+            }
+        },
+        "response.GetUserProfileVoResProfile": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.GetUserRes": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ListArticlesRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ListArticlesResListItem"
+                    }
+                },
+                "total": {
+                    "description": "总条数",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.ListArticlesResListItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "文章 id",
+                    "type": "integer"
+                },
+                "readCount": {
+                    "description": "阅读次数",
+                    "type": "integer"
+                },
+                "summary": {
+                    "description": "摘要",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                }
+            }
+        },
+        "response.ListNotifiesRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ListNotifiesResListItem"
+                    }
+                },
+                "total": {
+                    "description": "总条数",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.ListNotifiesResListItem": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "通知内容",
+                    "type": "string"
+                },
+                "createAt": {
+                    "description": "通知时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "通知 id",
+                    "type": "integer"
+                },
+                "read": {
+                    "description": "是否已读",
+                    "type": "boolean"
+                },
+                "title": {
+                    "description": "通知标题",
+                    "type": "string"
+                }
+            }
+        },
+        "response.ListOrdersRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ListOrdersResListItem"
+                    }
+                },
+                "total": {
+                    "description": "总条数",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.ListOrdersResListItem": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "订单金额",
+                    "type": "number"
+                },
+                "createAt": {
+                    "description": "下单时间",
+                    "type": "string"
+                },
+                "orderId": {
+                    "description": "订单号",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "订单状态",
+                    "type": "string"
+                }
+            }
+        },
+        "response.ListProductsRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ListProductsResListItem"
+                    }
+                },
+                "total": {
+                    "description": "总条数",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.ListProductsResListItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "商品 id",
+                    "type": "integer"
+                },
+                "price": {
+                    "description": "售价",
+                    "type": "number"
+                },
+                "tags": {
+                    "description": "商品标签",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "description": "商品标题",
+                    "type": "string"
+                }
+            }
+        },
+        "response.ListUsersRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ListUsersResListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.ListUsersResListItem": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.LoginRes": {
+            "type": "object",
+            "properties": {
+                "expireIn": {
+                    "description": "令牌有效期,单位秒",
+                    "type": "integer"
+                },
+                "token": {
+                    "description": "访问令牌",
+                    "type": "string"
+                }
+            }
+        },
+        "response.SearchUserRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.SearchUserResListItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.SearchUserResListItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.UploadFilesRes": {
+            "type": "object",
+            "properties": {
+                "urls": {
+                    "description": "文件访问地址列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "textproto.MIMEHeader": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        },
+        "time.Duration": {
+            "type": "integer",
+            "format": "int64",
+            "enum": [
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000
+            ],
+            "x-enum-varnames": [
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour"
+            ]
+        }
+    }
+}

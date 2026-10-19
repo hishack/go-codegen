@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"codegen-example/internal/model/gen/request"
+	"codegen-example/internal/validate"
 	"codegen-example/pkg/errorutil"
 
 	"github.com/gin-gonic/gin"
@@ -302,11 +303,11 @@ func TestBusinessErrorCode(t *testing.T) {
 		t.Fatal("期望报错")
 	}
 	be := errorutil.ConvertError(err)
-	if be.Code != errUserNotFound.Code {
-		t.Errorf("错误码不对: 期望 %d,实际 %d", errUserNotFound.Code, be.Code)
+	if be.Code != validate.NotFound.Code {
+		t.Errorf("错误码不对: 期望 %d,实际 %d", validate.NotFound.Code, be.Code)
 	}
 	// wrap 应保留原始描述并追加上下文
-	if be.Message != "用户不存在: id=999" {
+	if be.Message != "资源不存在: 用户 id=999" {
 		t.Errorf("错误描述不对: %q", be.Message)
 	}
 }
