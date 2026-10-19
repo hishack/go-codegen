@@ -1,18 +1,37 @@
-# IDE
+# ===== IDE =====
 .idea/
 .vscode/
 
-# 构建产物
+# ===== Go 构建/测试产物 =====
 *.exe
 *.exe~
-dist/
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin/
+/gen
+/dist/
 
-# 运行时产物
+# 编译缓存目录(误入仓库时清理)
+gopath/
+
+# ===== 运行时产物 =====
 tmp/
 *.log
 
-# 工具状态
+# ===== 工具状态 =====
 .workbuddy/
 
-# 依赖目录(示例工程使用 go module,无需 vendor)
+# ===== 依赖目录(示例工程使用 go module,无需 vendor) =====
 node_modules/
+
+# ===== 前端产物 =====
+example/web/dist/
+example/web/.vite/
+example/web/node_modules/
+
+# ===== 生成器临时/实验目录 =====
+# example/cmd/gen/yaml 为手工试验用的临时输入,不入库
+example/cmd/gen/yaml/
