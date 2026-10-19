@@ -138,6 +138,37 @@ handler 胶水按请求形态自动选择 gin 绑定方式:
 文件下载是纯响应行为(不产生结构体),按 gin 惯例在 logic 返回内容、
 handler 里用 `c.File` / `c.Data` 输出即可,生成器不干预。
 
+## 自动生成的校验与状态码
+
+请求结构体会按字段类型自动带上 `binding` 标签,无需在 yaml 里声明:
+
+| 字段形态 | 生成的标签 |
+| --- | --- |
+| 关键标识(`name` / `title` / `userName` / `password` / `phone` / `email`) | `required,max=255` |
+| 其他 string | `omitempty,max=255` |
+| 整型 / 浮点 | `omitempty,gte=0` |
+| bool | `omitempty` |
+| 嵌套对象 / 切片 | `omitempty,dive` |
+| 时间 / file | `omitempty` |
+
+handler 按错误来源返回不同状态码,不再一律 200:
+
+```go
+if err := c.ShouldBindJSON(&req); err != nil {
+    c.JSON(http.StatusBadRequest, ...)   // 参数/绑定错误 -> 400
+    return
+}
+data, err := u.userService.CreateUser(c, req)
+if err != nil {
+    c.JSON(errorutil.HTTPStatusOf(err), ...)   // 业务失败 -> 422
+    return
+}
+c.JSON(http.StatusOK, ...)                // 成功 -> 200
+```
+
+`errorutil` 需要提供 `HTTPStatusOf(err) int`,参考
+`example/pkg/errorutil/business_error.go`。
+
 ## 命名约定
 
 以 user.yaml + 接口 CreateUser:
@@ -187,9 +218,13 @@ RegisterGenerator(func(cfg *config.CodeGenConfig) Generator { return NewMyGen(cf
 | --- | --- |
 | `yaml` | 输入的 yaml 目录 |
 | `module` | 目标工程 go module 名(拼 import 路径) |
+| `group` | 路由分组前缀(可选,如 `/api/v1`),生成路由、swagger、前端 url 时统一加上 |
 | `serviceOut` / `modelOut` / `logicOut` / `handlerOut` / `routerOut` | 目标工程各层目录(modelOut 下自动分 request/ response/ 子包) |
 | `webOut` | 前端 ts 目录(留空跳过) |
 | `author` / `github` | 写入生成文件头 |
+
+`group` 的写法很自由,`api/v1`、`/api/v1/`、`/api/v1` 都会被归一化成 `/api/v1`。
+同一目标工程的各份配置应使用一致的前缀,否则跨配置冲突检测会失效。
 
 ## 目录结构
 

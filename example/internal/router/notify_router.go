@@ -12,7 +12,7 @@ type NotifyRouter struct{}
 
 // InitNotifyRouter 注册Notify模块路由(路由列表由 yaml 生成)
 func (s *NotifyRouter) InitNotifyRouter(Router *gin.RouterGroup, notifyHandler *handler.NotifyHandler) (R gin.IRoutes) {
-	notifyRouter := Router.Group("")
+	notifyRouter := Router.Group("/api/v1")
 	{
 		notifyRouter.POST("/notify/sms", notifyHandler.SendSmsCode)
 		notifyRouter.GET("/notifies", notifyHandler.ListNotifies)

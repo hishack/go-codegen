@@ -4,17 +4,17 @@ package request
 
 type LoginReq struct {
 	// 登录名
-	Username string `json:"username" form:"username"`
+	Username string `json:"username" form:"username" binding:"required,max=255"`
 	// 密码
-	Password string `json:"password" form:"password"`
+	Password string `json:"password" form:"password" binding:"required,max=255"`
 }
 
 type RefreshTokenReq struct {
 	// 旧的访问令牌
-	Token string `json:"token" form:"token"`
+	Token string `json:"token" form:"token" binding:"omitempty,max=255"`
 }
 
 type LogoutAccountReq struct {
 	// 访问令牌
-	Token string `json:"token" form:"token"`
+	Token string `json:"token" form:"token" binding:"omitempty,max=255"`
 }

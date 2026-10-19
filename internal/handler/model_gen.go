@@ -138,31 +138,139 @@ func (g *ModelGen) genResponse(d *domain, report *Report) error {
 // ============ 结构体渲染 ============
 
 // structText 渲染一个结构体声明。
-// isReq=true 时字段 tag 为 json+form(gin 的 query/form 绑定依赖 form 标签);
-// file 字段按参考工程惯例只留 form 标签(multipart 不走 json)
+// isReq=true 时字段 tag 为 json+form+binding(gin 的 query/form 绑定依赖 form 标签,
+// 校验依赖 binding 标签);file 字段按参考工程惯例只留 form 标签(multipart 不走 json)
 func structText(s *field.Struct, isReq bool) string {
-	var b strings.Builder
-	if s.Comment != "" {
-		b.WriteString("// " + s.Name + " " + s.Comment + "\n")
+	type row struct {
+		comment string
+		name    string
+		typ     string
+		tag     string
 	}
-	b.WriteString("type " + s.Name + " struct {\n")
+	var rows []row
+	nameW, typeW := 0, 0
 	for _, fl := range s.Fields {
-		if fl.Comment != "" {
-			b.WriteString("\t// " + fl.Comment + "\n")
-		}
 		var tag string
 		switch {
 		case fl.Type.IsFile():
 			tag = `form:"` + fl.Tag + `"`
 		case isReq:
 			tag = `json:"` + fl.Tag + `" form:"` + fl.Tag + `"`
+			if bt := bindingTag(fl); bt != "" {
+				tag += ` binding:"` + bt + `"`
+			}
 		default:
 			tag = `json:"` + fl.Tag + `"`
 		}
-		b.WriteString("\t" + fl.Name + " " + fl.Type.GoString() + " `" + tag + "`\n")
+		// swag 不认识 time.Duration(底层是int64),会报
+		// "cannot find type definition",补 swaggertype 让它按整数输出
+		if fl.Type.Kind == field.KindPrimitive && fl.Type.Name == "time.Duration" {
+			tag += ` swaggertype:"integer"`
+		}
+		typ := fl.Type.GoString()
+		if len(fl.Name) > nameW {
+			nameW = len(fl.Name)
+		}
+		if len(typ) > typeW {
+			typeW = len(typ)
+		}
+		rows = append(rows, row{comment: fl.Comment, name: fl.Name, typ: typ, tag: tag})
+	}
+
+	var b strings.Builder
+	if s.Comment != "" {
+		b.WriteString("// " + s.Name + " " + s.Comment + "\n")
+	}
+	b.WriteString("type " + s.Name + " struct {\n")
+	// 字段名与类型按列对齐,与 gofmt 的输出保持一致
+	for _, r := range rows {
+		if r.comment != "" {
+			b.WriteString("\t// " + r.comment + "\n")
+		}
+		b.WriteString("\t" + r.name +
+			strings.Repeat(" ", nameW-len(r.name)+1) +
+			r.typ +
+			strings.Repeat(" ", typeW-len(r.typ)+1) +
+			"`" + r.tag + "`\n")
 	}
 	b.WriteString("}")
 	return b.String()
+}
+
+// bindingTag 按字段类型与命名自动推导 gin 的 binding 校验规则。
+//
+// yaml 里不必显式声明约束,生成器已知类型即可给出基础校验,
+// 让非法请求在 ShouldBind 阶段就被拦下,不必把脏数据传给 logic 层。
+//
+// 推导规则:
+//
+//	关键标识字段(name/title/... 的 string) -> required,max=255
+//	其余 string-> omitempty,max=255
+//	整型 / 浮点                              -> omitempty,gte=0
+//	bool                                    -> omitempty
+//	嵌套对象 / 切片                          -> omitempty,dive
+//	时间、any、file                         -> omitempty
+//
+// 注意:切片与嵌套对象一律用 omitempty 而非 required。
+// yaml 里无法区分"必填数组"与"可选数组",一律强制必填会让
+// 合法请求被误拒(如可选的附件列表),因此只校验"传了之后是否合法"。
+func bindingTag(f *field.Field) string {
+	if f == nil || f.Type == nil {
+		return ""
+	}
+	switch f.Type.Kind {
+	case field.KindPrimitive:
+		switch f.Type.Name {
+		case "string":
+			if isKeyIdent(f) {
+				return "required,max=255"
+			}
+			return "omitempty,max=255"
+		case "int", "int8", "int16", "int32", "int64",
+			"uint", "uint8", "uint16", "uint32", "uint64",
+			"float32", "float64":
+			return "omitempty,gte=0"
+		default:
+			return "omitempty"
+		}
+	case field.KindStruct, field.KindSlice:
+		return "omitempty,dive"
+	default:
+		return "omitempty"
+	}
+}
+
+// keyIdents 视为"关键标识"的字段名,命中则要求必填
+var keyIdents = map[string]bool{
+	"name": true, "title": true, "username": true,
+	"password": true, "phone": true, "email": true,
+}
+
+// isKeyIdent 判断字段是否属于"缺失即无意义"的关键标识字段。
+//
+// 只按"完整的词"匹配,不按字符串后缀:userName 的末段是 Name 算命中,
+// 而 nickname 整体是一个词、并非 name 的派生,不应被判为必填,
+// 否则可选的昵称字段会被误判成必填,合法请求直接被拒
+func isKeyIdent(f *field.Field) bool {
+	if f.OmitEmpty {
+		return false
+	}
+	return keyIdents[identOf(f.Tag)]
+}
+
+// identOf 取字段名的末段单词:userName -> name、user_name -> name、nickname -> nickname
+func identOf(tag string) string {
+	if i := strings.LastIndexAny(tag, "_-"); i >= 0 {
+		return strings.ToLower(tag[i+1:])
+	}
+	// 驼峰:从末尾往前找每个大写字母的起点
+	runes := []rune(tag)
+	for i := len(runes) - 1; i > 0; i-- {
+		if runes[i] >= 'A' && runes[i] <= 'Z' {
+			return strings.ToLower(string(runes[i:]))
+		}
+	}
+	return strings.ToLower(tag)
 }
 
 // structTypes 收集 root 结构体及其全部嵌套结构体(含数组元素),按声明顺序返回

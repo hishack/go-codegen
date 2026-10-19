@@ -98,7 +98,7 @@ export class UserApi {
   /** 基础增删改查 + 全量基础类型覆盖 */
   async createUser(req: CreateUserReq): Promise<ApiResp<CreateUserRes>> {
     return axios({
-      url: `/users`,
+      url: `/api/v1/users`,
       method: "post",
       data: req,
     });
@@ -107,7 +107,7 @@ export class UserApi {
   /** GetUser */
   async getUser(req: GetUserReq): Promise<ApiResp<GetUserRes>> {
     return axios({
-      url: `/users/${req.userId}`,
+      url: `/api/v1/users/${req.userId}`,
       method: "get",
       params: req,
     });
@@ -116,7 +116,7 @@ export class UserApi {
   /** ListUsers */
   async listUsers(): Promise<ApiResp<ListUsersRes>> {
     return axios({
-      url: `/users`,
+      url: `/api/v1/users`,
       method: "get",
     });
   }
@@ -124,7 +124,7 @@ export class UserApi {
   /** UpdateUser */
   async updateUser(req: UpdateUserReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/users/${req.userId}`,
+      url: `/api/v1/users/${req.userId}`,
       method: "put",
       data: req,
     });
@@ -133,7 +133,7 @@ export class UserApi {
   /** PatchUser */
   async patchUser(req: PatchUserReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/users/${req.userId}`,
+      url: `/api/v1/users/${req.userId}`,
       method: "patch",
       data: req,
     });
@@ -142,7 +142,7 @@ export class UserApi {
   /** DeleteUser */
   async deleteUser(req: DeleteUserReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/users/${req.userId}`,
+      url: `/api/v1/users/${req.userId}`,
       method: "delete",
       params: req,
     });
@@ -151,7 +151,7 @@ export class UserApi {
   /** 根据ID获取用户详情 */
   async getUserProfileVo(req: GetUserProfileVoReq): Promise<ApiResp<GetUserProfileVoRes>> {
     return axios({
-      url: `/users/profile/${req.id}`,
+      url: `/api/v1/users/profile/${req.id}`,
       method: "get",
       params: req,
     });
@@ -160,7 +160,7 @@ export class UserApi {
   /** 上传头像(multipart 文件上传) */
   async uploadAvatar(req: UploadAvatarReq): Promise<ApiResp<string>> {
     return axios({
-      url: `/users/avatar`,
+      url: `/api/v1/users/avatar`,
       method: "post",
       data: req,
     });

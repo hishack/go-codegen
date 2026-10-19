@@ -117,7 +117,7 @@ export class ArticleApi {
   /** 文章列表 */
   async listArticles(req: ListArticlesReq): Promise<ApiResp<ListArticlesRes>> {
     return axios({
-      url: `/articles`,
+      url: `/api/v1/articles`,
       method: "get",
       params: req,
     });
@@ -126,7 +126,7 @@ export class ArticleApi {
   /** 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles */
   async getArticleById(req: GetArticleByIdReq): Promise<ApiResp<GetArticleByIdRes>> {
     return axios({
-      url: `/cms-articles/${req.id}`,
+      url: `/api/v1/cms-articles/${req.id}`,
       method: "get",
       params: req,
     });
@@ -135,7 +135,7 @@ export class ArticleApi {
   /** 发布文章 */
   async publishArticle(req: PublishArticleReq): Promise<ApiResp<number>> {
     return axios({
-      url: `/articles`,
+      url: `/api/v1/articles`,
       method: "post",
       data: req,
     });
@@ -144,7 +144,7 @@ export class ArticleApi {
   /** 统计文章数据 */
   async getArticleStats(): Promise<ApiResp<GetArticleStatsRes>> {
     return axios({
-      url: `/articles/stats`,
+      url: `/api/v1/articles/stats`,
       method: "get",
     });
   }
@@ -152,7 +152,7 @@ export class ArticleApi {
   /** 统计文章数据1 */
   async getArticleStats1(): Promise<ApiResp<GetArticleStats1Res>> {
     return axios({
-      url: `/articles/stats1`,
+      url: `/api/v1/articles/stats1`,
       method: "get",
     });
   }
@@ -160,7 +160,7 @@ export class ArticleApi {
   /** 统计文章数据2 */
   async getArticleStats2(): Promise<ApiResp<GetArticleStats2Res>> {
     return axios({
-      url: `/articles/stats2`,
+      url: `/api/v1/articles/stats2`,
       method: "get",
     });
   }

@@ -4,7 +4,7 @@
         "contact": {}
     },
     "paths": {
-        "/arrays/int64s": {
+        "/api/v1/arrays/int64s": {
             "get": {
                 "description": "GetInt64Array",
                 "consumes": [
@@ -27,7 +27,7 @@
                 }
             }
         },
-        "/arrays/ints": {
+        "/api/v1/arrays/ints": {
             "get": {
                 "description": "数组的各种写法:基础类型数组、对象数组、混合嵌套",
                 "consumes": [
@@ -50,7 +50,7 @@
                 }
             }
         },
-        "/arrays/objects": {
+        "/api/v1/arrays/objects": {
             "get": {
                 "description": "对象数组:对应 res.list,会提升为 GetObjectArrayResListItem",
                 "consumes": [
@@ -73,7 +73,7 @@
                 }
             }
         },
-        "/arrays/strings": {
+        "/api/v1/arrays/strings": {
             "get": {
                 "description": "GetStringArray",
                 "consumes": [
@@ -96,7 +96,7 @@
                 }
             }
         },
-        "/articles": {
+        "/api/v1/articles": {
             "get": {
                 "description": "文章列表",
                 "consumes": [
@@ -112,6 +112,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "按作者过滤",
                         "name": "authorId",
                         "in": "query"
@@ -166,7 +167,7 @@
                 }
             }
         },
-        "/articles/:id": {
+        "/api/v1/articles/:id": {
             "get": {
                 "description": "无类型的路径参数,默认按 string",
                 "consumes": [
@@ -198,7 +199,7 @@
                 }
             }
         },
-        "/articles/stats": {
+        "/api/v1/articles/stats": {
             "get": {
                 "description": "统计文章数据",
                 "consumes": [
@@ -221,7 +222,53 @@
                 }
             }
         },
-        "/auth/login": {
+        "/api/v1/articles/stats1": {
+            "get": {
+                "description": "统计文章数据1",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cms"
+                ],
+                "summary": "统计文章数据1",
+                "responses": {
+                    "200": {
+                        "description": "统计文章数据1响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetArticleStats1Res"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/articles/stats2": {
+            "get": {
+                "description": "统计文章数据2",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cms"
+                ],
+                "summary": "统计文章数据2",
+                "responses": {
+                    "200": {
+                        "description": "统计文章数据2响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetArticleStats2Res"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
             "post": {
                 "description": "本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。 登录",
                 "consumes": [
@@ -255,7 +302,7 @@
                 }
             }
         },
-        "/auth/logout": {
+        "/api/v1/auth/logout": {
             "post": {
                 "description": "退出登录",
                 "consumes": [
@@ -289,7 +336,7 @@
                 }
             }
         },
-        "/auth/refresh": {
+        "/api/v1/auth/refresh": {
             "post": {
                 "description": "刷新令牌",
                 "consumes": [
@@ -323,7 +370,7 @@
                 }
             }
         },
-        "/characters/:id/skills": {
+        "/api/v1/characters/:id/skills": {
             "get": {
                 "description": "查询角色技能列表",
                 "consumes": [
@@ -339,6 +386,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "id",
                         "name": "id",
                         "in": "path",
@@ -355,7 +403,40 @@
                 }
             }
         },
-        "/config": {
+        "/api/v1/cms-articles/:id": {
+            "get": {
+                "description": "文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cms"
+                ],
+                "summary": "文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetArticleByIdRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/config": {
             "get": {
                 "description": "map 类型",
                 "consumes": [
@@ -378,7 +459,7 @@
                 }
             }
         },
-        "/config/a": {
+        "/api/v1/config/a": {
             "get": {
                 "description": "同名字段但结构不同 -\u003e 靠 ApiName 前缀区分,不会撞车",
                 "consumes": [
@@ -401,7 +482,7 @@
                 }
             }
         },
-        "/config/b": {
+        "/api/v1/config/b": {
             "get": {
                 "description": "GetConfigB",
                 "consumes": [
@@ -424,7 +505,7 @@
                 }
             }
         },
-        "/files": {
+        "/api/v1/files": {
             "post": {
                 "description": "单文件上传",
                 "consumes": [
@@ -456,7 +537,7 @@
                 }
             }
         },
-        "/files/:id": {
+        "/api/v1/files/:id": {
             "get": {
                 "description": "文件信息",
                 "consumes": [
@@ -472,6 +553,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "id",
                         "name": "id",
                         "in": "path",
@@ -488,7 +570,7 @@
                 }
             }
         },
-        "/files/batch": {
+        "/api/v1/files/batch": {
             "post": {
                 "description": "多文件上传",
                 "consumes": [
@@ -522,7 +604,7 @@
                 }
             }
         },
-        "/health": {
+        "/api/v1/health": {
             "get": {
                 "description": "没有 req 也没有 res",
                 "consumes": [
@@ -545,7 +627,7 @@
                 }
             }
         },
-        "/logout": {
+        "/api/v1/logout": {
             "post": {
                 "description": "只有 req,没有 res",
                 "consumes": [
@@ -579,7 +661,7 @@
                 }
             }
         },
-        "/notifies": {
+        "/api/v1/notifies": {
             "get": {
                 "description": "查询通知列表",
                 "consumes": [
@@ -595,6 +677,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "按用户过滤",
                         "name": "userId",
                         "in": "query"
@@ -616,7 +699,7 @@
                 }
             }
         },
-        "/notifies/:id/read": {
+        "/api/v1/notifies/:id/read": {
             "patch": {
                 "description": "标记通知已读",
                 "consumes": [
@@ -632,6 +715,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "id",
                         "name": "id",
                         "in": "path",
@@ -648,7 +732,7 @@
                 }
             }
         },
-        "/notifies/config": {
+        "/api/v1/notifies/config": {
             "get": {
                 "description": "扩展属性示例:map 类型",
                 "consumes": [
@@ -671,7 +755,7 @@
                 }
             }
         },
-        "/notify/sms": {
+        "/api/v1/notify/sms": {
             "post": {
                 "description": "发送短信验证码",
                 "consumes": [
@@ -705,9 +789,9 @@
                 }
             }
         },
-        "/orders": {
+        "/api/v1/orders": {
             "get": {
-                "description": "订单列表",
+                "description": "多字段对象数组",
                 "consumes": [
                     "application/json"
                 ],
@@ -715,40 +799,14 @@
                     "application/json"
                 ],
                 "tags": [
-                    "mall"
+                    "system"
                 ],
-                "summary": "订单列表",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "按用户过滤",
-                        "name": "userId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "订单状态,如 unpaid/paid/shipped",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页条数",
-                        "name": "pageSize",
-                        "in": "query"
-                    }
-                ],
+                "summary": "多字段对象数组",
                 "responses": {
                     "200": {
-                        "description": "订单列表响应",
+                        "description": "多字段对象数组响应",
                         "schema": {
-                            "$ref": "#/definitions/response.ListOrdersRes"
+                            "$ref": "#/definitions/response.GetOrderListRes"
                         }
                     }
                 }
@@ -786,7 +844,7 @@
                 }
             }
         },
-        "/orders/:orderId": {
+        "/api/v1/orders/:orderId": {
             "get": {
                 "description": "订单详情",
                 "consumes": [
@@ -802,6 +860,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "orderId",
                         "name": "orderId",
                         "in": "path",
@@ -818,7 +877,7 @@
                 }
             }
         },
-        "/orders/:orderId/cancel": {
+        "/api/v1/orders/:orderId/cancel": {
             "patch": {
                 "description": "取消订单",
                 "consumes": [
@@ -834,6 +893,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "orderId",
                         "name": "orderId",
                         "in": "path",
@@ -850,7 +910,7 @@
                 }
             }
         },
-        "/orders/:orderId/detail": {
+        "/api/v1/orders/:orderId/detail": {
             "get": {
                 "description": "数组套对象套对象",
                 "consumes": [
@@ -866,6 +926,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "orderId",
                         "name": "orderId",
                         "in": "path",
@@ -882,7 +943,7 @@
                 }
             }
         },
-        "/orgs/:orgId/users/:userId": {
+        "/api/v1/orgs/:orgId/users/:userId": {
             "get": {
                 "description": "多级路径参数",
                 "consumes": [
@@ -898,6 +959,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "orgId",
                         "name": "orgId",
                         "in": "path",
@@ -905,6 +967,7 @@
                     },
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "userId",
                         "name": "userId",
                         "in": "path",
@@ -921,7 +984,7 @@
                 }
             }
         },
-        "/ping": {
+        "/api/v1/ping": {
             "get": {
                 "description": "空 req 对象",
                 "consumes": [
@@ -944,7 +1007,7 @@
                 }
             }
         },
-        "/products": {
+        "/api/v1/products": {
             "get": {
                 "description": "商品列表查询",
                 "consumes": [
@@ -966,18 +1029,21 @@
                     },
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "分类 id",
                         "name": "categoryId",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "format": "int32",
                         "description": "页码,从 1 开始",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "format": "int32",
                         "description": "每页条数",
                         "name": "pageSize",
                         "in": "query"
@@ -1026,7 +1092,7 @@
                 }
             }
         },
-        "/products/:id": {
+        "/api/v1/products/:id": {
             "get": {
                 "description": "商品详情",
                 "consumes": [
@@ -1042,6 +1108,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "id",
                         "name": "id",
                         "in": "path",
@@ -1072,6 +1139,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "id",
                         "name": "id",
                         "in": "path",
@@ -1111,6 +1179,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "id",
                         "name": "id",
                         "in": "path",
@@ -1127,7 +1196,7 @@
                 }
             }
         },
-        "/thresholds": {
+        "/api/v1/thresholds": {
             "post": {
                 "description": "新增阈值",
                 "consumes": [
@@ -1162,7 +1231,7 @@
                 }
             }
         },
-        "/thresholds/:id": {
+        "/api/v1/thresholds/:id": {
             "put": {
                 "description": "更新阈值",
                 "consumes": [
@@ -1178,6 +1247,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "id",
                         "name": "id",
                         "in": "path",
@@ -1203,7 +1273,7 @@
                 }
             }
         },
-        "/time": {
+        "/api/v1/time": {
             "get": {
                 "description": "只有 res,没有 req",
                 "consumes": [
@@ -1226,7 +1296,59 @@
                 }
             }
         },
-        "/users": {
+        "/api/v1/user-orders": {
+            "get": {
+                "description": "订单列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mall"
+                ],
+                "summary": "订单列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "按用户过滤",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "订单状态,如 unpaid/paid/shipped",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "每页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "订单列表响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.ListOrdersRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
             "get": {
                 "description": "ListUsers",
                 "consumes": [
@@ -1281,39 +1403,7 @@
                 }
             }
         },
-        "/users/:id/detail": {
-            "get": {
-                "description": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "system"
-                ],
-                "summary": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress响应",
-                        "schema": {
-                            "$ref": "#/definitions/response.GetUserDetailRes"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/:userId": {
+        "/api/v1/users/:userId": {
             "get": {
                 "description": "GetUser",
                 "consumes": [
@@ -1329,6 +1419,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "userId",
                         "name": "userId",
                         "in": "path",
@@ -1359,6 +1450,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "userId",
                         "name": "userId",
                         "in": "path",
@@ -1398,6 +1490,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "userId",
                         "name": "userId",
                         "in": "path",
@@ -1428,6 +1521,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "userId",
                         "name": "userId",
                         "in": "path",
@@ -1453,7 +1547,40 @@
                 }
             }
         },
-        "/users/:userId/orders/:orderId": {
+        "/api/v1/users/:userId/detail": {
+            "get": {
+                "description": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "userId",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "深度嵌套:res 会提升出多层命名结构体 UserRes -\u003e UserResProfile -\u003e UserResProfileAddress响应",
+                        "schema": {
+                            "$ref": "#/definitions/response.GetUserDetailRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/:userId/orders/:orderId": {
             "get": {
                 "description": "多路径参数",
                 "consumes": [
@@ -1469,6 +1596,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "userId",
                         "name": "userId",
                         "in": "path",
@@ -1476,6 +1604,7 @@
                     },
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "orderId",
                         "name": "orderId",
                         "in": "path",
@@ -1492,7 +1621,7 @@
                 }
             }
         },
-        "/users/avatar": {
+        "/api/v1/users/avatar": {
             "post": {
                 "description": "上传头像(multipart 文件上传)",
                 "consumes": [
@@ -1524,7 +1653,7 @@
                 }
             }
         },
-        "/users/batch": {
+        "/api/v1/users/batch": {
             "post": {
                 "description": "请求里带数组",
                 "consumes": [
@@ -1559,7 +1688,7 @@
                 }
             }
         },
-        "/users/map": {
+        "/api/v1/users/map": {
             "get": {
                 "description": "GetUserMap",
                 "consumes": [
@@ -1582,7 +1711,7 @@
                 }
             }
         },
-        "/users/profile": {
+        "/api/v1/users/profile": {
             "get": {
                 "description": "用户详情",
                 "consumes": [
@@ -1637,7 +1766,7 @@
                 }
             }
         },
-        "/users/profile/:id": {
+        "/api/v1/users/profile/:id": {
             "get": {
                 "description": "根据ID获取用户详情",
                 "consumes": [
@@ -1653,6 +1782,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "format": "int64",
                         "description": "id",
                         "name": "id",
                         "in": "path",
@@ -1669,7 +1799,7 @@
                 }
             }
         },
-        "/users/search": {
+        "/api/v1/users/search": {
             "get": {
                 "description": "GET 带 req(query 参数场景)",
                 "consumes": [
@@ -1691,12 +1821,14 @@
                     },
                     {
                         "type": "integer",
+                        "format": "int32",
                         "description": "page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "format": "int32",
                         "description": "pageSize",
                         "name": "pageSize",
                         "in": "query"
@@ -1714,21 +1846,6 @@
         }
     },
     "definitions": {
-        "multipart.FileHeader": {
-            "type": "object",
-            "properties": {
-                "filename": {
-                    "type": "string"
-                },
-                "header": {
-                    "$ref": "#/definitions/textproto.MIMEHeader"
-                },
-                "size": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
         "request.CreateBatchUserReq": {
             "type": "object",
             "properties": {
@@ -1756,10 +1873,12 @@
             "type": "object",
             "properties": {
                 "key": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "value": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -1768,7 +1887,8 @@
             "properties": {
                 "addressId": {
                     "description": "收货地址 id",
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "items": {
                     "type": "array",
@@ -1778,11 +1898,13 @@
                 },
                 "remark": {
                     "description": "订单备注",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "userId": {
                     "description": "下单用户 id",
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         },
@@ -1791,16 +1913,21 @@
             "properties": {
                 "count": {
                     "description": "购买数量",
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "productId": {
                     "description": "商品 id",
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         },
         "request.CreateProductReq": {
             "type": "object",
+            "required": [
+                "title"
+            ],
             "properties": {
                 "detail": {
                     "$ref": "#/definitions/request.CreateProductReqDetail"
@@ -1814,11 +1941,13 @@
                 },
                 "price": {
                     "description": "售价",
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "title": {
                     "description": "商品标题",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -1827,74 +1956,98 @@
             "properties": {
                 "desc": {
                     "description": "商品详情描述",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "request.CreateThresholdReq": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "name": {
                     "description": "阈值名称",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "score": {
                     "description": "阈值档位,如 easy/normal/hard",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "request.CreateUserReq": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "age": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "birthday": {
                     "type": "string"
                 },
                 "count": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "duration": {
-                    "$ref": "#/definitions/time.Duration"
+                    "type": "integer"
                 },
                 "enabled": {
                     "type": "boolean"
                 },
                 "height": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "level": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "nickname": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "ratio": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "score": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "weight": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 }
             }
         },
         "request.LoginReq": {
             "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
             "properties": {
                 "password": {
                     "description": "密码",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "username": {
                     "description": "登录名",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -1903,7 +2056,8 @@
             "properties": {
                 "token": {
                     "description": "访问令牌",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -1911,7 +2065,8 @@
             "type": "object",
             "properties": {
                 "token": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -1919,16 +2074,21 @@
             "type": "object",
             "properties": {
                 "nickname": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "request.PublishArticleReq": {
             "type": "object",
+            "required": [
+                "title"
+            ],
             "properties": {
                 "content": {
                     "description": "正文",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "tags": {
                     "description": "标签列表",
@@ -1939,7 +2099,8 @@
                 },
                 "title": {
                     "description": "标题",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -1948,42 +2109,57 @@
             "properties": {
                 "token": {
                     "description": "旧的访问令牌",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "request.SendSmsCodeReq": {
             "type": "object",
+            "required": [
+                "phone"
+            ],
             "properties": {
                 "phone": {
                     "description": "手机号",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "scene": {
                     "description": "场景,如 login/register",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "request.UpdateProductReq": {
             "type": "object",
+            "required": [
+                "title"
+            ],
             "properties": {
                 "price": {
                     "description": "售价",
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "title": {
                     "description": "商品标题",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "request.UpdateThresholdReq": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "name": {
                     "description": "新的阈值名称",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -1992,52 +2168,34 @@
             "properties": {
                 "nickname": {
                     "description": "昵称",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "signature": {
                     "description": "个性签名",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "request.UpdateUserReq": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "age": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "request.UploadFilesReq": {
-            "type": "object",
-            "properties": {
-                "files": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/request.UploadFilesReqFilesItem"
-                    }
-                }
-            }
-        },
-        "request.UploadFilesReqFilesItem": {
-            "type": "object",
-            "properties": {
-                "file": {
-                    "description": "上传的文件",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/multipart.FileHeader"
-                        }
-                    ]
-                },
-                "key": {
-                    "description": "文件字段名",
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "response.CreateOrderRes": {
             "type": "object",
@@ -2080,11 +2238,7 @@
                 },
                 "lastEdit": {
                     "description": "距上次编辑的间隔",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/time.Duration"
-                        }
-                    ]
+                    "type": "integer"
                 },
                 "publishAt": {
                     "description": "发布时间",
@@ -2107,6 +2261,70 @@
                 }
             }
         },
+        "response.GetArticleStats1Res": {
+            "type": "object",
+            "properties": {
+                "avgRead": {
+                    "description": "平均阅读量",
+                    "type": "number"
+                },
+                "cost": {
+                    "description": "统计耗时",
+                    "type": "integer"
+                },
+                "extra": {
+                    "description": "预留的扩展字段"
+                },
+                "online": {
+                    "description": "是否有在线文章",
+                    "type": "boolean"
+                },
+                "ratio": {
+                    "description": "同比增长率",
+                    "type": "number"
+                },
+                "today": {
+                    "description": "今日新增",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "文章总数",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.GetArticleStats2Res": {
+            "type": "object",
+            "properties": {
+                "avgRead": {
+                    "description": "平均阅读量",
+                    "type": "number"
+                },
+                "cost": {
+                    "description": "统计耗时",
+                    "type": "integer"
+                },
+                "extra": {
+                    "description": "预留的扩展字段"
+                },
+                "online": {
+                    "description": "是否有在线文章",
+                    "type": "boolean"
+                },
+                "ratio": {
+                    "description": "同比增长率",
+                    "type": "number"
+                },
+                "today": {
+                    "description": "今日新增",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "文章总数",
+                    "type": "integer"
+                }
+            }
+        },
         "response.GetArticleStatsRes": {
             "type": "object",
             "properties": {
@@ -2116,11 +2334,7 @@
                 },
                 "cost": {
                     "description": "统计耗时",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/time.Duration"
-                        }
-                    ]
+                    "type": "integer"
                 },
                 "extra": {
                     "description": "预留的扩展字段"
@@ -2895,47 +3109,6 @@
                     }
                 }
             }
-        },
-        "textproto.MIMEHeader": {
-            "type": "object",
-            "additionalProperties": {
-                "type": "array",
-                "items": {
-                    "type": "string"
-                }
-            }
-        },
-        "time.Duration": {
-            "type": "integer",
-            "format": "int64",
-            "enum": [
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000
-            ],
-            "x-enum-varnames": [
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour"
-            ]
         }
     }
 }

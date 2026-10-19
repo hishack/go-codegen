@@ -12,7 +12,7 @@ type EdgeRouter struct{}
 
 // InitEdgeRouter 注册Edge模块路由(路由列表由 yaml 生成)
 func (s *EdgeRouter) InitEdgeRouter(Router *gin.RouterGroup, edgeHandler *handler.EdgeHandler) (R gin.IRoutes) {
-	edgeRouter := Router.Group("")
+	edgeRouter := Router.Group("/api/v1")
 	{
 		edgeRouter.GET("/health", edgeHandler.HealthCheck)
 		edgeRouter.POST("/logout", edgeHandler.Logout)

@@ -4,28 +4,28 @@ package request
 
 type CreateOrderReq struct {
 	// 下单用户 id
-	UserId int64 `json:"userId" form:"userId"`
+	UserId int64 `json:"userId" form:"userId" binding:"omitempty,gte=0"`
 	// 收货地址 id
-	AddressId int64                      `json:"addressId" form:"addressId"`
-	Items     []*CreateOrderReqItemsItem `json:"items" form:"items"`
+	AddressId int64                      `json:"addressId" form:"addressId" binding:"omitempty,gte=0"`
+	Items     []*CreateOrderReqItemsItem `json:"items" form:"items" binding:"omitempty,dive"`
 	// 订单备注
-	Remark string `json:"remark" form:"remark"`
+	Remark string `json:"remark" form:"remark" binding:"omitempty,max=255"`
 }
 
 type CreateOrderReqItemsItem struct {
 	// 商品 id
-	ProductId int64 `json:"productId" form:"productId"`
+	ProductId int64 `json:"productId" form:"productId" binding:"omitempty,gte=0"`
 	// 购买数量
-	Count int `json:"count" form:"count"`
+	Count int `json:"count" form:"count" binding:"omitempty,gte=0"`
 }
 
 type ListOrdersReq struct {
 	// 按用户过滤
-	UserId int64 `json:"userId" form:"userId"`
+	UserId int64 `json:"userId" form:"userId" binding:"omitempty,gte=0"`
 	// 订单状态,如 unpaid/paid/shipped
-	Status string `json:"status" form:"status"`
+	Status string `json:"status" form:"status" binding:"omitempty,max=255"`
 	// 页码
-	Page int `json:"page" form:"page"`
+	Page int `json:"page" form:"page" binding:"omitempty,gte=0"`
 	// 每页条数
-	PageSize int `json:"pageSize" form:"pageSize"`
+	PageSize int `json:"pageSize" form:"pageSize" binding:"omitempty,gte=0"`
 }

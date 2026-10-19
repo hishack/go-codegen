@@ -3,8 +3,13 @@
 package errorutil
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"strconv"
 )
 
 // BusinessError 业务错误
@@ -25,13 +30,43 @@ func (e BusinessError) WithMessage(message string) BusinessError {
 
 // ConvertError 将任意错误转换为业务错误
 func ConvertError(err error) BusinessError {
-	newErr := BusinessError{}
-	if errors.As(err, &newErr) {
-		return newErr
+	var be BusinessError
+	if errors.As(err, &be) {
+		return be
 	}
-	newErr = SystemError
-	newErr.Message = err.Error()
-	return newErr
+	base := SystemError
+	if IsClientError(err) {
+		base = ParamsError
+	}
+	base.Message = err.Error()
+	return base
+}
+
+// IsClientError 判断错误是否由客户端输入引起。
+// 这类错误应记为 400 而不是 500,否则监控会把"用户传错参数"算成服务端故障
+func IsClientError(err error) bool {
+	if err == nil {
+		return false
+	}
+	var syntaxErr *json.SyntaxError
+	if errors.As(err, &syntaxErr) {
+		return true
+	}
+	var typeErr *json.UnmarshalTypeError
+	if errors.As(err, &typeErr) {
+		return true
+	}
+	var numErr *strconv.NumError
+	if errors.As(err, &numErr) {
+		return true
+	}
+	if errors.Is(err, io.EOF) || errors.Is(err, io.ErrUnexpectedEOF) {
+		return true
+	}
+	if errors.Is(err, multipart.ErrMessageTooLarge) {
+		return true
+	}
+	return false
 }
 
 // 预置错误
@@ -40,3 +75,16 @@ var (
 	ParamsError = BusinessError{Code: 40000, Message: "参数错误"}
 	SystemError = BusinessError{Code: 50000, Message: "系统繁忙,请稍后再试"}
 )
+
+// HTTPStatusOf 把错误映射为 HTTP 状态码,供生成的 handler 使用。
+// 约定:参数/绑定类错误 400,业务处理失败 422。
+// 避免所有错误都返回 200,让网关与监控能按状态码统计错误率
+func HTTPStatusOf(err error) int {
+	if err == nil {
+		return http.StatusOK
+	}
+	if IsClientError(err) {
+		return http.StatusBadRequest
+	}
+	return http.StatusUnprocessableEntity
+}

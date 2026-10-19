@@ -4,16 +4,16 @@ package request
 
 type ListArticlesReq struct {
 	// 按作者过滤
-	AuthorId int64 `json:"authorId" form:"authorId"`
+	AuthorId int64 `json:"authorId" form:"authorId" binding:"omitempty,gte=0"`
 	// 按标签过滤
-	Tag string `json:"tag" form:"tag"`
+	Tag string `json:"tag" form:"tag" binding:"omitempty,max=255"`
 }
 
 type PublishArticleReq struct {
 	// 标题
-	Title string `json:"title" form:"title"`
+	Title string `json:"title" form:"title" binding:"required,max=255"`
 	// 正文
-	Content string `json:"content" form:"content"`
+	Content string `json:"content" form:"content" binding:"omitempty,max=255"`
 	// 标签列表
-	Tags []string `json:"tags" form:"tags"`
+	Tags []string `json:"tags" form:"tags" binding:"omitempty,dive"`
 }

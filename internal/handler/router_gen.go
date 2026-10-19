@@ -50,7 +50,7 @@ func (g *RouterGen) genDomain(d *domain, report *Report) error {
 		return err
 	}
 	report.add(a)
-	a, err = f.UpsertFunc(d.routerType(), d.routerInit(), routerFuncText(d), merge.PolicyAlways)
+	a, err = f.UpsertFunc(d.routerType(), d.routerInit(), routerFuncText(d, g.cfg), merge.PolicyAlways)
 	if err != nil {
 		return err
 	}
@@ -58,18 +58,20 @@ func (g *RouterGen) genDomain(d *domain, report *Report) error {
 	return f.Flush()
 }
 
-func routerFuncText(d *domain) string {
+func routerFuncText(d *domain, cfg *config.CodeGenConfig) string {
 	handlerParam := field.LowerFirst(d.pascal()) + "Handler" // userHandler
 	groupVar := d.routerGroupVar()                           // userRouter
 	var b strings.Builder
 	b.WriteString("// " + d.routerInit() + " 注册" + d.pascal() + "模块路由(路由列表由 yaml 生成)\n")
 	b.WriteString("func (s *" + d.routerType() + ") " + d.routerInit() +
 		"(Router *gin.RouterGroup, " + handlerParam + " *handler." + d.handlerType() + ") (R gin.IRoutes) {\n")
-	b.WriteString("\t" + groupVar + " := Router.Group(\"\")\n")
+	b.WriteString("\t" + groupVar + " := Router.Group(\"" + cfg.Group + "\")\n")
 	b.WriteString("\t{\n")
 	for _, api := range d.Apis {
+		// 路径已含分组前缀,组内不再重复拼接
+		path := strings.TrimPrefix(api.RoutePath(), cfg.Group)
 		b.WriteString("\t\t" + groupVar + "." + api.Method + "(\"" +
-			api.RoutePath() + "\", " + handlerParam + "." + api.ApiName + ")\n")
+			path + "\", " + handlerParam + "." + api.ApiName + ")\n")
 	}
 	b.WriteString("\t}\n")
 	b.WriteString("\treturn " + groupVar + "\n")

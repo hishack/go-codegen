@@ -12,7 +12,7 @@ type ProfileRouter struct{}
 
 // InitProfileRouter 注册Profile模块路由(路由列表由 yaml 生成)
 func (s *ProfileRouter) InitProfileRouter(Router *gin.RouterGroup, profileHandler *handler.ProfileHandler) (R gin.IRoutes) {
-	profileRouter := Router.Group("")
+	profileRouter := Router.Group("/api/v1")
 	{
 		profileRouter.GET("/users/profile", profileHandler.GetUserProfile)
 		profileRouter.PUT("/users/profile", profileHandler.UpdateUserProfile)

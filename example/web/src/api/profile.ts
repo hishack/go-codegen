@@ -38,7 +38,7 @@ export class ProfileApi {
   /** 用户详情 */
   async getUserProfile(): Promise<ApiResp<GetUserProfileRes>> {
     return axios({
-      url: `/users/profile`,
+      url: `/api/v1/users/profile`,
       method: "get",
     });
   }
@@ -46,7 +46,7 @@ export class ProfileApi {
   /** 更新用户资料 */
   async updateUserProfile(req: UpdateUserProfileReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/users/profile`,
+      url: `/api/v1/users/profile`,
       method: "put",
       data: req,
     });

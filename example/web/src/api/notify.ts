@@ -55,7 +55,7 @@ export class NotifyApi {
   /** 发送短信验证码 */
   async sendSmsCode(req: SendSmsCodeReq): Promise<ApiResp<number>> {
     return axios({
-      url: `/notify/sms`,
+      url: `/api/v1/notify/sms`,
       method: "post",
       data: req,
     });
@@ -64,7 +64,7 @@ export class NotifyApi {
   /** 查询通知列表 */
   async listNotifies(req: ListNotifiesReq): Promise<ApiResp<ListNotifiesRes>> {
     return axios({
-      url: `/notifies`,
+      url: `/api/v1/notifies`,
       method: "get",
       params: req,
     });
@@ -73,7 +73,7 @@ export class NotifyApi {
   /** 标记通知已读 */
   async readNotify(req: ReadNotifyReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/notifies/${req.id}/read`,
+      url: `/api/v1/notifies/${req.id}/read`,
       method: "patch",
       data: req,
     });
@@ -82,7 +82,7 @@ export class NotifyApi {
   /** 扩展属性示例:map 类型 */
   async getNotifyConfig(): Promise<ApiResp<GetNotifyConfigRes>> {
     return axios({
-      url: `/notifies/config`,
+      url: `/api/v1/notifies/config`,
       method: "get",
     });
   }

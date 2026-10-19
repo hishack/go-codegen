@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,6 +13,7 @@ import (
 type CodeGenConfig struct {
 	YamlInPath string // 输入的 yaml 目录
 	Module     string // 目标项目的 go module 名,如 "shack",用于生成 import 路径
+	Group      string // 路由分组前缀,如 "/api/v1";生成路由、swagger 与前端 url 时统一加上
 
 	ServiceIntOutPath string // service 接口目录,如 {目标项目}/internal/service
 	ModelOutPath      string // 模型父目录,其下自动分 request/ response/ 子包,如 {目标项目}/internal/model/gen
@@ -33,6 +35,7 @@ func LoadCodeGenConfig(path string) (*CodeGenConfig, error) {
 	var raw struct {
 		Yaml       string `yaml:"yaml"`
 		Module     string `yaml:"module"`
+		Group      string `yaml:"group"`
 		ServiceOut string `yaml:"serviceOut"`
 		ModelOut   string `yaml:"modelOut"`
 		LogicOut   string `yaml:"logicOut"`
@@ -48,6 +51,7 @@ func LoadCodeGenConfig(path string) (*CodeGenConfig, error) {
 	return NewCodeGenConfig(CodeGenConfig{
 		YamlInPath:        raw.Yaml,
 		Module:            raw.Module,
+		Group:             raw.Group,
 		ServiceIntOutPath: raw.ServiceOut,
 		ModelOutPath:      raw.ModelOut,
 		LogicOutPath:      raw.LogicOut,
@@ -69,6 +73,7 @@ func NewCodeGenConfig(cfg CodeGenConfig) (*CodeGenConfig, error) {
 	return &CodeGenConfig{
 		YamlInPath:        cfg.YamlInPath,
 		Module:            cfg.Module,
+		Group:             NormalizeGroup(cfg.Group),
 		ServiceIntOutPath: cfg.ServiceIntOutPath,
 		ModelOutPath:      cfg.ModelOutPath,
 		LogicOutPath:      cfg.LogicOutPath,
@@ -78,4 +83,31 @@ func NewCodeGenConfig(cfg CodeGenConfig) (*CodeGenConfig, error) {
 		UserName:          cfg.UserName,
 		Github:            cfg.Github,
 	}, nil
+}
+
+// NormalizeGroup 规整分组前缀:补齐前导斜杠、去掉末尾斜杠。
+// 空值表示不加前缀,返回空串
+func NormalizeGroup(g string) string {
+	g = strings.TrimSpace(g)
+	if g == "" || g == "/" {
+		return ""
+	}
+	if !strings.HasPrefix(g, "/") {
+		g = "/" + g
+	}
+	return strings.TrimRight(g, "/")
+}
+
+// PrefixPath 给路径加上分组前缀。g 为空时原样返回
+func (c *CodeGenConfig) PrefixPath(p string) string {
+	if c == nil || c.Group == "" {
+		return p
+	}
+	if p == "" || p == "/" {
+		return c.Group
+	}
+	if !strings.HasPrefix(p, "/") {
+		p = "/" + p
+	}
+	return c.Group + p
 }

@@ -35,7 +35,7 @@ type GetArticleByIdRes struct {
 	// 发布时间
 	PublishAt time.Time `json:"publishAt"`
 	// 距上次编辑的间隔
-	LastEdit time.Duration `json:"lastEdit"`
+	LastEdit time.Duration `json:"lastEdit" swaggertype:"integer"`
 }
 
 type GetArticleStatsRes struct {
@@ -50,7 +50,7 @@ type GetArticleStatsRes struct {
 	// 平均阅读量
 	AvgRead float32 `json:"avgRead"`
 	// 统计耗时
-	Cost time.Duration `json:"cost"`
+	Cost time.Duration `json:"cost" swaggertype:"integer"`
 	// 预留的扩展字段
 	Extra any `json:"extra"`
 }
@@ -67,10 +67,11 @@ type GetArticleStats1Res struct {
 	// 平均阅读量
 	AvgRead float32 `json:"avgRead"`
 	// 统计耗时
-	Cost time.Duration `json:"cost"`
+	Cost time.Duration `json:"cost" swaggertype:"integer"`
 	// 预留的扩展字段
 	Extra any `json:"extra"`
 }
+
 type GetArticleStats2Res struct {
 	// 文章总数
 	Total int64 `json:"total"`
@@ -83,7 +84,7 @@ type GetArticleStats2Res struct {
 	// 平均阅读量
 	AvgRead float32 `json:"avgRead"`
 	// 统计耗时
-	Cost time.Duration `json:"cost"`
+	Cost time.Duration `json:"cost" swaggertype:"integer"`
 	// 预留的扩展字段
 	Extra any `json:"extra"`
 }

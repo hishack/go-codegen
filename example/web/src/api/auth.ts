@@ -34,7 +34,7 @@ export class AuthApi {
   /** 本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。 登录 */
   async login(req: LoginReq): Promise<ApiResp<LoginRes>> {
     return axios({
-      url: `/auth/login`,
+      url: `/api/v1/auth/login`,
       method: "post",
       data: req,
     });
@@ -43,7 +43,7 @@ export class AuthApi {
   /** 刷新令牌 */
   async refreshToken(req: RefreshTokenReq): Promise<ApiResp<string>> {
     return axios({
-      url: `/auth/refresh`,
+      url: `/api/v1/auth/refresh`,
       method: "post",
       data: req,
     });
@@ -52,7 +52,7 @@ export class AuthApi {
   /** 退出登录 */
   async logoutAccount(req: LogoutAccountReq): Promise<ApiResp<void>> {
     return axios({
-      url: `/auth/logout`,
+      url: `/api/v1/auth/logout`,
       method: "post",
       data: req,
     });

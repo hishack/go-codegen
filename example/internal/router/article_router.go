@@ -12,7 +12,7 @@ type ArticleRouter struct{}
 
 // InitArticleRouter 注册Article模块路由(路由列表由 yaml 生成)
 func (s *ArticleRouter) InitArticleRouter(Router *gin.RouterGroup, articleHandler *handler.ArticleHandler) (R gin.IRoutes) {
-	articleRouter := Router.Group("")
+	articleRouter := Router.Group("/api/v1")
 	{
 		articleRouter.GET("/articles", articleHandler.ListArticles)
 		articleRouter.GET("/cms-articles/:id", articleHandler.GetArticleById)

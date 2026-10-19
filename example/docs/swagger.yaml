@@ -1,14 +1,4 @@
 definitions:
-  multipart.FileHeader:
-    properties:
-      filename:
-        type: string
-      header:
-        $ref: '#/definitions/textproto.MIMEHeader'
-      size:
-        format: int64
-        type: integer
-    type: object
   request.CreateBatchUserReq:
     properties:
       ages:
@@ -27,14 +17,17 @@ definitions:
   request.CreateBatchUserReqTagsItem:
     properties:
       key:
+        maxLength: 255
         type: string
       value:
+        maxLength: 255
         type: string
     type: object
   request.CreateOrderReq:
     properties:
       addressId:
         description: 收货地址 id
+        minimum: 0
         type: integer
       items:
         items:
@@ -42,18 +35,22 @@ definitions:
         type: array
       remark:
         description: 订单备注
+        maxLength: 255
         type: string
       userId:
         description: 下单用户 id
+        minimum: 0
         type: integer
     type: object
   request.CreateOrderReqItemsItem:
     properties:
       count:
         description: 购买数量
+        minimum: 0
         type: integer
       productId:
         description: 商品 id
+        minimum: 0
         type: integer
     type: object
   request.CreateProductReq:
@@ -67,82 +64,111 @@ definitions:
         type: array
       price:
         description: 售价
+        minimum: 0
         type: number
       title:
         description: 商品标题
+        maxLength: 255
         type: string
+    required:
+    - title
     type: object
   request.CreateProductReqDetail:
     properties:
       desc:
         description: 商品详情描述
+        maxLength: 255
         type: string
     type: object
   request.CreateThresholdReq:
     properties:
       name:
         description: 阈值名称
+        maxLength: 255
         type: string
       score:
         description: 阈值档位,如 easy/normal/hard
+        maxLength: 255
         type: string
+    required:
+    - name
     type: object
   request.CreateUserReq:
     properties:
       age:
+        minimum: 0
         type: integer
       birthday:
         type: string
       count:
+        minimum: 0
         type: integer
       duration:
-        $ref: '#/definitions/time.Duration'
+        type: integer
       enabled:
         type: boolean
       height:
+        minimum: 0
         type: number
       level:
+        minimum: 0
         type: integer
       name:
+        maxLength: 255
         type: string
       nickname:
+        maxLength: 255
         type: string
       ratio:
+        minimum: 0
         type: number
       score:
+        minimum: 0
         type: integer
       weight:
+        minimum: 0
         type: number
+    required:
+    - name
     type: object
   request.LoginReq:
     properties:
       password:
         description: 密码
+        maxLength: 255
         type: string
       username:
         description: 登录名
+        maxLength: 255
         type: string
+    required:
+    - password
+    - username
     type: object
   request.LogoutAccountReq:
     properties:
       token:
         description: 访问令牌
+        maxLength: 255
         type: string
     type: object
   request.LogoutReq:
     properties:
       token:
+        maxLength: 255
         type: string
     type: object
   request.PatchUserReq:
     properties:
       nickname:
+        maxLength: 255
         type: string
     type: object
   request.PublishArticleReq:
     properties:
       content:
         description: 正文
+        maxLength: 255
         type: string
       tags:
         description: 标签列表
@@ -151,70 +177,76 @@ definitions:
         type: array
       title:
         description: 标题
+        maxLength: 255
         type: string
+    required:
+    - title
     type: object
   request.RefreshTokenReq:
     properties:
       token:
         description: 旧的访问令牌
+        maxLength: 255
         type: string
     type: object
   request.SendSmsCodeReq:
     properties:
       phone:
         description: 手机号
+        maxLength: 255
         type: string
       scene:
         description: 场景,如 login/register
+        maxLength: 255
         type: string
+    required:
+    - phone
     type: object
   request.UpdateProductReq:
     properties:
       price:
         description: 售价
+        minimum: 0
         type: number
       title:
         description: 商品标题
+        maxLength: 255
         type: string
+    required:
+    - title
     type: object
   request.UpdateThresholdReq:
     properties:
       name:
         description: 新的阈值名称
+        maxLength: 255
         type: string
+    required:
+    - name
     type: object
   request.UpdateUserProfileReq:
     properties:
       nickname:
         description: 昵称
+        maxLength: 255
         type: string
       signature:
         description: 个性签名
+        maxLength: 255
         type: string
     type: object
   request.UpdateUserReq:
     properties:
       age:
+        minimum: 0
         type: integer
       name:
+        maxLength: 255
         type: string
+    required:
+    - name
     type: object
   request.UploadFilesReq:
-    properties:
-      files:
-        items:
-          $ref: '#/definitions/request.UploadFilesReqFilesItem'
-        type: array
-    type: object
-  request.UploadFilesReqFilesItem:
-    properties:
-      file:
-        allOf:
-        - $ref: '#/definitions/multipart.FileHeader'
-        description: 上传的文件
-      key:
-        description: 文件字段名
-        type: string
     type: object
   response.CreateOrderRes:
     properties:
@@ -244,9 +276,8 @@ definitions:
         description: 文章 id
         type: integer
       lastEdit:
-        allOf:
-        - $ref: '#/definitions/time.Duration'
         description: 距上次编辑的间隔
+        type: integer
       publishAt:
         description: 发布时间
         type: string
@@ -261,15 +292,60 @@ definitions:
       title:
         type: string
     type: object
+  response.GetArticleStats1Res:
+    properties:
+      avgRead:
+        description: 平均阅读量
+        type: number
+      cost:
+        description: 统计耗时
+        type: integer
+      extra:
+        description: 预留的扩展字段
+      online:
+        description: 是否有在线文章
+        type: boolean
+      ratio:
+        description: 同比增长率
+        type: number
+      today:
+        description: 今日新增
+        type: integer
+      total:
+        description: 文章总数
+        type: integer
+    type: object
+  response.GetArticleStats2Res:
+    properties:
+      avgRead:
+        description: 平均阅读量
+        type: number
+      cost:
+        description: 统计耗时
+        type: integer
+      extra:
+        description: 预留的扩展字段
+      online:
+        description: 是否有在线文章
+        type: boolean
+      ratio:
+        description: 同比增长率
+        type: number
+      today:
+        description: 今日新增
+        type: integer
+      total:
+        description: 文章总数
+        type: integer
+    type: object
   response.GetArticleStatsRes:
     properties:
       avgRead:
         description: 平均阅读量
         type: number
       cost:
-        allOf:
-        - $ref: '#/definitions/time.Duration'
         description: 统计耗时
+        type: integer
       extra:
         description: 预留的扩展字段
       online:
@@ -790,45 +866,10 @@ definitions:
           type: string
         type: array
     type: object
-  textproto.MIMEHeader:
-    additionalProperties:
-      items:
-        type: string
-      type: array
-    type: object
-  time.Duration:
-    enum:
-    - 1
-    - 1000
-    - 1000000
-    - 1000000000
-    - 60000000000
-    - 3600000000000
-    - 1
-    - 1000
-    - 1000000
-    - 1000000000
-    - 60000000000
-    - 3600000000000
-    format: int64
-    type: integer
-    x-enum-varnames:
-    - Nanosecond
-    - Microsecond
-    - Millisecond
-    - Second
-    - Minute
-    - Hour
-    - Nanosecond
-    - Microsecond
-    - Millisecond
-    - Second
-    - Minute
-    - Hour
 info:
   contact: {}
 paths:
-  /arrays/int64s:
+  /api/v1/arrays/int64s:
     get:
       consumes:
       - application/json
@@ -843,7 +884,7 @@ paths:
       summary: GetInt64Array
       tags:
       - system
-  /arrays/ints:
+  /api/v1/arrays/ints:
     get:
       consumes:
       - application/json
@@ -858,7 +899,7 @@ paths:
       summary: 数组的各种写法:基础类型数组、对象数组、混合嵌套
       tags:
       - system
-  /arrays/objects:
+  /api/v1/arrays/objects:
     get:
       consumes:
       - application/json
@@ -873,7 +914,7 @@ paths:
       summary: 对象数组:对应 res.list,会提升为 GetObjectArrayResListItem
       tags:
       - system
-  /arrays/strings:
+  /api/v1/arrays/strings:
     get:
       consumes:
       - application/json
@@ -888,13 +929,14 @@ paths:
       summary: GetStringArray
       tags:
       - system
-  /articles:
+  /api/v1/articles:
     get:
       consumes:
       - application/json
       description: 文章列表
       parameters:
       - description: 按作者过滤
+        format: int64
         in: query
         name: authorId
         type: integer
@@ -934,7 +976,7 @@ paths:
       summary: 发布文章
       tags:
       - cms
-  /articles/:id:
+  /api/v1/articles/:id:
     get:
       consumes:
       - application/json
@@ -955,7 +997,7 @@ paths:
       summary: 无类型的路径参数,默认按 string
       tags:
       - system
-  /articles/stats:
+  /api/v1/articles/stats:
     get:
       consumes:
       - application/json
@@ -970,7 +1012,37 @@ paths:
       summary: 统计文章数据
       tags:
       - cms
-  /auth/login:
+  /api/v1/articles/stats1:
+    get:
+      consumes:
+      - application/json
+      description: 统计文章数据1
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统计文章数据1响应
+          schema:
+            $ref: '#/definitions/response.GetArticleStats1Res'
+      summary: 统计文章数据1
+      tags:
+      - cms
+  /api/v1/articles/stats2:
+    get:
+      consumes:
+      - application/json
+      description: 统计文章数据2
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统计文章数据2响应
+          schema:
+            $ref: '#/definitions/response.GetArticleStats2Res'
+      summary: 统计文章数据2
+      tags:
+      - cms
+  /api/v1/auth/login:
     post:
       consumes:
       - application/json
@@ -996,7 +1068,7 @@ paths:
         登录
       tags:
       - system
-  /auth/logout:
+  /api/v1/auth/logout:
     post:
       consumes:
       - application/json
@@ -1018,7 +1090,7 @@ paths:
       summary: 退出登录
       tags:
       - system
-  /auth/refresh:
+  /api/v1/auth/refresh:
     post:
       consumes:
       - application/json
@@ -1040,13 +1112,14 @@ paths:
       summary: 刷新令牌
       tags:
       - system
-  /characters/:id/skills:
+  /api/v1/characters/:id/skills:
     get:
       consumes:
       - application/json
       description: 查询角色技能列表
       parameters:
       - description: id
+        format: int64
         in: path
         name: id
         required: true
@@ -1061,7 +1134,29 @@ paths:
       summary: 查询角色技能列表
       tags:
       - system
-  /config:
+  /api/v1/cms-articles/:id:
+    get:
+      consumes:
+      - application/json
+      description: 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles
+      parameters:
+      - description: id
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles响应
+          schema:
+            $ref: '#/definitions/response.GetArticleByIdRes'
+      summary: 文章详情。路径用 /cms-articles 以避开主测试集已占用的 /articles
+      tags:
+      - cms
+  /api/v1/config:
     get:
       consumes:
       - application/json
@@ -1076,7 +1171,7 @@ paths:
       summary: map 类型
       tags:
       - system
-  /config/a:
+  /api/v1/config/a:
     get:
       consumes:
       - application/json
@@ -1091,7 +1186,7 @@ paths:
       summary: 同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车
       tags:
       - system
-  /config/b:
+  /api/v1/config/b:
     get:
       consumes:
       - application/json
@@ -1106,7 +1201,7 @@ paths:
       summary: GetConfigB
       tags:
       - system
-  /files:
+  /api/v1/files:
     post:
       consumes:
       - application/json
@@ -1127,13 +1222,14 @@ paths:
       summary: 单文件上传
       tags:
       - system
-  /files/:id:
+  /api/v1/files/:id:
     get:
       consumes:
       - application/json
       description: 文件信息
       parameters:
       - description: id
+        format: int64
         in: path
         name: id
         required: true
@@ -1148,7 +1244,7 @@ paths:
       summary: 文件信息
       tags:
       - system
-  /files/batch:
+  /api/v1/files/batch:
     post:
       consumes:
       - application/json
@@ -1170,7 +1266,7 @@ paths:
       summary: 多文件上传
       tags:
       - system
-  /health:
+  /api/v1/health:
     get:
       consumes:
       - application/json
@@ -1185,7 +1281,7 @@ paths:
       summary: 没有 req 也没有 res
       tags:
       - system
-  /logout:
+  /api/v1/logout:
     post:
       consumes:
       - application/json
@@ -1207,13 +1303,14 @@ paths:
       summary: 只有 req,没有 res
       tags:
       - system
-  /notifies:
+  /api/v1/notifies:
     get:
       consumes:
       - application/json
       description: 查询通知列表
       parameters:
       - description: 按用户过滤
+        format: int64
         in: query
         name: userId
         type: integer
@@ -1231,13 +1328,14 @@ paths:
       summary: 查询通知列表
       tags:
       - system
-  /notifies/:id/read:
+  /api/v1/notifies/:id/read:
     patch:
       consumes:
       - application/json
       description: 标记通知已读
       parameters:
       - description: id
+        format: int64
         in: path
         name: id
         required: true
@@ -1252,7 +1350,7 @@ paths:
       summary: 标记通知已读
       tags:
       - system
-  /notifies/config:
+  /api/v1/notifies/config:
     get:
       consumes:
       - application/json
@@ -1267,7 +1365,7 @@ paths:
       summary: 扩展属性示例:map 类型
       tags:
       - system
-  /notify/sms:
+  /api/v1/notify/sms:
     post:
       consumes:
       - application/json
@@ -1289,38 +1387,21 @@ paths:
       summary: 发送短信验证码
       tags:
       - system
-  /orders:
+  /api/v1/orders:
     get:
       consumes:
       - application/json
-      description: 订单列表
-      parameters:
-      - description: 按用户过滤
-        in: query
-        name: userId
-        type: integer
-      - description: 订单状态,如 unpaid/paid/shipped
-        in: query
-        name: status
-        type: string
-      - description: 页码
-        in: query
-        name: page
-        type: integer
-      - description: 每页条数
-        in: query
-        name: pageSize
-        type: integer
+      description: 多字段对象数组
       produces:
       - application/json
       responses:
         "200":
-          description: 订单列表响应
+          description: 多字段对象数组响应
           schema:
-            $ref: '#/definitions/response.ListOrdersRes'
-      summary: 订单列表
+            $ref: '#/definitions/response.GetOrderListRes'
+      summary: 多字段对象数组
       tags:
-      - mall
+      - system
     post:
       consumes:
       - application/json
@@ -1342,13 +1423,14 @@ paths:
       summary: 创建订单
       tags:
       - mall
-  /orders/:orderId:
+  /api/v1/orders/:orderId:
     get:
       consumes:
       - application/json
       description: 订单详情
       parameters:
       - description: orderId
+        format: int64
         in: path
         name: orderId
         required: true
@@ -1363,13 +1445,14 @@ paths:
       summary: 订单详情
       tags:
       - mall
-  /orders/:orderId/cancel:
+  /api/v1/orders/:orderId/cancel:
     patch:
       consumes:
       - application/json
       description: 取消订单
       parameters:
       - description: orderId
+        format: int64
         in: path
         name: orderId
         required: true
@@ -1384,13 +1467,14 @@ paths:
       summary: 取消订单
       tags:
       - mall
-  /orders/:orderId/detail:
+  /api/v1/orders/:orderId/detail:
     get:
       consumes:
       - application/json
       description: 数组套对象套对象
       parameters:
       - description: orderId
+        format: int64
         in: path
         name: orderId
         required: true
@@ -1405,18 +1489,20 @@ paths:
       summary: 数组套对象套对象
       tags:
       - system
-  /orgs/:orgId/users/:userId:
+  /api/v1/orgs/:orgId/users/:userId:
     get:
       consumes:
       - application/json
       description: 多级路径参数
       parameters:
       - description: orgId
+        format: int64
         in: path
         name: orgId
         required: true
         type: integer
       - description: userId
+        format: int64
         in: path
         name: userId
         required: true
@@ -1431,7 +1517,7 @@ paths:
       summary: 多级路径参数
       tags:
       - system
-  /ping:
+  /api/v1/ping:
     get:
       consumes:
       - application/json
@@ -1446,7 +1532,7 @@ paths:
       summary: 空 req 对象
       tags:
       - system
-  /products:
+  /api/v1/products:
     get:
       consumes:
       - application/json
@@ -1457,14 +1543,17 @@ paths:
         name: keyword
         type: string
       - description: 分类 id
+        format: int64
         in: query
         name: categoryId
         type: integer
       - description: 页码,从 1 开始
+        format: int32
         in: query
         name: page
         type: integer
       - description: 每页条数
+        format: int32
         in: query
         name: pageSize
         type: integer
@@ -1500,13 +1589,14 @@ paths:
       summary: 创建商品
       tags:
       - mall
-  /products/:id:
+  /api/v1/products/:id:
     delete:
       consumes:
       - application/json
       description: 删除商品
       parameters:
       - description: id
+        format: int64
         in: path
         name: id
         required: true
@@ -1527,6 +1617,7 @@ paths:
       description: 商品详情
       parameters:
       - description: id
+        format: int64
         in: path
         name: id
         required: true
@@ -1547,6 +1638,7 @@ paths:
       description: 更新商品
       parameters:
       - description: id
+        format: int64
         in: path
         name: id
         required: true
@@ -1567,7 +1659,7 @@ paths:
       summary: 更新商品
       tags:
       - mall
-  /thresholds:
+  /api/v1/thresholds:
     post:
       consumes:
       - application/json
@@ -1590,13 +1682,14 @@ paths:
       summary: 新增阈值
       tags:
       - system
-  /thresholds/:id:
+  /api/v1/thresholds/:id:
     put:
       consumes:
       - application/json
       description: 更新阈值
       parameters:
       - description: id
+        format: int64
         in: path
         name: id
         required: true
@@ -1617,7 +1710,7 @@ paths:
       summary: 更新阈值
       tags:
       - system
-  /time:
+  /api/v1/time:
     get:
       consumes:
       - application/json
@@ -1632,7 +1725,42 @@ paths:
       summary: 只有 res,没有 req
       tags:
       - system
-  /users:
+  /api/v1/user-orders:
+    get:
+      consumes:
+      - application/json
+      description: 订单列表
+      parameters:
+      - description: 按用户过滤
+        format: int64
+        in: query
+        name: userId
+        type: integer
+      - description: 订单状态,如 unpaid/paid/shipped
+        in: query
+        name: status
+        type: string
+      - description: 页码
+        format: int32
+        in: query
+        name: page
+        type: integer
+      - description: 每页条数
+        format: int32
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 订单列表响应
+          schema:
+            $ref: '#/definitions/response.ListOrdersRes'
+      summary: 订单列表
+      tags:
+      - mall
+  /api/v1/users:
     get:
       consumes:
       - application/json
@@ -1668,34 +1796,14 @@ paths:
       summary: 基础增删改查 + 全量基础类型覆盖
       tags:
       - system
-  /users/:id/detail:
-    get:
-      consumes:
-      - application/json
-      description: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress响应
-          schema:
-            $ref: '#/definitions/response.GetUserDetailRes'
-      summary: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress
-      tags:
-      - system
-  /users/:userId:
+  /api/v1/users/:userId:
     delete:
       consumes:
       - application/json
       description: DeleteUser
       parameters:
       - description: userId
+        format: int64
         in: path
         name: userId
         required: true
@@ -1716,6 +1824,7 @@ paths:
       description: GetUser
       parameters:
       - description: userId
+        format: int64
         in: path
         name: userId
         required: true
@@ -1736,6 +1845,7 @@ paths:
       description: PatchUser
       parameters:
       - description: userId
+        format: int64
         in: path
         name: userId
         required: true
@@ -1762,6 +1872,7 @@ paths:
       description: UpdateUser
       parameters:
       - description: userId
+        format: int64
         in: path
         name: userId
         required: true
@@ -1782,18 +1893,42 @@ paths:
       summary: UpdateUser
       tags:
       - system
-  /users/:userId/orders/:orderId:
+  /api/v1/users/:userId/detail:
+    get:
+      consumes:
+      - application/json
+      description: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress
+      parameters:
+      - description: userId
+        format: int64
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress响应
+          schema:
+            $ref: '#/definitions/response.GetUserDetailRes'
+      summary: 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress
+      tags:
+      - system
+  /api/v1/users/:userId/orders/:orderId:
     get:
       consumes:
       - application/json
       description: 多路径参数
       parameters:
       - description: userId
+        format: int64
         in: path
         name: userId
         required: true
         type: integer
       - description: orderId
+        format: int64
         in: path
         name: orderId
         required: true
@@ -1808,7 +1943,7 @@ paths:
       summary: 多路径参数
       tags:
       - system
-  /users/avatar:
+  /api/v1/users/avatar:
     post:
       consumes:
       - application/json
@@ -1829,7 +1964,7 @@ paths:
       summary: 上传头像(multipart 文件上传)
       tags:
       - system
-  /users/batch:
+  /api/v1/users/batch:
     post:
       consumes:
       - application/json
@@ -1852,7 +1987,7 @@ paths:
       summary: 请求里带数组
       tags:
       - system
-  /users/map:
+  /api/v1/users/map:
     get:
       consumes:
       - application/json
@@ -1867,7 +2002,7 @@ paths:
       summary: GetUserMap
       tags:
       - system
-  /users/profile:
+  /api/v1/users/profile:
     get:
       consumes:
       - application/json
@@ -1903,13 +2038,14 @@ paths:
       summary: 更新用户资料
       tags:
       - system
-  /users/profile/:id:
+  /api/v1/users/profile/:id:
     get:
       consumes:
       - application/json
       description: 根据ID获取用户详情
       parameters:
       - description: id
+        format: int64
         in: path
         name: id
         required: true
@@ -1924,7 +2060,7 @@ paths:
       summary: 根据ID获取用户详情
       tags:
       - system
-  /users/search:
+  /api/v1/users/search:
     get:
       consumes:
       - application/json
@@ -1935,10 +2071,12 @@ paths:
         name: keyword
         type: string
       - description: page
+        format: int32
         in: query
         name: page
         type: integer
       - description: pageSize
+        format: int32
         in: query
         name: pageSize
         type: integer

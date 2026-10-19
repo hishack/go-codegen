@@ -94,7 +94,7 @@ export class OrderApi {
   /** 创建订单 */
   async createOrder(req: CreateOrderReq): Promise<ApiResp<CreateOrderRes>> {
     return axios({
-      url: `/orders`,
+      url: `/api/v1/orders`,
       method: "post",
       data: req,
     });
@@ -103,7 +103,7 @@ export class OrderApi {
   /** 订单列表 */
   async listOrders(req: ListOrdersReq): Promise<ApiResp<ListOrdersRes>> {
     return axios({
-      url: `/user-orders`,
+      url: `/api/v1/user-orders`,
       method: "get",
       params: req,
     });
@@ -112,7 +112,7 @@ export class OrderApi {
   /** 订单详情 */
   async getOrderInfo(req: GetOrderInfoReq): Promise<ApiResp<GetOrderInfoRes>> {
     return axios({
-      url: `/orders/${req.orderId}`,
+      url: `/api/v1/orders/${req.orderId}`,
       method: "get",
       params: req,
     });
@@ -121,7 +121,7 @@ export class OrderApi {
   /** 取消订单 */
   async cancelOrder(req: CancelOrderReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/orders/${req.orderId}/cancel`,
+      url: `/api/v1/orders/${req.orderId}/cancel`,
       method: "patch",
       data: req,
     });

@@ -20,3 +20,6 @@ webOut: ./example/web/src/api
 # 写入生成文件头的署名
 author: shack
 github: https://github.com/hishack
+
+# 路由分组前缀(可选):生成路由、swagger、前端 url 时统一加上
+group: /api/v1

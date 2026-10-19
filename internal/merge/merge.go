@@ -100,6 +100,11 @@ func Load(path string) (*File, error) {
 	if strings.TrimSpace(string(src)) == "" {
 		return f, nil // 空文件按新建处理
 	}
+	// 归一化行尾:用户在 Windows 上编辑过的文件常带CRLF,
+	// 原样保留会让生成产物过不了 gofmt
+	if bytes.Contains(src, []byte("\r\n")) {
+		src = bytes.ReplaceAll(src, []byte("\r\n"), []byte("\n"))
+	}
 	fset := token.NewFileSet()
 	af, err := parser.ParseFile(fset, path, src, parser.ParseComments|parser.SkipObjectResolution)
 	if err != nil {
@@ -522,7 +527,7 @@ func (f *File) fixImports(out []byte, missing []string) ([]byte, error) {
 		return out, nil
 	}
 
-	// 3. 重建 import(保留原有顺序,缺失的追加到末尾)
+	// 3. 重建 import(缺失的追加后统一按路径排序,与 gofmt 一致)
 	var kept []string
 	for _, s := range specs {
 		p := importPathOf(s)
@@ -534,7 +539,23 @@ func (f *File) fixImports(out []byte, missing []string) ([]byte, error) {
 	for _, p := range missing {
 		kept = append(kept, importLine(f.needImps[p], p))
 	}
+	sort.SliceStable(kept, func(i, j int) bool {
+		return importPathInLine(kept[i]) < importPathInLine(kept[j])
+	})
 	return replaceImportDecls(out, fset, af, kept), nil
+}
+
+// importPathInLine 从 `alias "path"` 或 `"path"` 形式的行里取出 import 路径,用于排序
+func importPathInLine(line string) string {
+	i := strings.Index(line, `"`)
+	if i < 0 {
+		return line
+	}
+	j := strings.LastIndex(line, `"`)
+	if j <= i {
+		return line
+	}
+	return line[i+1 : j]
 }
 
 // replaceImportDecls 把文件里全部 import 声明整理为一个 import 块
@@ -701,7 +722,8 @@ func (f *File) lineStart(off int) int {
 //
 // 做法:从 end 起跳过所有空白,停在下一个非空白字符 i。
 // 若这段空白里含换行,说明旧声明后面多出了整行空白,应连同替换区间一起删除,
-// 声明之间的空行由生成文本自身保证;不含换行则不处理。
+// 只保留恰好一个空行 —— gofmt 要求带文档注释的声明前必须有空行,
+// 但多个空行会被它合并成一个。
 //
 // 只清理"被替换声明"与后续内容之间的空白,不触碰用户手写代码本身。
 func (f *File) skipTrailingBlank(end int) int {
@@ -712,10 +734,19 @@ func (f *File) skipTrailingBlank(end int) int {
 	if i == end {
 		return end // 后面紧跟非空白,没有可清理的空白
 	}
-	if bytes.IndexByte(f.src[end:i], '\n') >= 0 {
-		return i // 整行空白,删除
+	if bytes.IndexByte(f.src[end:i], '\n') < 0 {
+		return end // 只是行内空格,保留
 	}
-	return end // 只是行内空格,保留
+	// 保留最后一个换行,其前的空白(含多余空行)纳入替换区间,
+	// 这样声明之间恰好剩一个空行
+	j := i - 1
+	for j > end && isSpaceByte(f.src[j]) && f.src[j] != '\n' {
+		j--
+	}
+	if j > end && f.src[j] == '\n' {
+		return j
+	}
+	return i
 }
 
 // isSpaceByte 判断是否为空白字符
@@ -937,9 +968,19 @@ func (f *File) groupedImports() []string {
 	return lines
 }
 
-// importBlock 生成格式化的 import 块文本
+// importBlock 生成格式化的 import 块文本。
+// 每行加一个制表符缩进,并按 import 路径排序,与 gofmt 的输出保持一致,
+// 否则生成的文件会过不了 gofmt 检查
 func importBlock(lines []string) string {
-	return "import (\n" + strings.Join(lines, "\n") + "\n)"
+	var b strings.Builder
+	b.WriteString("import (\n")
+	for _, l := range lines {
+		b.WriteString("\t")
+		b.WriteString(l)
+		b.WriteString("\n")
+	}
+	b.WriteString(")")
+	return b.String()
 }
 
 // quotedImports 把 import 路径加上引号

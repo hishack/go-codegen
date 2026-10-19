@@ -91,7 +91,7 @@ func RunAll(cfg *config.CodeGenConfig, yamls *field.YamlList) (*Report, error) {
 //  1. 本次 yaml 内部的冲突
 //  2. 本次 yaml 与目标工程里已生成的路由之间的冲突(跨多次配置的场景)
 func checkRouteConflicts(yamls *field.YamlList, cfg *config.CodeGenConfig) error {
-	conflicts := validateRoutes(yamls)
+	conflicts := validateRoutes(yamls, cfg)
 	if cfg != nil && cfg.RouterOutPath != "" {
 		conflicts = append(conflicts, checkRoutesAgainstExisting(yamls, cfg)...)
 	}

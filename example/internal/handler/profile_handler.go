@@ -6,6 +6,7 @@ import (
 	"codegen-example/internal/model/gen/request"
 	res "codegen-example/internal/model/gen/response"
 	"codegen-example/internal/service"
+	"codegen-example/pkg/errorutil"
 	"codegen-example/pkg/response"
 
 	"github.com/gin-gonic/gin"
@@ -28,11 +29,11 @@ func NewProfileHandler(userService service.IProfileService) *ProfileHandler {
 // @Accept json
 // @Produce json
 // @Success 200 {object} res.GetUserProfileRes "用户详情响应"
-// @Router /users/profile [get]
+// @Router /api/v1/users/profile [get]
 func (u *ProfileHandler) GetUserProfile(c *gin.Context) {
 	data, err := u.profileService.GetUserProfile(c)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserProfileRes](data))
@@ -46,17 +47,17 @@ func (u *ProfileHandler) GetUserProfile(c *gin.Context) {
 // @Produce json
 // @Param req body request.UpdateUserProfileReq true "更新用户资料请求"
 // @Success 200 {object} bool "更新用户资料响应"
-// @Router /users/profile [put]
+// @Router /api/v1/users/profile [put]
 func (u *ProfileHandler) UpdateUserProfile(c *gin.Context) {
 	var req request.UpdateUserProfileReq
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))
 		return
 	}
 
 	data, err := u.profileService.UpdateUserProfile(c, req)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))

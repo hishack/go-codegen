@@ -38,3 +38,8 @@ webOut: ../../web/src/api
 # 写入生成文件头的署名
 author: shack
 github: https://github.com/hishack
+
+# 路由分组前缀(可选):生成路由、swagger、前端 url 时统一加上。
+# 多领域路径散落时用它做版本隔离,例如 /api/v1。
+# 注意:同一目标工程的各份配置应使用一致的前缀,否则跨配置冲突检测会失效。
+group: /api/v1

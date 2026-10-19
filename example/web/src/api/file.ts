@@ -49,7 +49,7 @@ export class FileApi {
   /** 单文件上传 */
   async uploadFile(req: UploadFileReq): Promise<ApiResp<string>> {
     return axios({
-      url: `/files`,
+      url: `/api/v1/files`,
       method: "post",
       data: req,
     });
@@ -58,7 +58,7 @@ export class FileApi {
   /** 多文件上传 */
   async uploadFiles(req: UploadFilesReq): Promise<ApiResp<UploadFilesRes>> {
     return axios({
-      url: `/files/batch`,
+      url: `/api/v1/files/batch`,
       method: "post",
       data: req,
     });
@@ -67,7 +67,7 @@ export class FileApi {
   /** 文件信息 */
   async getFileInfo(req: GetFileInfoReq): Promise<ApiResp<GetFileInfoRes>> {
     return axios({
-      url: `/files/${req.id}`,
+      url: `/api/v1/files/${req.id}`,
       method: "get",
       params: req,
     });

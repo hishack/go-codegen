@@ -12,7 +12,7 @@ type OrderRouter struct{}
 
 // InitOrderRouter 注册Order模块路由(路由列表由 yaml 生成)
 func (s *OrderRouter) InitOrderRouter(Router *gin.RouterGroup, orderHandler *handler.OrderHandler) (R gin.IRoutes) {
-	orderRouter := Router.Group("")
+	orderRouter := Router.Group("/api/v1")
 	{
 		orderRouter.POST("/orders", orderHandler.CreateOrder)
 		orderRouter.GET("/user-orders", orderHandler.ListOrders)

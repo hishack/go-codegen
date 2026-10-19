@@ -28,6 +28,11 @@ import (
 var routeCallRe = regexp.MustCompile(
 	`(?m)^\s*\w+\.(GET|POST|PUT|PATCH|DELETE)\("([^"]*)"\s*,\s*\w+\.(\w+)\)`)
 
+// groupCallRe 匹配路由文件里的分组声明,例如:
+//
+//	userRouter := Router.Group("/api/v1")
+var groupCallRe = regexp.MustCompile(`(?m)^\s*\w+\s*:=\s*Router\.Group\("([^"]*)"\)`)
+
 // existingRoute 已存在的路由及其来源文件
 type existingRoute struct {
 	method string
@@ -58,10 +63,15 @@ func collectExistingRoutes(routerOut string, skipDomains map[string]bool) ([]exi
 		if err != nil {
 			return nil, err
 		}
+		// 取出该文件的分组前缀,使路径还原成注册到 gin 上的完整路径
+		prefix := ""
+		if m := groupCallRe.FindStringSubmatch(string(data)); m != nil {
+			prefix = config.NormalizeGroup(m[1])
+		}
 		for _, m := range routeCallRe.FindAllStringSubmatch(string(data), -1) {
 			out = append(out, existingRoute{
 				method: m[1],
-				path:   m[2],
+				path:   joinGroup(prefix, m[2]),
 				domain: domain,
 				file:   e.Name(),
 				api:    m[3],
@@ -80,6 +90,20 @@ func collectExistingRoutes(routerOut string, skipDomains map[string]bool) ([]exi
 // describeExisting 生成 "GET /orders (order_router.go 的 ListOrders)" 形式的来源描述
 func (e existingRoute) describe() string {
 	return fmt.Sprintf("%s %s (%s 的 %s)", e.method, e.path, e.domain, e.api)
+}
+
+// joinGroup 把分组前缀与组内路径拼成完整路径
+func joinGroup(prefix, path string) string {
+	if prefix == "" {
+		return path
+	}
+	if path == "" || path == "/" {
+		return prefix
+	}
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	return prefix + path
 }
 
 // checkRoutesAgainstExisting 把本次生成的路由与目标工程里已存在的路由做冲突检测。
@@ -105,7 +129,7 @@ func checkRoutesAgainstExisting(yamls *field.YamlList, cfg *config.CodeGenConfig
 		}
 	}
 
-	incoming := collectRoutes(yamls)
+	incoming := collectRoutes(yamls, cfg)
 	var conflicts []RouteConflict
 
 	// ---- 规则 0:历史路由自身就有冲突 ----

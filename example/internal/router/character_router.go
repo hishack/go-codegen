@@ -12,7 +12,7 @@ type CharacterRouter struct{}
 
 // InitCharacterRouter 注册Character模块路由(路由列表由 yaml 生成)
 func (s *CharacterRouter) InitCharacterRouter(Router *gin.RouterGroup, characterHandler *handler.CharacterHandler) (R gin.IRoutes) {
-	characterRouter := Router.Group("")
+	characterRouter := Router.Group("/api/v1")
 	{
 		characterRouter.GET("/characters/:id/skills", characterHandler.GetCharacterSkills)
 	}

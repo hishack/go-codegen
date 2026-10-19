@@ -72,7 +72,7 @@ func TestValidateRoutesNoConflict(t *testing.T) {
 		"a.yaml": "filename: alpha\npackage: system\n\nGetAlpha:\n  method: GET\n  path: /alpha\n",
 		"b.yaml": "filename: beta\npackage: system\n\nGetBeta:\n  method: POST\n  path: /beta\n",
 	})
-	if got := validateRoutes(list); len(got) != 0 {
+	if got := validateRoutes(list, nil); len(got) != 0 {
 		t.Errorf("期望无冲突,实际 %d 处:\n%s", len(got), formatConflicts(got))
 	}
 }
@@ -83,7 +83,7 @@ func TestValidateRoutesDuplicate(t *testing.T) {
 		"alpha.yaml": dupYamlA,
 		"beta.yaml":  dupYamlB,
 	})
-	got := validateRoutes(list)
+	got := validateRoutes(list, nil)
 	if len(got) == 0 {
 		t.Fatal("期望检出 GET /things 重复")
 	}
@@ -119,7 +119,7 @@ QueryThings:
   path: /things
 `,
 	})
-	if got := validateRoutes(list); len(got) == 0 {
+	if got := validateRoutes(list, nil); len(got) == 0 {
 		t.Fatal("同一文件内的重复路由也应被检出")
 	}
 }
@@ -130,7 +130,7 @@ func TestValidateRoutesWildcard(t *testing.T) {
 		"gamma.yaml": wildcardYamlA,
 		"delta.yaml": wildcardYamlB,
 	})
-	got := validateRoutes(list)
+	got := validateRoutes(list, nil)
 	if len(got) == 0 {
 		t.Fatal("期望检出 /users 下通配符命名冲突")
 	}
@@ -149,7 +149,7 @@ func TestValidateRoutesDifferentMethodSamePath(t *testing.T) {
 		"alpha.yaml": "filename: alpha\npackage: system\n\nGetThings:\n  method: GET\n  path: /things\n",
 		"beta.yaml":  "filename: beta\npackage: system\n\nCreateThing:\n  method: POST\n  path: /things\n",
 	})
-	if got := validateRoutes(list); len(got) != 0 {
+	if got := validateRoutes(list, nil); len(got) != 0 {
 		t.Errorf("不同 METHOD 的同一路径不应算冲突,实际:\n%s", formatConflicts(got))
 	}
 }
@@ -160,7 +160,7 @@ func TestValidateRoutesWildcardDifferentLevel(t *testing.T) {
 		"a.yaml": "filename: alpha\npackage: system\n\nGetUser:\n  method: GET\n  path: /users/:userId(int64)\n",
 		"b.yaml": "filename: beta\npackage: system\n\nGetOrder:\n  method: GET\n  path: /orders/:orderId(int64)\n",
 	})
-	if got := validateRoutes(list); len(got) != 0 {
+	if got := validateRoutes(list, nil); len(got) != 0 {
 		t.Errorf("不同前缀下的通配符不应算冲突,实际:\n%s", formatConflicts(got))
 	}
 }
@@ -171,7 +171,7 @@ func TestValidateRoutesNestedSameName(t *testing.T) {
 		"a.yaml": "filename: alpha\npackage: system\n\nGetUser:\n  method: GET\n  path: /users/:userId(int64)\n",
 		"b.yaml": "filename: beta\npackage: system\n\nGetUserOrder:\n  method: GET\n  path: /users/:userId(int64)/orders/:orderId(int64)\n",
 	})
-	if got := validateRoutes(list); len(got) != 0 {
+	if got := validateRoutes(list, nil); len(got) != 0 {
 		t.Errorf("嵌套层同名参数应合法,实际:\n%s", formatConflicts(got))
 	}
 }

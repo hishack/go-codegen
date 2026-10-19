@@ -4,33 +4,33 @@ package request
 
 type ListProductsReq struct {
 	// 搜索关键字
-	Keyword string `json:"keyword" form:"keyword"`
+	Keyword string `json:"keyword" form:"keyword" binding:"omitempty,max=255"`
 	// 分类 id
-	CategoryId int64 `json:"categoryId" form:"categoryId"`
+	CategoryId int64 `json:"categoryId" form:"categoryId" binding:"omitempty,gte=0"`
 	// 页码,从 1 开始
-	Page int `json:"page" form:"page"`
+	Page int `json:"page" form:"page" binding:"omitempty,gte=0"`
 	// 每页条数
-	PageSize int `json:"pageSize" form:"pageSize"`
+	PageSize int `json:"pageSize" form:"pageSize" binding:"omitempty,gte=0"`
 }
 
 type CreateProductReq struct {
 	// 商品标题
-	Title string `json:"title" form:"title"`
+	Title string `json:"title" form:"title" binding:"required,max=255"`
 	// 售价
-	Price float64 `json:"price" form:"price"`
+	Price float64 `json:"price" form:"price" binding:"omitempty,gte=0"`
 	// 商品图链接
-	Images []string                `json:"images" form:"images"`
-	Detail *CreateProductReqDetail `json:"detail" form:"detail"`
+	Images []string                `json:"images" form:"images" binding:"omitempty,dive"`
+	Detail *CreateProductReqDetail `json:"detail" form:"detail" binding:"omitempty,dive"`
 }
 
 type CreateProductReqDetail struct {
 	// 商品详情描述
-	Desc string `json:"desc" form:"desc"`
+	Desc string `json:"desc" form:"desc" binding:"omitempty,max=255"`
 }
 
 type UpdateProductReq struct {
 	// 商品标题
-	Title string `json:"title" form:"title"`
+	Title string `json:"title" form:"title" binding:"required,max=255"`
 	// 售价
-	Price float64 `json:"price" form:"price"`
+	Price float64 `json:"price" form:"price" binding:"omitempty,gte=0"`
 }

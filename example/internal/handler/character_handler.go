@@ -28,19 +28,20 @@ func NewCharacterHandler(userService service.ICharacterService) *CharacterHandle
 // @Tags system
 // @Accept json
 // @Produce json
-// @Param id path integer true "id"
+// @Param id path integer true "id" format(int64)
 // @Success 200 {object} res.GetCharacterSkillsRes "查询角色技能列表响应"
-// @Router /characters/:id/skills [get]
+// @Router /api/v1/characters/:id/skills [get]
 func (u *CharacterHandler) GetCharacterSkills(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))
+		return
 	}
 
 	data, err := u.characterService.GetCharacterSkills(c, id)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetCharacterSkillsRes](data))

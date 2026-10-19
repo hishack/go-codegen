@@ -82,7 +82,7 @@ export class NestedApi {
   /** 深度嵌套:res 会提升出多层命名结构体 UserRes -> UserResProfile -> UserResProfileAddress */
   async getUserDetail(req: GetUserDetailReq): Promise<ApiResp<GetUserDetailRes>> {
     return axios({
-      url: `/users/${req.userId}/detail`,
+      url: `/api/v1/users/${req.userId}/detail`,
       method: "get",
       params: req,
     });
@@ -91,7 +91,7 @@ export class NestedApi {
   /** 数组套对象套对象 */
   async getOrderDetail(req: GetOrderDetailReq): Promise<ApiResp<GetOrderDetailRes>> {
     return axios({
-      url: `/orders/${req.orderId}/detail`,
+      url: `/api/v1/orders/${req.orderId}/detail`,
       method: "get",
       params: req,
     });
@@ -100,7 +100,7 @@ export class NestedApi {
   /** map 类型 */
   async getConfig(): Promise<ApiResp<GetConfigRes>> {
     return axios({
-      url: `/config`,
+      url: `/api/v1/config`,
       method: "get",
     });
   }
@@ -108,7 +108,7 @@ export class NestedApi {
   /** GetUserMap */
   async getUserMap(): Promise<ApiResp<GetUserMapRes>> {
     return axios({
-      url: `/users/map`,
+      url: `/api/v1/users/map`,
       method: "get",
     });
   }
@@ -116,7 +116,7 @@ export class NestedApi {
   /** 同名字段但结构不同 -> 靠 ApiName 前缀区分,不会撞车 */
   async getConfigA(): Promise<ApiResp<GetConfigARes>> {
     return axios({
-      url: `/config/a`,
+      url: `/api/v1/config/a`,
       method: "get",
     });
   }
@@ -124,7 +124,7 @@ export class NestedApi {
   /** GetConfigB */
   async getConfigB(): Promise<ApiResp<GetConfigBRes>> {
     return axios({
-      url: `/config/b`,
+      url: `/api/v1/config/b`,
       method: "get",
     });
   }

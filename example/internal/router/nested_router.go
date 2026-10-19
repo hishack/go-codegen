@@ -12,7 +12,7 @@ type NestedRouter struct{}
 
 // InitNestedRouter 注册Nested模块路由(路由列表由 yaml 生成)
 func (s *NestedRouter) InitNestedRouter(Router *gin.RouterGroup, nestedHandler *handler.NestedHandler) (R gin.IRoutes) {
-	nestedRouter := Router.Group("")
+	nestedRouter := Router.Group("/api/v1")
 	{
 		nestedRouter.GET("/users/:userId/detail", nestedHandler.GetUserDetail)
 		nestedRouter.GET("/orders/:orderId/detail", nestedHandler.GetOrderDetail)

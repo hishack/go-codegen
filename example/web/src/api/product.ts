@@ -91,7 +91,7 @@ export class ProductApi {
   /** 商品列表查询 */
   async listProducts(req: ListProductsReq): Promise<ApiResp<ListProductsRes>> {
     return axios({
-      url: `/products`,
+      url: `/api/v1/products`,
       method: "get",
       params: req,
     });
@@ -100,7 +100,7 @@ export class ProductApi {
   /** 商品详情 */
   async getProduct(req: GetProductReq): Promise<ApiResp<GetProductRes>> {
     return axios({
-      url: `/products/${req.id}`,
+      url: `/api/v1/products/${req.id}`,
       method: "get",
       params: req,
     });
@@ -109,7 +109,7 @@ export class ProductApi {
   /** 创建商品 */
   async createProduct(req: CreateProductReq): Promise<ApiResp<number>> {
     return axios({
-      url: `/products`,
+      url: `/api/v1/products`,
       method: "post",
       data: req,
     });
@@ -118,7 +118,7 @@ export class ProductApi {
   /** 更新商品 */
   async updateProduct(req: UpdateProductReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/products/${req.id}`,
+      url: `/api/v1/products/${req.id}`,
       method: "put",
       data: req,
     });
@@ -127,7 +127,7 @@ export class ProductApi {
   /** 删除商品 */
   async deleteProduct(req: DeleteProductReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/products/${req.id}`,
+      url: `/api/v1/products/${req.id}`,
       method: "delete",
       params: req,
     });

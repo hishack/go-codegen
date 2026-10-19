@@ -12,7 +12,7 @@ type ArrayRouter struct{}
 
 // InitArrayRouter 注册Array模块路由(路由列表由 yaml 生成)
 func (s *ArrayRouter) InitArrayRouter(Router *gin.RouterGroup, arrayHandler *handler.ArrayHandler) (R gin.IRoutes) {
-	arrayRouter := Router.Group("")
+	arrayRouter := Router.Group("/api/v1")
 	{
 		arrayRouter.GET("/arrays/ints", arrayHandler.GetIntArray)
 		arrayRouter.GET("/arrays/strings", arrayHandler.GetStringArray)

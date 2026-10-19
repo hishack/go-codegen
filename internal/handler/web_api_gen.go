@@ -203,7 +203,7 @@ func (g *WebApiGen) writeMethod(b *strings.Builder, d *domain, api *field.Api) {
 		b.WriteString("  async " + methodName + "(): Promise<ApiResp<" + g.resTs(api) + ">> {\n")
 	}
 
-	url := api.RoutePath()
+	url := g.cfg.PrefixPath(api.RoutePath())
 	for _, p := range api.Params {
 		url = strings.ReplaceAll(url, ":"+p.Tag, "${req."+p.Tag+"}")
 	}

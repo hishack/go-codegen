@@ -12,7 +12,7 @@ type AuthRouter struct{}
 
 // InitAuthRouter 注册Auth模块路由(路由列表由 yaml 生成)
 func (s *AuthRouter) InitAuthRouter(Router *gin.RouterGroup, authHandler *handler.AuthHandler) (R gin.IRoutes) {
-	authRouter := Router.Group("")
+	authRouter := Router.Group("/api/v1")
 	{
 		authRouter.POST("/auth/login", authHandler.Login)
 		authRouter.POST("/auth/refresh", authHandler.RefreshToken)

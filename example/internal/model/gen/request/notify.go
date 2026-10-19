@@ -4,14 +4,14 @@ package request
 
 type SendSmsCodeReq struct {
 	// 手机号
-	Phone string `json:"phone" form:"phone"`
+	Phone string `json:"phone" form:"phone" binding:"required,max=255"`
 	// 场景,如 login/register
-	Scene string `json:"scene" form:"scene"`
+	Scene string `json:"scene" form:"scene" binding:"omitempty,max=255"`
 }
 
 type ListNotifiesReq struct {
 	// 按用户过滤
-	UserId int64 `json:"userId" form:"userId"`
+	UserId int64 `json:"userId" form:"userId" binding:"omitempty,gte=0"`
 	// 是否已读
-	Read bool `json:"read" form:"read"`
+	Read bool `json:"read" form:"read" binding:"omitempty"`
 }

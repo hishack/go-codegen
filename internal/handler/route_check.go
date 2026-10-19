@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/hishack/go-codegen/config"
 	"github.com/hishack/go-codegen/internal/field"
 )
 
@@ -44,14 +45,19 @@ func (c RouteConflict) String() string {
 	return fmt.Sprintf("[%s] %s\n    先: %s\n    后: %s", c.Kind, c.Detail, c.First, c.Second)
 }
 
-// collectRoutes 汇总所有领域将要注册的路由
-func collectRoutes(yamls *field.YamlList) []routeEntry {
+// collectRoutes 汇总所有领域将要注册的路由。
+// cfg 非 nil 时会带上配置里的分组前缀,使检测结果与 gin 实际注册的完整路径一致
+func collectRoutes(yamls *field.YamlList, cfg *config.CodeGenConfig) []routeEntry {
 	var out []routeEntry
 	for _, d := range groupDomains(yamls) {
 		for _, api := range d.Apis {
+			full := api.RoutePath()
+			if cfg != nil {
+				full = cfg.PrefixPath(full)
+			}
 			out = append(out, routeEntry{
 				method: api.Method,
-				path:   normalizeRoutePath(api.RoutePath()),
+				path:   normalizeRoutePath(full),
 				raw:    api.Path,
 				api:    api,
 				domain: d.Name,
@@ -91,8 +97,8 @@ func (e routeEntry) describe() string {
 //
 // gin 的路由树按"静态前缀"分组,同一前缀下的 :param 必须同名,
 // 因此这里既要查 METHOD+PATH 重复,也要查同层通配符命名是否一致。
-func validateRoutes(yamls *field.YamlList) []RouteConflict {
-	entries := collectRoutes(yamls)
+func validateRoutes(yamls *field.YamlList, cfg *config.CodeGenConfig) []RouteConflict {
+	entries := collectRoutes(yamls, cfg)
 	var conflicts []RouteConflict
 
 	// ---- 规则 1:METHOD + PATH 重复 ----

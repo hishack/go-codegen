@@ -4,12 +4,12 @@ package request
 
 type CreateThresholdReq struct {
 	// 阈值名称
-	Name string `json:"name" form:"name"`
+	Name string `json:"name" form:"name" binding:"required,max=255"`
 	// 阈值档位,如 easy/normal/hard
-	Score string `json:"score" form:"score"`
+	Score string `json:"score" form:"score" binding:"omitempty,max=255"`
 }
 
 type UpdateThresholdReq struct {
 	// 新的阈值名称
-	Name string `json:"name" form:"name"`
+	Name string `json:"name" form:"name" binding:"required,max=255"`
 }

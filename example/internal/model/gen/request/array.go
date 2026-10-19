@@ -3,12 +3,12 @@
 package request
 
 type CreateBatchUserReq struct {
-	Names []string                      `json:"names" form:"names"`
-	Ages  []int                         `json:"ages" form:"ages"`
-	Tags  []*CreateBatchUserReqTagsItem `json:"tags" form:"tags"`
+	Names []string                      `json:"names" form:"names" binding:"omitempty,dive"`
+	Ages  []int                         `json:"ages" form:"ages" binding:"omitempty,dive"`
+	Tags  []*CreateBatchUserReqTagsItem `json:"tags" form:"tags" binding:"omitempty,dive"`
 }
 
 type CreateBatchUserReqTagsItem struct {
-	Key   string `json:"key" form:"key"`
-	Value string `json:"value" form:"value"`
+	Key   string `json:"key" form:"key" binding:"omitempty,max=255"`
+	Value string `json:"value" form:"value" binding:"omitempty,max=255"`
 }

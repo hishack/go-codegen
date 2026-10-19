@@ -8,34 +8,34 @@ import (
 )
 
 type CreateUserReq struct {
-	Name     string        `json:"name" form:"name"`
-	Age      int           `json:"age" form:"age"`
-	Height   float64       `json:"height" form:"height"`
-	Weight   float32       `json:"weight" form:"weight"`
-	Enabled  bool          `json:"enabled" form:"enabled"`
-	Score    int64         `json:"score" form:"score"`
-	Level    int32         `json:"level" form:"level"`
-	Count    uint          `json:"count" form:"count"`
-	Ratio    float64       `json:"ratio" form:"ratio"`
-	Birthday time.Time     `json:"birthday" form:"birthday"`
-	Duration time.Duration `json:"duration" form:"duration"`
-	Nickname string        `json:"nickname" form:"nickname"`
+	Name     string        `json:"name" form:"name" binding:"required,max=255"`
+	Age      int           `json:"age" form:"age" binding:"omitempty,gte=0"`
+	Height   float64       `json:"height" form:"height" binding:"omitempty,gte=0"`
+	Weight   float32       `json:"weight" form:"weight" binding:"omitempty,gte=0"`
+	Enabled  bool          `json:"enabled" form:"enabled" binding:"omitempty"`
+	Score    int64         `json:"score" form:"score" binding:"omitempty,gte=0"`
+	Level    int32         `json:"level" form:"level" binding:"omitempty,gte=0"`
+	Count    uint          `json:"count" form:"count" binding:"omitempty,gte=0"`
+	Ratio    float64       `json:"ratio" form:"ratio" binding:"omitempty,gte=0"`
+	Birthday time.Time     `json:"birthday" form:"birthday" binding:"omitempty"`
+	Duration time.Duration `json:"duration" form:"duration" binding:"omitempty" swaggertype:"integer"`
+	Nickname string        `json:"nickname" form:"nickname" binding:"omitempty,max=255"`
 }
 
 type UpdateUserReq struct {
-	Name string `json:"name" form:"name"`
-	Age  int    `json:"age" form:"age"`
+	Name string `json:"name" form:"name" binding:"required,max=255"`
+	Age  int    `json:"age" form:"age" binding:"omitempty,gte=0"`
 }
 
 type PatchUserReq struct {
-	Nickname string `json:"nickname" form:"nickname"`
+	Nickname string `json:"nickname" form:"nickname" binding:"omitempty,max=255"`
 }
 
 type UploadAvatarReq struct {
 	// 用户ID
-	UserId int64 `json:"userId" form:"userId"`
+	UserId int64 `json:"userId" form:"userId" binding:"omitempty,gte=0"`
 	// 头像文件
 	Avatar *multipart.FileHeader `form:"avatar"`
 	// 附件,可多个
-	Attachments []*multipart.FileHeader `json:"attachments" form:"attachments"`
+	Attachments []*multipart.FileHeader `json:"attachments" form:"attachments" binding:"omitempty,dive"`
 }

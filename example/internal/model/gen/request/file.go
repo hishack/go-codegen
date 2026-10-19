@@ -12,12 +12,12 @@ type UploadFileReq struct {
 }
 
 type UploadFilesReq struct {
-	Files []*UploadFilesReqFilesItem `json:"files" form:"files"`
+	Files []*UploadFilesReqFilesItem `json:"files" form:"files" binding:"omitempty,dive"`
 }
 
 type UploadFilesReqFilesItem struct {
 	// 文件字段名
-	Key string `json:"key" form:"key"`
+	Key string `json:"key" form:"key" binding:"omitempty,max=255"`
 	// 上传的文件
 	File *multipart.FileHeader `form:"file"`
 }

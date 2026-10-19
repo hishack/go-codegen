@@ -12,7 +12,7 @@ type ThresholdRouter struct{}
 
 // InitThresholdRouter 注册Threshold模块路由(路由列表由 yaml 生成)
 func (s *ThresholdRouter) InitThresholdRouter(Router *gin.RouterGroup, thresholdHandler *handler.ThresholdHandler) (R gin.IRoutes) {
-	thresholdRouter := Router.Group("")
+	thresholdRouter := Router.Group("/api/v1")
 	{
 		thresholdRouter.POST("/thresholds", thresholdHandler.CreateThreshold)
 		thresholdRouter.PUT("/thresholds/:id", thresholdHandler.UpdateThreshold)

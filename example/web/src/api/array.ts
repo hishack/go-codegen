@@ -59,7 +59,7 @@ export class ArrayApi {
   /** 数组的各种写法:基础类型数组、对象数组、混合嵌套 */
   async getIntArray(): Promise<ApiResp<GetIntArrayRes>> {
     return axios({
-      url: `/arrays/ints`,
+      url: `/api/v1/arrays/ints`,
       method: "get",
     });
   }
@@ -67,7 +67,7 @@ export class ArrayApi {
   /** GetStringArray */
   async getStringArray(): Promise<ApiResp<GetStringArrayRes>> {
     return axios({
-      url: `/arrays/strings`,
+      url: `/api/v1/arrays/strings`,
       method: "get",
     });
   }
@@ -75,7 +75,7 @@ export class ArrayApi {
   /** GetInt64Array */
   async getInt64Array(): Promise<ApiResp<GetInt64ArrayRes>> {
     return axios({
-      url: `/arrays/int64s`,
+      url: `/api/v1/arrays/int64s`,
       method: "get",
     });
   }
@@ -83,7 +83,7 @@ export class ArrayApi {
   /** 对象数组:对应 res.list,会提升为 GetObjectArrayResListItem */
   async getObjectArray(): Promise<ApiResp<GetObjectArrayRes>> {
     return axios({
-      url: `/arrays/objects`,
+      url: `/api/v1/arrays/objects`,
       method: "get",
     });
   }
@@ -91,7 +91,7 @@ export class ArrayApi {
   /** 多字段对象数组 */
   async getOrderList(): Promise<ApiResp<GetOrderListRes>> {
     return axios({
-      url: `/orders`,
+      url: `/api/v1/orders`,
       method: "get",
     });
   }
@@ -99,7 +99,7 @@ export class ArrayApi {
   /** 请求里带数组 */
   async createBatchUser(req: CreateBatchUserReq): Promise<ApiResp<number>> {
     return axios({
-      url: `/users/batch`,
+      url: `/api/v1/users/batch`,
       method: "post",
       data: req,
     });

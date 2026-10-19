@@ -30,17 +30,17 @@ func NewThresholdHandler(userService service.IThresholdService) *ThresholdHandle
 // @Produce json
 // @Param req body request.CreateThresholdReq true "新增阈值请求"
 // @Success 200 {object} int64 "新增阈值响应"
-// @Router /thresholds [post]
+// @Router /api/v1/thresholds [post]
 func (u *ThresholdHandler) CreateThreshold(c *gin.Context) {
 	var req request.CreateThresholdReq
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))
 		return
 	}
 
 	data, err := u.thresholdService.CreateThreshold(c, req)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[int64](data))
@@ -52,26 +52,27 @@ func (u *ThresholdHandler) CreateThreshold(c *gin.Context) {
 // @Tags system
 // @Accept json
 // @Produce json
-// @Param id path integer true "id"
+// @Param id path integer true "id" format(int64)
 // @Param req body request.UpdateThresholdReq true "更新阈值请求"
 // @Success 200 {object} bool "更新阈值响应"
-// @Router /thresholds/:id [put]
+// @Router /api/v1/thresholds/:id [put]
 func (u *ThresholdHandler) UpdateThreshold(c *gin.Context) {
 	var req request.UpdateThresholdReq
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))
 		return
 	}
 
 	idStr := c.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))
+		c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))
+		return
 	}
 
 	data, err := u.thresholdService.UpdateThreshold(c, id, req)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))

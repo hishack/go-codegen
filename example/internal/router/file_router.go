@@ -12,7 +12,7 @@ type FileRouter struct{}
 
 // InitFileRouter 注册File模块路由(路由列表由 yaml 生成)
 func (s *FileRouter) InitFileRouter(Router *gin.RouterGroup, fileHandler *handler.FileHandler) (R gin.IRoutes) {
-	fileRouter := Router.Group("")
+	fileRouter := Router.Group("/api/v1")
 	{
 		fileRouter.POST("/files", fileHandler.UploadFile)
 		fileRouter.POST("/files/batch", fileHandler.UploadFiles)

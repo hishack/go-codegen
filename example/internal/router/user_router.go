@@ -12,7 +12,7 @@ type UserRouter struct{}
 
 // InitUserRouter 注册User模块路由(路由列表由 yaml 生成)
 func (s *UserRouter) InitUserRouter(Router *gin.RouterGroup, userHandler *handler.UserHandler) (R gin.IRoutes) {
-	userRouter := Router.Group("")
+	userRouter := Router.Group("/api/v1")
 	{
 		userRouter.POST("/users", userHandler.CreateUser)
 		userRouter.GET("/users/:userId", userHandler.GetUser)

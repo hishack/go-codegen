@@ -6,6 +6,7 @@ import (
 	"codegen-example/internal/model/gen/request"
 	res "codegen-example/internal/model/gen/response"
 	"codegen-example/internal/service"
+	"codegen-example/pkg/errorutil"
 	"codegen-example/pkg/response"
 
 	"github.com/gin-gonic/gin"
@@ -29,17 +30,17 @@ func NewAuthHandler(userService service.IAuthService) *AuthHandler {
 // @Produce json
 // @Param req body request.LoginReq true "本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。 登录请求"
 // @Success 200 {object} res.LoginRes "本文件演示:一个 yaml 靠接口级 filename 拆成多个领域。 三个接口分属 user / profile / auth 三组文件,互不干扰。 登录响应"
-// @Router /auth/login [post]
+// @Router /api/v1/auth/login [post]
 func (u *AuthHandler) Login(c *gin.Context) {
 	var req request.LoginReq
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))
 		return
 	}
 
 	data, err := u.authService.Login(c, req)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.LoginRes](data))
@@ -53,17 +54,17 @@ func (u *AuthHandler) Login(c *gin.Context) {
 // @Produce json
 // @Param req body request.RefreshTokenReq true "刷新令牌请求"
 // @Success 200 {object} string "刷新令牌响应"
-// @Router /auth/refresh [post]
+// @Router /api/v1/auth/refresh [post]
 func (u *AuthHandler) RefreshToken(c *gin.Context) {
 	var req request.RefreshTokenReq
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))
 		return
 	}
 
 	data, err := u.authService.RefreshToken(c, req)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[string](data))
@@ -77,17 +78,17 @@ func (u *AuthHandler) RefreshToken(c *gin.Context) {
 // @Produce json
 // @Param req body request.LogoutAccountReq true "退出登录请求"
 // @Success 200 {object} bool "退出登录响应"
-// @Router /auth/logout [post]
+// @Router /api/v1/auth/logout [post]
 func (u *AuthHandler) LogoutAccount(c *gin.Context) {
 	var req request.LogoutAccountReq
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))
 		return
 	}
 
 	err := u.authService.LogoutAccount(c, req)
 	if err != nil {
-		c.JSON(http.StatusOK, response.NewErrorResponse[any](err))
+		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[any](true))

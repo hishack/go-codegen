@@ -70,7 +70,7 @@ export class EdgeApi {
   /** 没有 req 也没有 res */
   async healthCheck(): Promise<ApiResp<void>> {
     return axios({
-      url: `/health`,
+      url: `/api/v1/health`,
       method: "get",
     });
   }
@@ -78,7 +78,7 @@ export class EdgeApi {
   /** 只有 req,没有 res */
   async logout(req: LogoutReq): Promise<ApiResp<void>> {
     return axios({
-      url: `/logout`,
+      url: `/api/v1/logout`,
       method: "post",
       data: req,
     });
@@ -87,7 +87,7 @@ export class EdgeApi {
   /** 只有 res,没有 req */
   async getTime(): Promise<ApiResp<GetTimeRes>> {
     return axios({
-      url: `/time`,
+      url: `/api/v1/time`,
       method: "get",
     });
   }
@@ -95,7 +95,7 @@ export class EdgeApi {
   /** 空 req 对象 */
   async ping(): Promise<ApiResp<void>> {
     return axios({
-      url: `/ping`,
+      url: `/api/v1/ping`,
       method: "get",
     });
   }
@@ -103,7 +103,7 @@ export class EdgeApi {
   /** GET 带 req(query 参数场景) */
   async searchUser(req: SearchUserReq): Promise<ApiResp<SearchUserRes>> {
     return axios({
-      url: `/users/search`,
+      url: `/api/v1/users/search`,
       method: "get",
       params: req,
     });
@@ -112,7 +112,7 @@ export class EdgeApi {
   /** 多路径参数 */
   async getUserOrder(req: GetUserOrderReq): Promise<ApiResp<GetUserOrderRes>> {
     return axios({
-      url: `/users/${req.userId}/orders/${req.orderId}`,
+      url: `/api/v1/users/${req.userId}/orders/${req.orderId}`,
       method: "get",
       params: req,
     });
@@ -121,7 +121,7 @@ export class EdgeApi {
   /** 无类型的路径参数,默认按 string */
   async getArticle(req: GetArticleReq): Promise<ApiResp<GetArticleRes>> {
     return axios({
-      url: `/articles/${req.id}`,
+      url: `/api/v1/articles/${req.id}`,
       method: "get",
       params: req,
     });
@@ -130,7 +130,7 @@ export class EdgeApi {
   /** 多级路径参数 */
   async getOrgUser(req: GetOrgUserReq): Promise<ApiResp<GetOrgUserRes>> {
     return axios({
-      url: `/orgs/${req.orgId}/users/${req.userId}`,
+      url: `/api/v1/orgs/${req.orgId}/users/${req.userId}`,
       method: "get",
       params: req,
     });

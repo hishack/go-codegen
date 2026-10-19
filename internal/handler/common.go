@@ -195,6 +195,7 @@ func pathParamParse(name, tag string, t *field.Type) ([]string, bool) {
 			name+", err := "+parse,
 			"if err != nil {",
 			"\treturnError",
+			"\treturn",
 			"}",
 		)
 		return lines, true
@@ -213,6 +214,7 @@ func pathParamParse(name, tag string, t *field.Type) ([]string, bool) {
 		raw+"Parsed, err := "+parse,
 		"if err != nil {",
 		"\treturnError",
+		"\treturn",
 		"}",
 		name+" := "+conv+"("+raw+"Parsed)",
 	)
@@ -245,6 +247,32 @@ func swaggerType(t *field.Type) string {
 		return "file"
 	}
 	return "string"
+}
+
+// swaggerFormat 基础类型对应的 swagger format。
+// 以 format(...) 属性追加在 @Param 行的**描述之后**(swag 只认这个位置),
+// 使输出里带上 format: int64,前端能拿到具体类型而不是只知道"是个整数"。
+// 取值遵循 OpenAPI 惯例: int/int8/int16/int32 -> int32,int64 及无符号 -> int64
+func swaggerFormat(t *field.Type) string {
+	switch t.Name {
+	case "int", "int8", "int16", "int32":
+		return "int32"
+	case "int64", "uint", "uint8", "uint16", "uint32", "uint64":
+		return "int64"
+	case "float32":
+		return "float"
+	case "float64":
+		return "double"
+	}
+	return ""
+}
+
+// swaggerFormatAttr 输出 @Param 行尾的 format 属性,无 format 时返回空串
+func swaggerFormatAttr(t *field.Type) string {
+	if f := swaggerFormat(t); f != "" {
+		return " format(" + f + ")"
+	}
+	return ""
 }
 
 // ============ 前端 TS 类型映射 ============
@@ -309,8 +337,8 @@ func apiHasTypedParam(api *field.Api) bool {
 	return false
 }
 
-// handlerDocBlock 渲染 handler 方法的文档注释 + swagger 注解块(含 @Router)
-func handlerDocBlock(d *domain, api *field.Api) string {
+// handlerDocBlock 渲染 handler 方法的文档注释+ swagger 注解块(含 @Router)
+func handlerDocBlock(d *domain, api *field.Api, cfg *config.CodeGenConfig) string {
 	comment := docComment(api)
 	var b strings.Builder
 	b.WriteString("// " + api.ApiName + " " + comment + "\n")
@@ -320,7 +348,7 @@ func handlerDocBlock(d *domain, api *field.Api) string {
 	b.WriteString("// @Accept json\n")
 	b.WriteString("// @Produce json\n")
 	for _, p := range api.Params {
-		b.WriteString("// @Param " + p.Tag + " path " + swaggerType(p.Type) + " true \"" + p.Tag + "\"\n")
+		b.WriteString("// @Param " + p.Tag + " path " + swaggerType(p.Type) + " true \"" + p.Tag + "\"" + swaggerFormatAttr(p.Type) + "\n")
 	}
 	if api.HasReq() {
 		switch {
@@ -330,7 +358,7 @@ func handlerDocBlock(d *domain, api *field.Api) string {
 				if c == "" {
 					c = fl.Tag
 				}
-				b.WriteString("// @Param " + fl.Tag + " query " + swaggerType(fl.Type) + " false \"" + c + "\"\n")
+				b.WriteString("// @Param " + fl.Tag + " query " + swaggerType(fl.Type) + " false \"" + c + "\"" + swaggerFormatAttr(fl.Type) + "\n")
 			}
 		case reqHasFile(api):
 			// multipart 表单:文件字段逐个标注 formData
@@ -355,6 +383,10 @@ func handlerDocBlock(d *domain, api *field.Api) string {
 	default:
 		b.WriteString("// @Success 200 {object} bool \"" + comment + "响应\"\n")
 	}
-	b.WriteString("// @Router " + api.RoutePath() + " [" + strings.ToLower(api.Method) + "]\n")
+	routePath := api.RoutePath()
+	if cfg != nil {
+		routePath = cfg.PrefixPath(routePath)
+	}
+	b.WriteString("// @Router " + routePath + " [" + strings.ToLower(api.Method) + "]\n")
 	return b.String()
 }

@@ -4,7 +4,7 @@ package request
 
 type UpdateUserProfileReq struct {
 	// 昵称
-	Nickname string `json:"nickname" form:"nickname"`
+	Nickname string `json:"nickname" form:"nickname" binding:"omitempty,max=255"`
 	// 个性签名
-	Signature string `json:"signature" form:"signature"`
+	Signature string `json:"signature" form:"signature" binding:"omitempty,max=255"`
 }

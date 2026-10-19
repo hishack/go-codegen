@@ -70,7 +70,7 @@ func (g *HandlerGen) registerStructAndCtor(f *goFile, d *domain, report *Report)
 // registerMethods 注册/更新各接口方法(handler 是生成器管理的胶水层)
 func (g *HandlerGen) registerMethods(f *goFile, d *domain, report *Report) {
 	for _, api := range d.Apis {
-		a, err := f.UpsertFunc("*"+d.handlerType(), api.ApiName, handlerMethodText(d, api), merge.PolicyAlways)
+		a, err := f.UpsertFunc("*"+d.handlerType(), api.ApiName, handlerMethodText(d, api, g.cfg), merge.PolicyAlways)
 		if err != nil {
 			report.warn("handler 生成失败(" + d.Name + "): " + err.Error())
 			continue
@@ -87,27 +87,27 @@ func (g *HandlerGen) registerMethods(f *goFile, d *domain, report *Report) {
 
 // registerImports handler 文件 import 精确计算
 func (g *HandlerGen) registerImports(f *goFile, d *domain) {
-	f.NeedImports("github.com/gin-gonic/gin", "net/http", g.cfg.Module+"/pkg/response")
+	f.NeedImports("github.com/gin-gonic/gin", "net/http", g.cfg.Module+"/pkg/response", g.cfg.Module+"/pkg/errorutil")
 	registerModelImports(f.File, g.cfg, d)
 	if d.hasTypedParam() {
-		f.NeedImports("strconv", g.cfg.Module+"/pkg/errorutil")
+		f.NeedImports("strconv")
 	}
 }
 
 // handlerMethodText 渲染一个 handler 方法(胶水代码)
-func handlerMethodText(d *domain, api *field.Api) string {
+func handlerMethodText(d *domain, api *field.Api, cfg *config.CodeGenConfig) string {
 	var b strings.Builder
-	b.WriteString(handlerDocBlock(d, api))
+	b.WriteString(handlerDocBlock(d, api, cfg))
 	b.WriteString("func (u *" + d.handlerType() + ") " + api.ApiName + "(c *gin.Context) {\n")
 
-	errStmt := "c.JSON(http.StatusOK, response.NewErrorResponse[any](err))"
-	paramsErrorStmt := "c.JSON(http.StatusOK, response.NewErrorResponse[any](errorutil.ParamsError))"
+	errStmt := "c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))"
+	badRequestStmt := "c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))"
 	section := func() { b.WriteString("\n") }
 
 	// 1. 绑定请求参数(bindExpr 按有无 file 字段选择 ShouldBind / ShouldBindQuery / ShouldBindJSON)
 	if api.HasReq() {
 		b.WriteString("\tvar req request." + api.Req.Name + "\n")
-		b.WriteString("\tif err := " + bindExpr(api) + "; err != nil {\n\t\t" + errStmt + "\n\t\treturn\n\t}\n")
+		b.WriteString("\tif err := " + bindExpr(api) + "; err != nil {\n\t\t" + badRequestStmt + "\n\t\treturn\n\t}\n")
 		section()
 	}
 
@@ -115,7 +115,7 @@ func handlerMethodText(d *domain, api *field.Api) string {
 	for _, p := range api.Params {
 		lines, _ := pathParamParse(field.LowerFirst(p.Name), p.Tag, p.Type)
 		for _, l := range lines {
-			l = strings.ReplaceAll(l, "returnError", paramsErrorStmt)
+			l = strings.ReplaceAll(l, "returnError", badRequestStmt)
 			b.WriteString("\t" + l + "\n")
 		}
 	}

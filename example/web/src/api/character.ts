@@ -25,7 +25,7 @@ export class CharacterApi {
   /** 查询角色技能列表 */
   async getCharacterSkills(req: GetCharacterSkillsReq): Promise<ApiResp<GetCharacterSkillsRes>> {
     return axios({
-      url: `/characters/${req.id}/skills`,
+      url: `/api/v1/characters/${req.id}/skills`,
       method: "get",
       params: req,
     });

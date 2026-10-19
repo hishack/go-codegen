@@ -12,7 +12,7 @@ type ProductRouter struct{}
 
 // InitProductRouter 注册Product模块路由(路由列表由 yaml 生成)
 func (s *ProductRouter) InitProductRouter(Router *gin.RouterGroup, productHandler *handler.ProductHandler) (R gin.IRoutes) {
-	productRouter := Router.Group("")
+	productRouter := Router.Group("/api/v1")
 	{
 		productRouter.GET("/products", productHandler.ListProducts)
 		productRouter.GET("/products/:id", productHandler.GetProduct)

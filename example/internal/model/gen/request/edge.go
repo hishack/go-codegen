@@ -3,11 +3,11 @@
 package request
 
 type LogoutReq struct {
-	Token string `json:"token" form:"token"`
+	Token string `json:"token" form:"token" binding:"omitempty,max=255"`
 }
 
 type SearchUserReq struct {
-	Keyword  string `json:"keyword" form:"keyword"`
-	Page     int    `json:"page" form:"page"`
-	PageSize int    `json:"pageSize" form:"pageSize"`
+	Keyword  string `json:"keyword" form:"keyword" binding:"omitempty,max=255"`
+	Page     int    `json:"page" form:"page" binding:"omitempty,gte=0"`
+	PageSize int    `json:"pageSize" form:"pageSize" binding:"omitempty,gte=0"`
 }

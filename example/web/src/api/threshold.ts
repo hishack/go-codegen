@@ -21,7 +21,7 @@ export class ThresholdApi {
   /** 新增阈值 */
   async createThreshold(req: CreateThresholdReq): Promise<ApiResp<number>> {
     return axios({
-      url: `/thresholds`,
+      url: `/api/v1/thresholds`,
       method: "post",
       data: req,
     });
@@ -30,7 +30,7 @@ export class ThresholdApi {
   /** 更新阈值 */
   async updateThreshold(req: UpdateThresholdReq): Promise<ApiResp<boolean>> {
     return axios({
-      url: `/thresholds/${req.id}`,
+      url: `/api/v1/thresholds/${req.id}`,
       method: "put",
       data: req,
     });
