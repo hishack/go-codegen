@@ -33,7 +33,7 @@ func NewArrayHandler(userService service.IArrayService) *ArrayHandler {
 func (u *ArrayHandler) GetIntArray(c *gin.Context) {
 	data, err := u.arrayService.GetIntArray(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetIntArrayRes](data))
@@ -50,7 +50,7 @@ func (u *ArrayHandler) GetIntArray(c *gin.Context) {
 func (u *ArrayHandler) GetStringArray(c *gin.Context) {
 	data, err := u.arrayService.GetStringArray(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetStringArrayRes](data))
@@ -67,7 +67,7 @@ func (u *ArrayHandler) GetStringArray(c *gin.Context) {
 func (u *ArrayHandler) GetInt64Array(c *gin.Context) {
 	data, err := u.arrayService.GetInt64Array(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetInt64ArrayRes](data))
@@ -84,7 +84,7 @@ func (u *ArrayHandler) GetInt64Array(c *gin.Context) {
 func (u *ArrayHandler) GetObjectArray(c *gin.Context) {
 	data, err := u.arrayService.GetObjectArray(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetObjectArrayRes](data))
@@ -101,7 +101,7 @@ func (u *ArrayHandler) GetObjectArray(c *gin.Context) {
 func (u *ArrayHandler) GetOrderList(c *gin.Context) {
 	data, err := u.arrayService.GetOrderList(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetOrderListRes](data))
@@ -125,7 +125,7 @@ func (u *ArrayHandler) CreateBatchUser(c *gin.Context) {
 
 	data, err := u.arrayService.CreateBatchUser(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[int64](data))

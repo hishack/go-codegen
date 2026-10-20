@@ -41,7 +41,7 @@ func (u *NestedHandler) GetUserDetail(c *gin.Context) {
 
 	data, err := u.nestedService.GetUserDetail(c, userId)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserDetailRes](data))
@@ -66,7 +66,7 @@ func (u *NestedHandler) GetOrderDetail(c *gin.Context) {
 
 	data, err := u.nestedService.GetOrderDetail(c, orderId)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetOrderDetailRes](data))
@@ -83,7 +83,7 @@ func (u *NestedHandler) GetOrderDetail(c *gin.Context) {
 func (u *NestedHandler) GetConfig(c *gin.Context) {
 	data, err := u.nestedService.GetConfig(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetConfigRes](data))
@@ -100,7 +100,7 @@ func (u *NestedHandler) GetConfig(c *gin.Context) {
 func (u *NestedHandler) GetUserMap(c *gin.Context) {
 	data, err := u.nestedService.GetUserMap(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserMapRes](data))
@@ -117,7 +117,7 @@ func (u *NestedHandler) GetUserMap(c *gin.Context) {
 func (u *NestedHandler) GetConfigA(c *gin.Context) {
 	data, err := u.nestedService.GetConfigA(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetConfigARes](data))
@@ -134,7 +134,7 @@ func (u *NestedHandler) GetConfigA(c *gin.Context) {
 func (u *NestedHandler) GetConfigB(c *gin.Context) {
 	data, err := u.nestedService.GetConfigB(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetConfigBRes](data))

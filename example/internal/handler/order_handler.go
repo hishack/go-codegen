@@ -41,7 +41,7 @@ func (u *OrderHandler) CreateOrder(c *gin.Context) {
 
 	data, err := u.orderService.CreateOrder(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.CreateOrderRes](data))
@@ -68,7 +68,7 @@ func (u *OrderHandler) ListOrders(c *gin.Context) {
 
 	data, err := u.orderService.ListOrders(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.ListOrdersRes](data))
@@ -93,7 +93,7 @@ func (u *OrderHandler) GetOrderInfo(c *gin.Context) {
 
 	data, err := u.orderService.GetOrderInfo(c, orderId)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetOrderInfoRes](data))
@@ -118,7 +118,7 @@ func (u *OrderHandler) CancelOrder(c *gin.Context) {
 
 	data, err := u.orderService.CancelOrder(c, orderId)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))

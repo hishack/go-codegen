@@ -19,7 +19,7 @@ yaml 里写的注释会一路带到 Go 字段注释、swagger 注解和前端 TS
 | --- | --- |
 | Go | 1.25 及以上(见 `go.mod`) |
 | 目标工程 | 使用 [gin](https://github.com/gin-gonic/gin) 的 Web 工程 |
-| 目标工程必需包 | `pkg/response`、`pkg/errorutil`(见下方「准备目标工程」) |
+| 目标工程必需包 | `pkg/response`;`pkg/errorutil`(有接口需要参数校验时才会 import) |
 
 ## 安装
 
@@ -51,7 +51,7 @@ go run github.com/hishack/go-codegen/cmd/gen@latest -config gen.yaml
 | 包 | 需要提供 | 用途 |
 | --- | --- | --- |
 | `pkg/response` | `BaseResponse[T]`、`NewSuccessResponse[T](data T)`、`NewErrorResponse[T](err error)` | handler 统一包装响应体 |
-| `pkg/errorutil` | `BusinessError` 类型、`ParamsError` 变量、`HTTPStatusOf(err) int` | 业务错误与 HTTP 状态码映射 |
+| `pkg/errorutil` | `BusinessError` 类型、`ParamsError` 变量 | 参数/绑定失败时构造 400 的错误体 |
 
 > 这两个包的 import 前缀是 `<module>/pkg/response` 和 `<module>/pkg/errorutil`,
 > 所以必须放在目标工程根目录下的 `pkg/` 里,`module` 也要配成真实的 go module 名。
@@ -296,9 +296,13 @@ handler 按错误来源返回不同状态码:
 
 | 情况 | 状态码 |
 | --- | --- |
-| 绑定 / 参数解析失败 | `400` |
-| 业务失败(`logic` 返回 error) | `422`(`errorutil.HTTPStatusOf` 决定) |
+| 绑定 / 参数解析失败(请求本身不合法) | `400` |
+| 业务失败(`logic` 返回 error) | `422`(固定 `http.StatusUnprocessableEntity`) |
 | 成功 | `200` |
+
+业务失败**统一**是 422,不再按错误类型二次映射:请求能解析、但业务上处理不了,语义上正是
+"格式没问题、内容无法处理"。具体是哪一类失败,由响应体里的业务错误码表达 —— 这样前端只需
+判断 HTTP 状态,业务分支交给 code,不必为每种错误维护一张状态码映射表。
 
 ---
 

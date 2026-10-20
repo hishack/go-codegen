@@ -1,0 +1,68 @@
+filename: test
+package: test
+
+# ping 测试
+TestPing:
+  method: GET
+  path: /test/ping
+  res:
+    message: string # 响应消息,固定为 Pong successfully!
+    time: string # 响应时间,RFC3339 格式
+
+# hello 测试
+TestHello:
+  method: GET
+  path: /test/hello
+  res:
+    message: string # 问候语
+    version: string # 服务版本号
+
+# 日志组件测试
+TestLogger:
+  method: GET
+  path: /test/logger
+  res:
+    message: string # 测试结果说明
+    level: string # 实际写入的日志级别,如 info
+
+# redis 读写测试
+TestRedis:
+  method: POST
+  path: /test/redis
+  req:
+    key: string # 缓存键
+    value: string # 缓存值
+    ttl: int # 过期时间,单位秒
+  res:
+    message: string # 测试结果说明
+    key: string # 实际写入的键
+    value: string # 回读到的值
+    ttl: int # 实际生效的过期时间,单位秒
+
+# 成功响应校验
+TestSuccess:
+  method: GET
+  path: /test/success
+  res:
+    message: string # 成功提示
+    status: string # 状态标识,固定为 success
+
+# 错误响应校验
+TestError:
+  method: GET
+  path: /test/error
+  res:
+    message: string # 错误提示
+    code: int # 业务错误码,取 errno.ErrInternalServer
+
+# 长耗时请求模拟
+TestLong:
+  method: POST
+  path: /test/long
+  req:
+    duration: int # 阻塞时长,单位秒
+  res:
+    message: string # 完成提示
+    duration: int # 实际耗时,单位秒
+
+

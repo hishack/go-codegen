@@ -20,8 +20,19 @@ func TestParseAllYaml(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ParseAllYaml: %v", err)
 	}
-	if len(list.YamlList) != 4 {
-		t.Fatalf("期望 4 个 yaml 文件,实际 %d", len(list.YamlList))
+	// 期望值按目录里实际的 yaml 文件数推导,避免新增用例后断言失效
+	entries, err := os.ReadDir(yamlDir)
+	if err != nil {
+		t.Fatalf("读取 yaml 目录: %v", err)
+	}
+	want := 0
+	for _, e := range entries {
+		if !e.IsDir() && (strings.HasSuffix(e.Name(), ".yaml") || strings.HasSuffix(e.Name(), ".yml")) {
+			want++
+		}
+	}
+	if len(list.YamlList) != want {
+		t.Fatalf("期望 %d 个 yaml 文件,实际 %d", want, len(list.YamlList))
 	}
 
 	// 汇总所有接口,应涵盖 4 个文件的全部接口

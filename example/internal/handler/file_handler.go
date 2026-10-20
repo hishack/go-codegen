@@ -41,7 +41,7 @@ func (u *FileHandler) UploadFile(c *gin.Context) {
 
 	data, err := u.fileService.UploadFile(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[string](data))
@@ -65,7 +65,7 @@ func (u *FileHandler) UploadFiles(c *gin.Context) {
 
 	data, err := u.fileService.UploadFiles(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.UploadFilesRes](data))
@@ -90,7 +90,7 @@ func (u *FileHandler) GetFileInfo(c *gin.Context) {
 
 	data, err := u.fileService.GetFileInfo(c, id)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetFileInfoRes](data))

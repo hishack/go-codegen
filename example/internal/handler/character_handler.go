@@ -41,7 +41,7 @@ func (u *CharacterHandler) GetCharacterSkills(c *gin.Context) {
 
 	data, err := u.characterService.GetCharacterSkills(c, id)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetCharacterSkillsRes](data))

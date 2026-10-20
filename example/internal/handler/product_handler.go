@@ -44,7 +44,7 @@ func (u *ProductHandler) ListProducts(c *gin.Context) {
 
 	data, err := u.productService.ListProducts(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.ListProductsRes](data))
@@ -69,7 +69,7 @@ func (u *ProductHandler) GetProduct(c *gin.Context) {
 
 	data, err := u.productService.GetProduct(c, id)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetProductRes](data))
@@ -93,7 +93,7 @@ func (u *ProductHandler) CreateProduct(c *gin.Context) {
 
 	data, err := u.productService.CreateProduct(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[int64](data))
@@ -125,7 +125,7 @@ func (u *ProductHandler) UpdateProduct(c *gin.Context) {
 
 	data, err := u.productService.UpdateProduct(c, id, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))
@@ -150,7 +150,7 @@ func (u *ProductHandler) DeleteProduct(c *gin.Context) {
 
 	data, err := u.productService.DeleteProduct(c, id)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))

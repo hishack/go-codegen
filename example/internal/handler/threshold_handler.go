@@ -40,7 +40,7 @@ func (u *ThresholdHandler) CreateThreshold(c *gin.Context) {
 
 	data, err := u.thresholdService.CreateThreshold(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[int64](data))
@@ -72,7 +72,7 @@ func (u *ThresholdHandler) UpdateThreshold(c *gin.Context) {
 
 	data, err := u.thresholdService.UpdateThreshold(c, id, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))

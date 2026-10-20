@@ -33,7 +33,7 @@ func NewProfileHandler(userService service.IProfileService) *ProfileHandler {
 func (u *ProfileHandler) GetUserProfile(c *gin.Context) {
 	data, err := u.profileService.GetUserProfile(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserProfileRes](data))
@@ -57,7 +57,7 @@ func (u *ProfileHandler) UpdateUserProfile(c *gin.Context) {
 
 	data, err := u.profileService.UpdateUserProfile(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))

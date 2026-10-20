@@ -104,8 +104,11 @@ CreateThing:
 	if !strings.Contains(text, "c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))") {
 		t.Errorf("绑定失败应返回 400:\n%s", text)
 	}
-	if !strings.Contains(text, "c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))") {
-		t.Errorf("业务失败应经 HTTPStatusOf 映射状态码:\n%s", text)
+	if !strings.Contains(text, "c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))") {
+		t.Errorf("业务失败应统一返回 422:\n%s", text)
+	}
+	if strings.Contains(text, "HTTPStatusOf") {
+		t.Errorf("业务失败不应再经 HTTPStatusOf 推断状态码:\n%s", text)
 	}
 	if strings.Contains(text, "c.JSON(http.StatusOK, response.NewErrorResponse") {
 		t.Errorf("错误响应不应再用 200:\n%s", text)
@@ -473,3 +476,49 @@ func mustParseAll(t *testing.T, dir string) *field.YamlList {
 }
 
 var _ = os.Stat
+
+// TestHandlerBusinessErrorUnified422 业务失败统一返回 422,且不再依赖 errorutil.HTTPStatusOf。
+// 同时覆盖"按需导入":没有 req、也没有类型化路径参数的领域,errorutil 用不上,
+// 若仍然导入就会变成未使用 import,产物直接编译不过。
+func TestHandlerBusinessErrorUnified422(t *testing.T) {
+	dir := t.TempDir()
+	yamlDir := filepath.Join(dir, "yaml")
+	mustWrite(filepath.Join(yamlDir, "ping.yaml"), `filename: ping
+package: system
+
+# 健康检查
+Ping:
+  method: GET
+  path: /ping
+  res:
+    message: string
+`)
+	cfg := mustConfig(config.CodeGenConfig{
+		YamlInPath:        yamlDir,
+		Module:            "testapp",
+		ServiceIntOutPath: filepath.Join(dir, "out", "service"),
+		ModelOutPath:      filepath.Join(dir, "out", "model", "gen"),
+		LogicOutPath:      filepath.Join(dir, "out", "logic"),
+		HandlerOutPath:    filepath.Join(dir, "out", "handler"),
+		RouterOutPath:     filepath.Join(dir, "out", "router"),
+	})
+	if _, err := RunAll(cfg, mustParseAll(t, yamlDir)); err != nil {
+		t.Fatalf("RunAll: %v", err)
+	}
+
+	raw, err := os.ReadFile(filepath.Join(cfg.HandlerOutPath, "ping_handler.go"))
+	if err != nil {
+		t.Fatalf("读取生成结果: %v", err)
+	}
+	text := string(raw)
+
+	if !strings.Contains(text, "c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))") {
+		t.Errorf("业务失败应统一返回 422:\n%s", text)
+	}
+	if strings.Contains(text, "HTTPStatusOf") {
+		t.Errorf("业务失败不应再经 HTTPStatusOf 推断状态码:\n%s", text)
+	}
+	if strings.Contains(text, "pkg/errorutil") {
+		t.Errorf("无 req、无类型路径参数时不应导入 errorutil(未使用 import):\n%s", text)
+	}
+}

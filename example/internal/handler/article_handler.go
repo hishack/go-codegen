@@ -42,7 +42,7 @@ func (u *ArticleHandler) ListArticles(c *gin.Context) {
 
 	data, err := u.articleService.ListArticles(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.ListArticlesRes](data))
@@ -67,7 +67,7 @@ func (u *ArticleHandler) GetArticleById(c *gin.Context) {
 
 	data, err := u.articleService.GetArticleById(c, id)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleByIdRes](data))
@@ -91,7 +91,7 @@ func (u *ArticleHandler) PublishArticle(c *gin.Context) {
 
 	data, err := u.articleService.PublishArticle(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[int64](data))
@@ -108,7 +108,7 @@ func (u *ArticleHandler) PublishArticle(c *gin.Context) {
 func (u *ArticleHandler) GetArticleStats(c *gin.Context) {
 	data, err := u.articleService.GetArticleStats(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleStatsRes](data))
@@ -125,7 +125,7 @@ func (u *ArticleHandler) GetArticleStats(c *gin.Context) {
 func (u *ArticleHandler) GetArticleStats1(c *gin.Context) {
 	data, err := u.articleService.GetArticleStats1(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleStats1Res](data))
@@ -142,7 +142,7 @@ func (u *ArticleHandler) GetArticleStats1(c *gin.Context) {
 func (u *ArticleHandler) GetArticleStats2(c *gin.Context) {
 	data, err := u.articleService.GetArticleStats2(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleStats2Res](data))

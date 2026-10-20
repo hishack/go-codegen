@@ -34,7 +34,7 @@ func NewEdgeHandler(userService service.IEdgeService) *EdgeHandler {
 func (u *EdgeHandler) HealthCheck(c *gin.Context) {
 	err := u.edgeService.HealthCheck(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[any](true))
@@ -58,7 +58,7 @@ func (u *EdgeHandler) Logout(c *gin.Context) {
 
 	err := u.edgeService.Logout(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[any](true))
@@ -75,7 +75,7 @@ func (u *EdgeHandler) Logout(c *gin.Context) {
 func (u *EdgeHandler) GetTime(c *gin.Context) {
 	data, err := u.edgeService.GetTime(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetTimeRes](data))
@@ -92,7 +92,7 @@ func (u *EdgeHandler) GetTime(c *gin.Context) {
 func (u *EdgeHandler) Ping(c *gin.Context) {
 	err := u.edgeService.Ping(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[any](true))
@@ -118,7 +118,7 @@ func (u *EdgeHandler) SearchUser(c *gin.Context) {
 
 	data, err := u.edgeService.SearchUser(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.SearchUserRes](data))
@@ -150,7 +150,7 @@ func (u *EdgeHandler) GetUserOrder(c *gin.Context) {
 
 	data, err := u.edgeService.GetUserOrder(c, userId, orderId)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserOrderRes](data))
@@ -170,7 +170,7 @@ func (u *EdgeHandler) GetArticle(c *gin.Context) {
 
 	data, err := u.edgeService.GetArticle(c, id)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetArticleRes](data))
@@ -202,7 +202,7 @@ func (u *EdgeHandler) GetOrgUser(c *gin.Context) {
 
 	data, err := u.edgeService.GetOrgUser(c, orgId, userId)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetOrgUserRes](data))

@@ -87,7 +87,12 @@ func (g *HandlerGen) registerMethods(f *goFile, d *domain, report *Report) {
 
 // registerImports handler 文件 import 精确计算
 func (g *HandlerGen) registerImports(f *goFile, d *domain) {
-	f.NeedImports("github.com/gin-gonic/gin", "net/http", g.cfg.Module+"/pkg/response", g.cfg.Module+"/pkg/errorutil")
+	f.NeedImports("github.com/gin-gonic/gin", "net/http", g.cfg.Module+"/pkg/response")
+	// errorutil 只服务于"参数/绑定失败"分支(400);
+	// 既没有 req、也没有需要类型解析的路径参数时,导入了会变成未使用 import
+	if d.hasReq() || d.hasTypedParam() {
+		f.NeedImports(g.cfg.Module + "/pkg/errorutil")
+	}
 	registerModelImports(f.File, g.cfg, d)
 	if d.hasTypedParam() {
 		f.NeedImports("strconv")
@@ -100,7 +105,7 @@ func handlerMethodText(d *domain, api *field.Api, cfg *config.CodeGenConfig) str
 	b.WriteString(handlerDocBlock(d, api, cfg))
 	b.WriteString("func (u *" + d.handlerType() + ") " + api.ApiName + "(c *gin.Context) {\n")
 
-	errStmt := "c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))"
+	errStmt := "c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))"
 	badRequestStmt := "c.JSON(http.StatusBadRequest, response.NewErrorResponse[any](errorutil.ParamsError.WithMessage(err.Error())))"
 	section := func() { b.WriteString("\n") }
 

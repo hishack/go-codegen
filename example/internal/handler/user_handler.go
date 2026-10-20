@@ -41,7 +41,7 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 
 	data, err := u.userService.CreateUser(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.CreateUserRes](data))
@@ -66,7 +66,7 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 
 	data, err := u.userService.GetUser(c, userId)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserRes](data))
@@ -83,7 +83,7 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 func (u *UserHandler) ListUsers(c *gin.Context) {
 	data, err := u.userService.ListUsers(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.ListUsersRes](data))
@@ -115,7 +115,7 @@ func (u *UserHandler) UpdateUser(c *gin.Context) {
 
 	data, err := u.userService.UpdateUser(c, userId, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))
@@ -147,7 +147,7 @@ func (u *UserHandler) PatchUser(c *gin.Context) {
 
 	data, err := u.userService.PatchUser(c, userId, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))
@@ -172,7 +172,7 @@ func (u *UserHandler) DeleteUser(c *gin.Context) {
 
 	data, err := u.userService.DeleteUser(c, userId)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))
@@ -197,7 +197,7 @@ func (u *UserHandler) GetUserProfileVo(c *gin.Context) {
 
 	data, err := u.userService.GetUserProfileVo(c, id)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetUserProfileVoRes](data))
@@ -221,7 +221,7 @@ func (u *UserHandler) UploadAvatar(c *gin.Context) {
 
 	data, err := u.userService.UploadAvatar(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[string](data))

@@ -40,7 +40,7 @@ func (u *AuthHandler) Login(c *gin.Context) {
 
 	data, err := u.authService.Login(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.LoginRes](data))
@@ -64,7 +64,7 @@ func (u *AuthHandler) RefreshToken(c *gin.Context) {
 
 	data, err := u.authService.RefreshToken(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[string](data))
@@ -88,7 +88,7 @@ func (u *AuthHandler) LogoutAccount(c *gin.Context) {
 
 	err := u.authService.LogoutAccount(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[any](true))

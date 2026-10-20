@@ -76,8 +76,9 @@ var (
 	SystemError = BusinessError{Code: 50000, Message: "系统繁忙,请稍后再试"}
 )
 
-// HTTPStatusOf 把错误映射为 HTTP 状态码,供生成的 handler 使用。
-// 约定:参数/绑定类错误 400,业务处理失败 422。
+// HTTPStatusOf 把错误映射为 HTTP 状态码,供**手写** handler 使用。
+// 生成器产出的 handler 已固定为:参数/绑定类 400、业务处理失败 422,
+// 不再调用本函数;这里保留给其它手写接口复用同一套约定。
 // 避免所有错误都返回 200,让网关与监控能按状态码统计错误率
 func HTTPStatusOf(err error) int {
 	if err == nil {

@@ -41,7 +41,7 @@ func (u *NotifyHandler) SendSmsCode(c *gin.Context) {
 
 	data, err := u.notifyService.SendSmsCode(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[int](data))
@@ -66,7 +66,7 @@ func (u *NotifyHandler) ListNotifies(c *gin.Context) {
 
 	data, err := u.notifyService.ListNotifies(c, req)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.ListNotifiesRes](data))
@@ -91,7 +91,7 @@ func (u *NotifyHandler) ReadNotify(c *gin.Context) {
 
 	data, err := u.notifyService.ReadNotify(c, id)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[bool](data))
@@ -108,7 +108,7 @@ func (u *NotifyHandler) ReadNotify(c *gin.Context) {
 func (u *NotifyHandler) GetNotifyConfig(c *gin.Context) {
 	data, err := u.notifyService.GetNotifyConfig(c)
 	if err != nil {
-		c.JSON(errorutil.HTTPStatusOf(err), response.NewErrorResponse[any](err))
+		c.JSON(http.StatusUnprocessableEntity, response.NewErrorResponse[any](err))
 		return
 	}
 	c.JSON(http.StatusOK, response.NewSuccessResponse[res.GetNotifyConfigRes](data))
