@@ -244,7 +244,7 @@ CreateUser:
 | model/request | `internal/model/gen/request/user.go` | `CreateUserReq`(`json` + `form` 双 tag) |
 | model/response | `internal/model/gen/response/user.go` | `CreateUserRes`(嵌套对象自动提升命名) |
 | service | `internal/service/user_service.go` | 接口 `IUserService` 及方法签名 |
-| logic | `internal/logic/user_logic.go` | 空实现 `UserService`(带 TODO) |
+| logic | `internal/logic/user_logic.go` | 空实现 `UserService`(方法体只返回零值) |
 | handler | `internal/handler/user_handler.go` | 绑定 → 调 service → 包装响应,含 swagger 注解 |
 | router | `internal/router/user_router.go` | `InitUserRouter(Router *gin.RouterGroup, ...)` |
 | web | `web/src/api/user.ts` | TS 类型 + `UserApi` 请求类(axios) |

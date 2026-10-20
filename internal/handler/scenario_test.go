@@ -236,8 +236,9 @@ func TestScenarioIncremental(t *testing.T) {
 		}
 		// GET query 绑定
 		e.mustContain("handler", "user_handler.go", "c.ShouldBindQuery(&req)")
-		// 注释透传到 logic TODO
-		e.mustContain("logic", "user_logic.go", "TODO: 实现业务逻辑:创建用户")
+		// 注释透传到 logic 的方法文档注释;方法体内不再有 TODO 占位
+		e.mustContain("logic", "user_logic.go", "// CreateUser 创建用户")
+		e.mustNotContain("logic", "user_logic.go", "TODO")
 	})
 
 	// ---------- S2 幂等:重复生成零变更 ----------
@@ -261,7 +262,6 @@ func TestScenarioIncremental(t *testing.T) {
 		src := mustRead(logicFile)
 		// 写入真实业务逻辑
 		src = strings.Replace(src, `func (s *UserService) CreateUser(c *gin.Context, req request.CreateUserReq) (res.CreateUserRes, error) {
-	// TODO: 实现业务逻辑:创建用户
 	return res.CreateUserRes{}, nil
 }`, `func (s *UserService) CreateUser(c *gin.Context, req request.CreateUserReq) (res.CreateUserRes, error) {
 	// 用户手写的真实业务逻辑
@@ -345,7 +345,7 @@ GetUserDetail:
 		e.mustContain("handler", "user_handler.go", "strconv.ParseInt(idStr, 10, 64)")
 		e.mustContain("response", "user.go", "type GetUserDetailResProfile struct")
 		e.mustContain("router", "user_router.go", "userRouter.GET(\"/users/:id/detail\", userHandler.GetUserDetail)")
-		e.mustContain("logic", "user_logic.go", "TODO: 实现业务逻辑:获取用户详情")
+		e.mustContain("logic", "user_logic.go", "// GetUserDetail 获取用户详情")
 		// S3 的用户代码仍在
 		if !strings.Contains(mustRead(e.out("logic", "user_logic.go")), "用户手写的真实业务逻辑") {
 			t.Fatal("新增接口后用户代码丢失")
@@ -479,9 +479,13 @@ GetUserDetail:
 		})
 		e.run()
 		e.mustContain("handler", "user_handler.go", "@Summary 创建用户(含邀请码)")
-		// logic 是用户层,注释变化不重写方法(未被用户改过的方法 TODO 原样保留)
-		if !strings.Contains(mustRead(e.out("logic", "user_logic.go")), "TODO: 实现业务逻辑:GetUser") {
-			t.Fatal("S9 后 logic 原 TODO 丢失")
+		// logic 是用户层,注释变化不重写方法:CreateUser 仍是旧注释,且方法体无 TODO 占位
+		logic := mustRead(e.out("logic", "user_logic.go"))
+		if !strings.Contains(logic, "// CreateUser 创建用户\n") {
+			t.Fatal("S9 后 logic 方法注释被改写")
+		}
+		if strings.Contains(logic, "TODO") {
+			t.Fatal("S9 后 logic 仍出现 TODO 占位")
 		}
 		// 用户业务逻辑仍在(handler 重写不影响 logic)
 		if !strings.Contains(mustRead(e.out("logic", "user_logic.go")), "用户手写的真实业务逻辑") {

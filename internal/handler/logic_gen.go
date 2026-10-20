@@ -62,13 +62,13 @@ func (g *LogicGen) genDomain(d *domain, report *Report) error {
 	return f.Flush()
 }
 
-// logicMethodText logic 空实现方法
+// logicMethodText logic 空实现方法。
+// 方法体只放零值返回,不写 TODO 占位注释 —— 接口说明已经在函数上方的文档注释里,
+// 体内再重复一遍只会让每次生成都多出一行噪音,用户实现后还得手动删
 func logicMethodText(d *domain, api *field.Api) string {
 	var b strings.Builder
-	comment := docComment(api)
-	b.WriteString("// " + api.ApiName + " " + comment + "\n")
+	b.WriteString("// " + api.ApiName + " " + docComment(api) + "\n")
 	b.WriteString("func (s *" + d.logicType() + ") " + serviceSig(api) + " {\n")
-	b.WriteString("\t// TODO: 实现业务逻辑:" + comment + "\n")
 
 	if t := api.ScalarRes(); t != nil {
 		b.WriteString("\treturn " + zeroValue(t) + ", nil\n")
